@@ -1,0 +1,11 @@
+{
+  "name"        : "bjjtechniques",
+  "description" : "Brazilian Jiu-Jitsu Techniques by David Thomas of Austin Jiu-Jitsu",
+  "version"     : "1.0.0",
+  "author"      : "David Thomas <dthomas@austinjiujitsu.com>",
+  "private"     : true,
+  "engines": {
+        "node"      : "0.8.x",
+        "npm"       : "1.1.x"
+  }
+}
