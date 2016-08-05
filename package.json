@@ -1,11 +1,43 @@
+// Read https://blog.heroku.com/node-habits-2016 for how to create this file and keep it pretty
+// In short:
+// - npm init                 will create the file
+// - npm install blah --save  will add new entries for dependencies
 {
-  "name"        : "bjjtechniques",
-  "description" : "Brazilian Jiu-Jitsu Techniques by David Thomas of Austin Jiu-Jitsu",
-  "version"     : "1.0.0",
-  "author"      : "David Thomas <dthomas@austinjiujitsu.com>",
-  "private"     : true,
+  "name": "bjjtechniques",
+  "description": "Brazilian Jiu-Jitsu Techniques by David Thomas of Austin Jiu-Jitsu",
+  "version": "1.0.0",
+  "author": "Dave Thomas",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
   "engines": {
-        "node"      : "0.8.x",
-        "npm"       : "1.1.x"
-  }
+    "node": "6.3.x",
+    "npm": "3.10.x"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "express": "^4.14.0",
+    "moment": "^2.14.1",
+    "pg-promise": "^5.2.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davecthomas/bjjtech.git"
+  },
+  "contributors": [
+    "Dave Thomas"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davecthomas/bjjtech/issues"
+  },
+  "homepage": "https://github.com/davecthomas/bjjtech#readme",
+  "main": "server.js",
+  "devDependencies": {},
+  "keywords": [
+    "bjj",
+    "techniques",
+    "austinjiujitsu"
+  ]
 }
