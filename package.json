@@ -1,7 +1,6 @@
-// Read https://blog.heroku.com/node-habits-2016 for how to create this file and keep it pretty
-// In short:
-// - npm init                 will create the file
-// - npm install blah --save  will add new entries for dependencies
+{ "//": "Read https://blog.heroku.com/node-habits-2016 for how to create this file and keep it pretty. In short:",
+  "//": "- npm init                 will create the file",
+  "//": "- npm install blah --save  will add new entries for dependencies" }
 {
   "name": "bjjtechniques",
   "description": "Brazilian Jiu-Jitsu Techniques by David Thomas of Austin Jiu-Jitsu",
