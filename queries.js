@@ -9,14 +9,23 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 // var connectionString = 'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
-var connectionString = 'postgres://ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt?sslmode=require&user=uhysicyepxoqup&password=y4k-5ixpJulBVtwciNexZmuAvJ';
+// var connectionString = 'postgres://ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt?sslmode=require&user=uhysicyepxoqup&password=y4k-5ixpJulBVtwciNexZmuAvJ';
 // var connectionString = 'postgres://localhost:5432/bjjtech';
+var connectionString = {
+    user: "uhysicyepxoqup",
+    password: "y4k-5ixpJulBVtwciNexZmuAvJ",
+    database: "d2fa0lq37cnebt",
+    port: 5432,
+    host: "ec2-54-163-251-104.compute-1.amazonaws.com",
+    ssl: true
+};
 var db = pgp(connectionString);
 
 // add query functions
 
 module.exports = {
   getAllTech: getAllTech,
+  getTechFromStr: getTechFromStr,
   getSingleTech: getSingleTech,
   createTech: createTech,
   updateTech: updateTech,
@@ -38,8 +47,23 @@ function getAllTech(req, res, next) {
     });
 }
 
+function getTechFromStr(req, res, next) {
+  db.any("select * from technique where name LIKE '%$1%' OR setup LIKE '%$1%' OR details LIKE '%$1%'")
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved tech with str $1'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
 function getSingleTech(req, res, next) {
-  var techniqueID = parseInt(req.params.index);
+  var techniqueID = parseInt(req.params.id);
   db.one('select * from technique where index = $1', techniqueID)
     .then(function (data) {
       res.status(200)

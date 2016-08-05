@@ -46,19 +46,8 @@ router.get('/', function(req, res) {
 var db = require('./queries');
 
 router.get('/tech', db.getAllTech);
-// router.get('/tech',
-//
-// function (req, res, next) {
-//
-//       res.status(200)
-//         .json({
-//           status: 'success',
-//           data: data,
-//           message: 'Retrieved ALL tech'
-//         });
-//
-// });
 router.get('/tech/:id', db.getSingleTech);
+router.get('/tech/text/:str', db.getTechFromStr);
 router.post('/tech', db.createTech);
 router.put('/tech/:id', db.updateTech);
 router.delete('/tech/:id', db.removeTech);
