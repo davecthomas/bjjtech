@@ -1,5 +1,5 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
-
+var app = require('./server');
 var promise = require('bluebird');
 
 var options = {
@@ -8,7 +8,9 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://localhost:5432/bjjtech';
+// var connectionString = 'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
+var connectionString = 'postgres://ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt?sslmode=require&user=uhysicyepxoqup&password=y4k-5ixpJulBVtwciNexZmuAvJ';
+// var connectionString = 'postgres://localhost:5432/bjjtech';
 var db = pgp(connectionString);
 
 // add query functions

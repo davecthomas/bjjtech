@@ -11,20 +11,20 @@
 -- TOC entry 2585 (class 1262 OID 46084)
 -- Name: bjjtech; Type: DATABASE; Schema: -; Owner: -
 --
-DROP DATABASE IF EXISTS bjjtech;
+-- DROP DATABASE IF EXISTS d2fa0lq37cnebt;
 
-CREATE DATABASE bjjtech WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+-- CREATE DATABASE d2fa0lq37cnebt WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
 
-
-\connect bjjtech
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-SET row_security = off;
+-- 
+-- \connect d2fa0lq37cnebt
+--
+-- SET statement_timeout = 0;
+-- SET lock_timeout = 0;
+-- SET client_encoding = 'UTF8';
+-- SET standard_conforming_strings = on;
+-- SET check_function_bodies = false;
+-- SET client_min_messages = warning;
+-- SET row_security = off;
 
 --
 -- TOC entry 173 (class 1259 OID 47984)
