@@ -1,5 +1,5 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
-var app = require('../api_server');
+var app = require('../server');
 var promise = require('bluebird');
 
 var options = {
@@ -8,17 +8,22 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
-// var connectionString = 'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
-// var connectionString = 'postgres://ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt?sslmode=require&user=uhysicyepxoqup&password=y4k-5ixpJulBVtwciNexZmuAvJ';
+
+var connectionString;
+
+if (process.env.NODE_ENV === 'development'){
+  connectionString = {
+      user: process.env.DB_user,
+      password: process.env.DB_password,
+      database: process.env.DB_database,
+      port: process.env.DB_port,
+      host: process.env.DB_host,
+      ssl: process.env.DB_ssl
+  };
+} else {
+  connectionString = 'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
+}
 // var connectionString = 'postgres://localhost:5432/bjjtech';
-var connectionString = {
-    user: "uhysicyepxoqup",
-    password: "y4k-5ixpJulBVtwciNexZmuAvJ",
-    database: "d2fa0lq37cnebt",
-    port: 5432,
-    host: "ec2-54-163-251-104.compute-1.amazonaws.com",
-    ssl: true
-};
 var db = pgp(connectionString);
 
 // add query functions
