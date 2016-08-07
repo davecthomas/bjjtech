@@ -2,21 +2,27 @@ var express = require('express'),
 //routes = require('./routes'),
 path = require('path'),
 favicon = require('serve-favicon'),
-
-index = require('./routes/index')
-
-routerRoot = express.Router();
+// define the home page route
+root = require('./routes/root'),
+morgan = require('morgan'),
+router = express.Router();
 
 // Express is our web server routing engine for node.js
 var app = express();
+// For dates/times
 app.locals.moment = require('moment');
+// For logging
+app.use(morgan('combined', {
+  skip: function (req, res) { return res.statusCode < 400 }
+}));
 
+// Our local settings
 app.locals.bjjtech_web = {
   port: (process.env.PORT || 8080),
   general: {
     dotcom: 'BJJTech.com',
-    title: 'BJJTech Web server',
-    description: 'Brazilian Jiu-Jitsu technique catalog.',
+    title: 'BJJTech',
+    description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
     tagline: 'Untangle the Jits knot',
     year: app.locals.moment().year()
   },
@@ -30,6 +36,7 @@ app.locals.bjjtech_web = {
     github: 'davecthomas@github.com'
   }
 };
+
 app.set('port', app.locals.bjjtech_web.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -40,14 +47,17 @@ if ( 'development' == app.get('env')){
   app.locals.pretty = true;
 }
 
-// List of routes
-app.use('/', routerRoot);
-app.use('/index', index);
+// Defile routes
+router.get('/', root.getIndex);
+router.get('/index', root.getIndex);
+router.get('/about', root.getAbout);
+router.get('/tech/:id', root.getSingleTech);
+router.get('/tech/text/:str', root.getTechFromStr);
 
-// define the home page route
-routerRoot.get('/', function(req, res) {
-  res.render('pages/index');
-});
+// List of routes - all prefixed with /web
+app.use('/', router);
+
+module.exports = router;
 
 // Start the app
 var server = app.listen(app.get('port'), function() {
@@ -65,15 +75,15 @@ if (app.get('env') === 'development') {
             error: err
         });
     });
+} else {
+  // production error handler
+  // no stacktraces leaked to user
+  app.use(function (err, req, res, next) {
+      res.status(err.status || 500);
+      res.render('pages/500', {
+          message: err.message,
+          verbose: false,
+          error: err
+      });
+  });
 }
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function (err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('pages/500', {
-        message: err.message,
-        verbose: false,
-        error: err
-    });
-});
