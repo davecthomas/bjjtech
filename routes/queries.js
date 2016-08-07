@@ -1,5 +1,5 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
-var app = require('./server');
+var app = require('../api_server');
 var promise = require('bluebird');
 
 var options = {
@@ -48,13 +48,14 @@ function getAllTech(req, res, next) {
 }
 
 function getTechFromStr(req, res, next) {
-  db.any("select * from technique where name LIKE '%$1%' OR setup LIKE '%$1%' OR details LIKE '%$1%'")
+  var strSearch = parseInt(req.params.str);
+  db.any("select * from technique where name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'", strSearch)
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved tech with str $1'
+          message: 'Retrieved tech with str ' + strSearch
         });
     })
     .catch(function (err) {
@@ -119,7 +120,7 @@ function removeTech(req, res, next) {
       res.status(200)
         .json({
           status: 'success',
-          message: `Removed ${result.rowCount} tech`
+          message: 'Removed ${result.rowCount} tech'
         });
       /* jshint ignore:end */
     })

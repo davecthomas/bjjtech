@@ -1,0 +1,9 @@
+<% include ../partials/error_header %>
+<h2>Error: <%=message %></h2>
+<% if (verbose) { %>
+  <pre><%= error.lineNumber %></pre>
+  <pre><%= error.stack %></pre>
+<% } else { %>
+  <p>An error occurred!</p>
+<% } %>
+<% include ../partials/footer %>

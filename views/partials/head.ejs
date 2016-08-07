@@ -1,0 +1,26 @@
+<title><%=bjjtech_web.general.title %></title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<link href="/public/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+<!-- CSS (load bootstrap from a CDN) -->
+<script type="text/javascript" src= "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src= "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<script type="text/javascript" src= "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.11/d3.min.js"></script>
+<link rel="stylesheet" href="/public/css/bjjt.css">
+<link rel="shortcut icon" href="/public/img/favicon.png?v=<%=Math.floor(Math.random() *100) %>" />
+
+<script>
+$(document).ready(function(){
+    var classCycle=['imageCycle1','imageCycle2','imageCycle3','imageCycle4','imageCycle4','imageCycle5','imageCycle6'
+  ,'imageCycle7','imageCycle8','imageCycle9', 'imageCycle10'];
+
+    var randomNumber = Math.floor(Math.random() * classCycle.length);
+    var classToAdd = classCycle[randomNumber];
+
+    $('body').addClass(classToAdd);
+
+});
+</script>

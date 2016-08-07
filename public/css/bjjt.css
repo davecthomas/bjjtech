@@ -1,0 +1,162 @@
+@import url(http://fonts.googleapis.com/css?family=Syncopate:400,300,700);
+
+body {
+  background-color: transparent;
+  padding-top:50px;
+  padding-bottom: 40px;
+}
+  .imageCycle1{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle2{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle3{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle4{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle5{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle6{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle7{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle8{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle9{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .imageCycle10{
+    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+
+
+/* The top left logo */
+#bjjt_topleft {
+  position: absolute;
+  top: 12px;
+  left: 20px;
+    background:url(../img/bjj-tech-logo-100.png) no-repeat left top;
+    width:89px;
+    height:64px;
+    display: inline-block; /*not supported by IE7<*/
+    -webkit-filter: drop-shadow(5px 5px 5px #444);
+    filter:         drop-shadow(10px 10px 10px rgba(0,0,0,0.6));
+  }
+
+/* The top left Company name */
+#bjjt_brand {
+    font-family: 'Syncopate', sans-serif;
+    color: white;
+    text-shadow: 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6);
+    position: absolute;
+    top: 12px;
+    left: 114px;
+    font-size: xx-large;
+}
+/* The top left tagline */
+#bjjt_tag {
+    font-family: 'Syncopate', sans-serif;
+    color: white;
+    text-shadow: 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6);
+    position: absolute;
+    top: 53px;
+    left: 114px;
+    font-size: large;
+}
+
+.caret {
+    position: absolute;
+    left: 85%;
+    top: 45%;
+}
+
+.navbar {
+    border: none;
+    border-radius: 4;
+    background-color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    margin-top:30px;  /* this moves the nav below the logo */
+    font-size: large;
+}
+
+.navbar-bottom-bc {
+  border-radius: 4px;
+  font-size: small;
+  margin-left: 15px !important;
+  margin-bottom: 14px !important;
+  margin-right: 15px !important;
+  padding-top: 14px;
+}
+
+.navbar a{
+  color: #333;
+}
+
+
+#intro-bc-title{
+  font-size: xx-large;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-top: 14px;
+}
+
+.bjjt{
+  font-family: 'Syncopate', sans-serif;
+
+}
+.lead{
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-bottom: 14px;
+}
+#intro-bc{
+  background-color: rgba(255,255,255,0.75);
+  border-radius: 4;
+}
