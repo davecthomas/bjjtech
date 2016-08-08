@@ -1,90 +1,34 @@
 @import url(//fonts.googleapis.com/css?family=Syncopate:400,300,700);
 
 body {
-  background-color: transparent;
-  padding-top:50px;
-  padding-bottom: 40px;
-}
-  .imageCycle1{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle2{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle3{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle4{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle5{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle6{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle7{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle8{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle9{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .imageCycle10{
-    background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
+   background: url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
 
+   position:relative;
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   background-size: cover;
+   width:100%;
+   height:100%;
+   margin:0;
+   background-size: contain;
+   background-position: center top;
+   background-repeat: no-repeat;
+   background-attachment: scroll;
+ }
+
+.bjjt_header {
+  background-color: rgba(0,0,0,1);
+}
 
 /* The top left logo */
 #bjjt_topleft {
   position: absolute;
-  top: 12px;
-  left: 20px;
+  top: 0px;
+  left: 0px;
     background:url(../img/bjj-tech-logo-100.png) no-repeat left top;
-    width:89px;
-    height:64px;
+    width:400px;
+    height:100px;
     display: inline-block; /*not supported by IE7<*/
     -webkit-filter: drop-shadow(5px 5px 5px #444);
     filter:         drop-shadow(10px 10px 10px rgba(0,0,0,0.6));
@@ -94,10 +38,10 @@ body {
 #bjjt_brand {
     font-family: 'Syncopate', sans-serif;
     color: white;
-    text-shadow: 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6);
-    position: absolute;
+    text-shadow: 0 0 0.5em rgba(128,128,128,0.9), 0 0 0.5em rgba(128,128,128,0.9), 0 0 0.5em rgba(128,128,128,0.9);
+    /*position: absolute;
     top: 12px;
-    left: 114px;
+    right: 0.8rem;*/
     font-size: xx-large;
 }
 /* The top left tagline */
@@ -105,9 +49,9 @@ body {
     font-family: 'Syncopate', sans-serif;
     color: white;
     text-shadow: 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6);
-    position: absolute;
+    /*position: absolute;
     top: 53px;
-    left: 114px;
+    right: 0.8rem;*/
     font-size: large;
 }
 
@@ -142,21 +86,32 @@ body {
 
 #intro-bc-title{
   font-size: xx-large;
-  margin-left: 15px;
-  margin-right: 15px;
-  padding-top: 14px;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  padding-top: 1.5rem;
 }
 
 .bjjt{
   font-family: 'Syncopate', sans-serif;
 
 }
-.lead{
-  margin-left: 15px;
-  margin-right: 15px;
-  padding-bottom: 14px;
+.bjjt_p{
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+
 }
-#intro-bc{
+.panel-transparent {
+    background: none;
+}
+.panel-transparent .panel-heading {
+    background: rgba(122, 130, 136, 0.2)!important;
+}
+.panel-transparent .panel-body {
+    background: rgba(46, 51, 56, 0.2)!important;
+}
+
+.content-panel{
   background-color: rgba(255,255,255,0.75);
-  border-radius: 4;
+  border-color: rgba(0,0,0,0.1);
+
 }

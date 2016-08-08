@@ -1,29 +1,23 @@
-<!-- views/pages/index.ejs -->
+<% include ../partials/top %>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="panel panel-default content-panel panel-transparent">
+                <h1 id="intro-bc-title">A technique for every position, with <span class="bjjt"><%=bjjtech.general.title %></span>. </h1>
+                  <p class="bjjt_p">In a ground fight, you need to have base, mobility, and ability from every position.
+                  Locksmiths pick locks. Jits fighters need to know how to untangle positions.
+                  <%= bjjtech.general.dotcom %> is a lock-picking guide for Brazilian Jiu-Jitsu practitioners.
+                </p>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <% include ../partials/head %>
-</head>
-<body class="container-fluid">
-
-    <header>
-        <% include ../partials/header %>
-    </header>
-
-    <main>
-        <div class="panel panel-default" id="intro-bc">
-            <h1 id="intro-bc-title">A technique for every position, with <span class="bjjt"><%=bjjtech.general.title %></span>. </h1>
-            <div class="lead"><p>In a ground fight, you need to have base, mobility, and ability from every position.
-              Locksmiths pick locks. Jits fighters need to know how to untangle positions.
-              <%= bjjtech.general.dotcom %> is a lock-picking guide for Brazilian Jiu-Jitsu practitioners.
-            </p></div>
+            </div>
+          </div>
+        <div class="row">
+          <div class="col-sm-3 panel panel-default content-panel">
+            <h3>Topics</h3>
+            <p><%= response %></p>
+          </div>
+          <div class="col-sm-3 panel panel-default content-panel"><h3>Techniques</h3></div>
+          <div class="col-sm-6 panel panel-default content-panel"><h3>Detail</h3></div>
         </div>
-    </main>
 
-    <footer>
-        <% include ../partials/footer %>
-    </footer>
-
-</body>
-</html>
+      </div>
+<% include ../partials/bottom %>

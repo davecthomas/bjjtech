@@ -62,6 +62,7 @@ router.get('/tech/text/:str', root.getTechFromStr);
 var db = require('./routes/queries');       // queries.js has our DB logic
 
 router.get('/api/tech', db.getAllTech);
+router.get('/api/tech/topics', db.getAllTopics);
 router.get('/api/tech/:id', db.getSingleTech);
 router.get('/api/tech/text/:str', db.getTechFromStr);
 router.post('/api/tech', db.createTech);

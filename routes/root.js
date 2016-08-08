@@ -16,7 +16,11 @@ module.exports = {
 
 // define the home page route
 function getIndex(req, res) {
-  res.render('pages/index');
+  request(api_url+'tech/topics', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.render('pages/index', {response: body});
+    }
+  })
 };
 
 function getAbout(req, res) {

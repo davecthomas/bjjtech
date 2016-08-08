@@ -30,7 +30,15 @@ var db = pgp(connectionString);
 
 module.exports = {
   getAllTech: getAllTech,
+  getAllTopics: getAllTopics,
+  // getAllTechInTopic: getAllTechInTopic,
+
+  // Get tech from str
+  getTechFromStrInTopic: getTechFromStrInTopic,
+  // getTechFromStrInPositionName: getTechFromStrInPositionName,
+  // getTechFromStrInTechiqueType: getTechFromStrInTechiqueType,
   getTechFromStr: getTechFromStr,
+
   getSingleTech: getSingleTech,
   createTech: createTech,
   updateTech: updateTech,
@@ -45,6 +53,21 @@ function getAllTech(req, res, next) {
           status: 'success',
           data: data,
           message: 'Retrieved ALL tech'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+function getAllTopics(req, res, next) {
+  db.any('select * from topic')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL topics'
         });
     })
     .catch(function (err) {
@@ -67,6 +90,24 @@ function getTechFromStr(req, res, next) {
       return next(err);
     });
 }
+
+
+function getTechFromStrInTopic(req, res, next) {
+  var strSearch = parseInt(req.params.str);
+  db.any("select * from technique where name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'", strSearch)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved tech with str ' + strSearch
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
 
 function getSingleTech(req, res, next) {
   var techniqueID = parseInt(req.params.id);
