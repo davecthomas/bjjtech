@@ -31,7 +31,7 @@ var db = pgp(connectionString);
 module.exports = {
   getAllTech: getAllTech,
   getAllTopics: getAllTopics,
-  // getAllTechInTopic: getAllTechInTopic,
+  getAllTechInTopic: getAllTechInTopic,
 
   // Get tech from str
   getTechFromStrInTopic: getTechFromStrInTopic,
@@ -68,6 +68,22 @@ function getAllTopics(req, res, next) {
           status: 'success',
           data: data,
           message: 'Retrieved ALL topics'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+function getAllTechInTopic(req, res, next) {
+  var topicID = parseInt(req.params.id);
+  db.any('select index, name from technique where topic = $1', topicID)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL techs in topic'
         });
     })
     .catch(function (err) {

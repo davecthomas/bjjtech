@@ -12,11 +12,40 @@
           </div>
         <div class="row">
           <div class="col-sm-3 panel panel-default content-panel">
-            <h3>Topics</h3>
-            <p><%
+  <script>
+  $(document).ready(function () {
+  <% var api_url = 'http://localhost:'+process.env.PORT+'/api/'; %>
+      $(document).on('click', '.get_techs_topic', function () {
+        var topic_id = $(this).data('id');
+
+        // alert( event.target);
+        $.ajax({
+            url: "<%-api_url %>"+"tech/topic/"+topic_id,
+            success: function(result) {
+              alert( JSON.stringify(result));
+            }
+        });
+        return false;
+    });
+});
+
+  </script>
+
+            <%
               var topics = JSON.parse(response);
-              if (topics.status === 'success'){%>
-                <%= "fuck yea" + topics.status %>
+              if (topics.status === 'success'){
+                var len = topics.data.length %>
+                <%- "<h3>Topics (" + len + ")</h3>" %>
+              <%
+                for(i = 0; i < len; i++){ %>
+                  <%- "<span class='get_techs_topic' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</span><br>"; %>
+                  <%
+                }
+
+
+
+              } else { %>
+                <%- "<h3>No topics (try a search)</h3>" %>
               <%
               } %>
 
