@@ -19,6 +19,7 @@ body {
 
 .bjjt_header {
   background-color: rgba(0,0,0,1);
+  padding-bottom: 3rem;
 }
 
 /* The top left logo */
@@ -32,6 +33,16 @@ body {
     display: inline-block; /*not supported by IE7<*/
     -webkit-filter: drop-shadow(5px 5px 5px #444);
     filter:         drop-shadow(10px 10px 10px rgba(0,0,0,0.6));
+  }
+
+/*Hide excess stuff on iPhone-sized devices*/
+  @media (max-width: 480px) {
+      #bjjt_tag {
+          display: none;
+      }
+      #bjjt_br{
+        display: static;
+      }
   }
 
 /* The top left Company name */
@@ -53,6 +64,19 @@ body {
     top: 53px;
     right: 0.8rem;*/
     font-size: large;
+}
+#bjjt_br{
+  display: none;
+}
+/* The top left tagline */
+#bjjt_dave {
+    font-family: 'Syncopate', sans-serif;
+    color: white;
+    text-shadow: 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6), 0 0 0.3em rgba(0,0,0,0.6);
+    /*position: absolute;
+    top: 53px;
+    right: 0.8rem;*/
+    font-size: 1.2rem;
 }
 
 .caret {

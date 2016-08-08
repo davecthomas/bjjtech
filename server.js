@@ -24,7 +24,7 @@ app.locals.bjjtech = {
     dotcom: 'BJJTech.com',
     title: 'BJJTech',
     description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
-    tagline: 'Untangle the Jits knot',
+    tagline: 'Austin Jiu-Jitsu techniques',
     year: app.locals.moment().year()
   },
   company: {

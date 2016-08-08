@@ -35,7 +35,8 @@ function getSingleTech(req, res) {
   var techniqueID = parseInt(req.params.id);
   request(api_url+'tech/'+techniqueID, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      res.render('pages/getsingletech', {response: body});
+      var topics = JSON.parse(body);
+      res.render('pages/getsingletech', {response: topics});
     }
   })
 };
