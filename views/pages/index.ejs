@@ -17,12 +17,22 @@
   <% var api_url = 'http://localhost:'+process.env.PORT+'/api/'; %>
       $(document).on('click', '.get_techs_topic', function () {
         var topic_id = $(this).data('id');
+        $('#techs').empty();
+        $('#num_techs').empty();
 
         // alert( event.target);
         $.ajax({
             url: "<%-api_url %>"+"tech/topic/"+topic_id,
             success: function(result) {
-              alert( JSON.stringify(result));
+              // alert( JSON.stringify(result));
+              var techs = result;
+              if (techs.status === 'success'){
+                var len = techs.data.length;
+                $('#num_techs').append("&nbsp;("+len+")");
+                for(i = 0; i < len; i++){
+                  $('#techs').append("<div class='get_tech_detail bjjt_hover' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
+                }
+              }
             }
         });
         return false;
@@ -34,11 +44,11 @@
             <%
               var topics = JSON.parse(response);
               if (topics.status === 'success'){
-                var len = topics.data.length %>
+                var len = topics.data.length; %>
                 <%- "<h3>Topics (" + len + ")</h3>" %>
               <%
                 for(i = 0; i < len; i++){ %>
-                  <%- "<span class='get_techs_topic' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</span><br>"; %>
+                  <%- "<div class='get_techs_topic bjjt_hover' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</div>"; %>
                   <%
                 }
 
@@ -49,10 +59,14 @@
               <%
               } %>
 
-          </p>
           </div>
-          <div class="col-sm-3 panel panel-default content-panel"><h3>Techniques</h3></div>
-          <div class="col-sm-6 panel panel-default content-panel"><h3>Detail</h3></div>
+          <div class="col-sm-3 panel panel-default content-panel"><h3>Techniques<span id="num_techs"></span></h3>
+          <span id="techs">
+          </span>
+        </div>
+          <div class="col-sm-6 panel panel-default content-panel"><h3>Detail</h3>
+          <span id="details">
+          </span></div>
         </div>
 
       </div>
