@@ -39,12 +39,15 @@ body {
   }
 
 /*Hide excess stuff on iPhone-sized devices*/
-  @media (max-width: 480px) {
+  @media screen and (max-width: 480px), screen and (max-height: 435px) {
       #bjjt_tag {
           display: none;
       }
       #bjjt_br{
         display: static;
+      }
+      .content-panel-belowtop{
+        display: none;
       }
   }
 
@@ -128,28 +131,32 @@ body {
 
 }
 
-.panel-transparent {
-    background: none;
-}
-.panel-transparent .panel-heading {
-    background: rgba(122, 130, 136, 0.2)!important;
-}
-.panel-transparent .panel-body {
-    background: rgba(46, 51, 56, 0.2)!important;
+.content-panel-belowtop {
+  background-color: rgba(255,255,255,0.2);
+  border-color: rgba(0,0,0,0.1);
+  color: rgba(255,255,255,1);
 }
 
 .content-panel{
-  background-color: rgba(255,255,255,0.5);
+  background-color: rgba(255,255,255,0.8);
   border-color: rgba(0,0,0,0.1);
   color: rgba(0,0,0,1);
 }
 
-.bjjt_hover{
-  background-color: inherit;
-  color: inherit;
+.bjjt_hover_click{
+  background-color: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.75)
+
+}
+
+.bjjt_hover_clickoff{
 
 }
 .bjjt_hover:hover{
-      background-color: rgba(0,0,0,0.5);
-      color: rgba(255,255,255,0.75)
+  background-color: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.75)
+}
+
+.bjjt_button{
+  padding-bottom: 4rem;
 }

@@ -1,7 +1,6 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
 var app = require('../server');
 var promise = require('bluebird');
-
 var options = {
   // Initialization Options
   promiseLib: promise
@@ -39,11 +38,16 @@ module.exports = {
   // getTechFromStrInTechiqueType: getTechFromStrInTechiqueType,
   getTechFromStr: getTechFromStr,
 
+  getTechBrief: getTechBrief,
   getSingleTech: getSingleTech,
   createTech: createTech,
   updateTech: updateTech,
   removeTech: removeTech
 };
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 function getAllTech(req, res, next) {
   db.any('select * from technique')
@@ -77,7 +81,8 @@ function getAllTopics(req, res, next) {
 
 function getAllTechInTopic(req, res, next) {
   var topicID = parseInt(req.params.id);
-  db.any('select index, name from technique where topic = $1', topicID)
+  db.any('SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN ' +
+          'technique ON topic.index = technique.topic WHERE topic.index = $1', topicID)
     .then(function (data) {
       res.status(200)
         .json({
@@ -124,10 +129,47 @@ function getTechFromStrInTopic(req, res, next) {
     });
 }
 
+function getTechBrief(req, res, next) {
+  var techniqueID = parseInt(req.params.id);
+  db.one('select name, setup, details from technique where index = $1', techniqueID)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved tech brief'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
 
 function getSingleTech(req, res, next) {
-  var techniqueID = parseInt(req.params.id);
-  db.one('select * from technique where index = $1', techniqueID)
+  var techniqueID = 0;                            // See if this is coming from old ASP-style link ...asp?id=100
+  if (! isNumeric(req.query.id) || (isNaN(req.query.id))){
+    if (isNumeric(req.params.id)){
+      techniqueID = parseInt(req.params.id);    // Coming from new-style format
+    }
+  } else {
+    techniqueID = parseInt(req.query.id);
+  }
+  var strSQL = "SELECT technique.*, techniquetype.techniquetype AS techniquetype_techniquetype, " +
+            "positionnames.positionname AS position_name, " +
+            "sport.sport AS sport_sport, topic.topic AS topic_topic , skilllevel.levelname AS level_name FROM " +
+          	"topic INNER JOIN (" +
+          		"positionnames INNER JOIN (" +
+          			"skilllevel INNER JOIN (" +
+          				"sport INNER JOIN (" +
+          					"techniquetype INNER JOIN technique ON techniquetype.index = technique.type) " +
+          				"ON sport.index = technique.sport) " +
+          			"ON skilllevel.index = technique.skilllevel)" +
+          		"ON positionnames.index = technique.startingpos) " +
+          	"ON topic.index = technique.topic WHERE technique.index = $1";
+
+  // strSQL = "select * from technique where index = $1";
+  db.one(strSQL, techniqueID)
     .then(function (data) {
       res.status(200)
         .json({

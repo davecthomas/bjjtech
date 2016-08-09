@@ -1,22 +1,16 @@
 <% include ../partials/top %>
         <div class="container-fluid">
-          <div class="row">
-            <div class="panel panel-default content-panel panel-transparent">
-                <h1 id="intro-bc-title">A technique for every position, with <span class="bjjt"><%=bjjtech.general.title %></span>. </h1>
-                  <p class="bjjt_p">In a ground fight, you need to have base, mobility, and ability from every position.
-                  Locksmiths pick locks. Jits fighters need to know how to untangle positions.
-                  <%= bjjtech.general.dotcom %> is a lock-picking guide for Brazilian Jiu-Jitsu practitioners.
-                </p>
-
-            </div>
-          </div>
+          <% include ../partials/belowtop %>
         <div class="row">
           <div class="col-sm-3 panel panel-default content-panel">
   <script>
   $(document).ready(function () {
   <% var api_url = 'http://localhost:'+process.env.PORT+'/api/'; %>
+
       $(document).on('click', '.get_techs_topic', function () {
+
         var topic_id = $(this).data('id');
+        $("#"+topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
         $('#techs').empty();
         $('#num_techs').empty();
 
@@ -28,8 +22,10 @@
               var techs = result;
               if (techs.status === 'success'){
                 var len = techs.data.length;
-                $('#num_techs').append("&nbsp;("+len+")");
                 for(i = 0; i < len; i++){
+                  if (i == 0){
+                    $('#num_techs').append(len+"&nbsp;"+techs.data[i].topic_name+"&nbsp;");
+                  }
                   $('#techs').append("<div class='get_tech_detail bjjt_hover' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
                 }
               }
@@ -37,10 +33,40 @@
         });
         return false;
     });
+
+    $(document).on('click', '.get_tech_detail', function () {
+      var id = $(this).data('id');
+      $('#detail_h').empty();
+      $('#details').empty();
+
+      // alert( event.target);
+      $.ajax({
+          url: "<%-api_url %>"+"tech/brief/"+id,
+          success: function(result) {
+            // alert( JSON.stringify(result));
+            var tech = result;
+            if (tech.status === 'success'){
+              $('#detail_h').append(tech.data.name );
+              // Swap \n with <br>
+              if (tech.data.details.length > 0){
+                var details = tech.data.details.replace("\n", "<br>");
+              } else {
+                var details = "Sorry, homie, I haven't written this yet.";
+              }
+              $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
+              $('#details').append('<div class="col-md-6 text-center bjjt_button">');
+              $('#details').append('<button id="moredetail" name="moredetail" class="btn btn-primary">More Detail</button> ');
+              $('#details').append('</div>');
+            }
+          }
+      });
+      return false;
+    });
+
+
 });
 
   </script>
-
             <%
               var topics = JSON.parse(response);
               if (topics.status === 'success'){
@@ -48,7 +74,7 @@
                 <%- "<h3>Topics (" + len + ")</h3>" %>
               <%
                 for(i = 0; i < len; i++){ %>
-                  <%- "<div class='get_techs_topic bjjt_hover' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</div>"; %>
+                  <%- "<div class='get_techs_topic bjjt_hover' id='"+topics.data[i].index+"' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</div>"; %>
                   <%
                 }
 
@@ -60,11 +86,11 @@
               } %>
 
           </div>
-          <div class="col-sm-3 panel panel-default content-panel"><h3>Techniques<span id="num_techs"></span></h3>
+          <div class="col-sm-3 panel panel-default content-panel"><h3><span id="num_techs"></span>Techniques</h3>
           <span id="techs">
           </span>
         </div>
-          <div class="col-sm-6 panel panel-default content-panel"><h3>Detail</h3>
+          <div class="col-sm-6 panel panel-default content-panel"><h3 id="detail_h">Detail</h3>
           <span id="details">
           </span></div>
         </div>
