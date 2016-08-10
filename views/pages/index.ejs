@@ -2,36 +2,50 @@
         <div class="container-fluid">
           <% include ../partials/belowtop %>
         <div class="row">
-          <div class="col-sm-3 panel panel-default content-panel">
+          <div class="col-sm-3 panel panel-default content-panel" id="topiclist-content-panel">
 
   <script>
 
   $(document).ready(function () {
+
+<%
+  var topics = JSON.parse(response);
+  if (topics.status === 'success'){
+    var len = topics.data.length; %>
+
+    var len_topic_list = <%- len %>;
+
     var prev_topic_id = 0;
     var prev_tech_id = 0;
+    var list_index = 0;
 
   <%
     var api_url = 'http://localhost:'+process.env.PORT+'/api/';
     var root_url = 'http://localhost:'+process.env.PORT+'/';
   %>
 
+  //
     $(document).on('click', '.get_techs_topic', function () {
       // Hide the nudge
       $("#nudge_topic").hide();
+      $("#detail-content-panel").hide();
 
       var topic_id = $(this).data('id');
-      if (prev_topic_id != 0){
-        $("#"+prev_topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
-      }
-      prev_topic_id = topic_id;
-      $("#"+topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
-      $('#techs').empty();
-      $('#num_techs').empty();
+      list_index = $(this).data('listindex');   // Save which item is selected for arrow key support
+
+      // if (prev_topic_id != 0){
+      //   $("#"+prev_topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
+      // }
+      // prev_topic_id = topic_id;
+      // $("#"+topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
 
       // alert( event.target);
       $.ajax({
           url: "<%-api_url %>"+"tech/topic/"+topic_id,
           success: function(result) {
+            $("#techlist-content-panel").show();
+            $('#techs').empty();
+            $('#num_techs').empty();
             // alert( JSON.stringify(result));
             var techs = result;
             if (techs.status === 'success'){
@@ -52,7 +66,7 @@
   });
   $(document).on('click', '#moredetail', function () {
     var id = $(this).data('id');
-    window.location.replace( "<%-root_url%>tech/"+id);
+    window.location = "<%-root_url%>tech/"+id;
   });
 
   $(document).on('click', '.get_tech_detail', function () {
@@ -62,8 +76,6 @@
     }
     prev_tech_id = id;
     $("#"+id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
-    $('#detail_h').empty();
-    $('#details').empty();
 
     // alert( event.target);
     $.ajax({
@@ -72,7 +84,11 @@
           // alert( JSON.stringify(result));
           var tech = result;
           if (tech.status === 'success'){
+            $('#detail_h').empty();
+            $('#details').empty();
             $("#nudge_tech").hide();
+            $("#detail-content-panel").show();
+            // $("#nudge_detail").show();
             $('#detail_h').append(tech.data.name );
             // Swap \n with <br>
             if (tech.data.details.length > 0){
@@ -80,10 +96,10 @@
             } else {
               var details = "Sorry, homie, I haven't written this yet.";
             }
-            $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
             $('#details').append('<div class="col-md-6 bjjt_button_parent">'+
-            '<div class=""><button id="moredetail" data-id="'+tech.data.index+'" name="moredetail" class="btn btn-secondary bjjt_button">'+
-            '<i class="fa fa-expand" aria-hidden="true"></i>&nbsp;More Detail</button></div></div>');
+            '<div class=""><button id="moredetail" data-id="'+tech.data.index+'" name="moredetail" class="btn btn-outline-primary bjjt_button">'+
+            'Click for more&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button></div></div>');
+            $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
           }
         }
     });
@@ -92,35 +108,29 @@
 
 
 });
-
   </script>
-            <%
-              var topics = JSON.parse(response);
-              if (topics.status === 'success'){
-                var len = topics.data.length; %>
-                <%- "<h3>"+len+"&nbsp;Jits Topics&nbsp;<span id='nudge_topic' class='valign center pulsor nudge'>Click one!</span></h3>" %>
-              <%
-                for(i = 0; i < len; i++){ %>
-                  <%- "<div class='get_techs_topic bjjt_hover' id='"+topics.data[i].index+"' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</div>"; %>
-                  <%
-                }
-
-
-
-              } else { %>
-                <%- "<h3>No topics (try a search)</h3>" %>
-              <%
-              } %>
-
-          </div>
-          <div class="col-sm-3 panel panel-default content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech'class='valign center pulsor nudge' style="display: none">Click one!</span></h3>
-          <span id="techs">
-          </span>
-        </div>
-          <div class="col-sm-6 panel panel-default content-panel"><h3 id="detail_h"></i>Detail</h3>
-          <span id="details">
-          </span></div>
+<%- "<h3>"+len+"&nbsp;Jits Topics&nbsp;<span id='nudge_topic' class='valign center pulsor nudge'>Click one!</span></h3>" %>
+      <div class="list-group">
+    <%
+      for(i = 0; i < len; i++){ %>
+        <a href="#" class="list-group-item get_techs_topic" id="<%= topics.data[i].index%>" data-listindex="<%=i%>" data-id="<%= topics.data[i].index%>"><h4 class="list-group-item-heading"><%= topics.data[i].topic%></h4></a>
+        <%
+      }
+    } else { %>
+      <%- "<h4 class='list-group-item-heading'>No topics (try a search)</h4>" %>
+    <%
+    } %>
         </div>
 
       </div>
+      <div class="col-sm-3 panel panel-default content-panel content-panel-hidden" id="techlist-content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech'class='valign center pulsor nudge' style="display: none">Click one!</span></h3>
+      <span id="techs">
+      </span>
+    </div>
+      <div class="col-sm-6 panel panel-default content-panel content-panel-hidden" id="detail-content-panel"><div id='nudge_detail' class='valign center pulsor nudge' style="display: none">Click anywhere for more detail!</div><h3 id="detail_h"></h3>
+      <span id="details">
+      </span></div>
+    </div>
+
+  </div>
 <% include ../partials/bottom %>

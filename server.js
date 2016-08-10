@@ -1,22 +1,26 @@
 // server.js
-var express     = require('express'),
-    app         = module.exports = express(),
-    path        = require('path'),
-    favicon     = require('serve-favicon'),
-    morgan      = require('morgan'),
-    bodyParser  = require('body-parser');
+var express = require( 'express' ),
+  app = module.exports = express(),
+  path = require( 'path' ),
+  favicon = require( 'serve-favicon' ),
+  morgan = require( 'morgan' ),
+  bodyParser = require( 'body-parser' );
 
 // For JSON parsing
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use( bodyParser.urlencoded( {
+  extended: true
+} ) );
+app.use( bodyParser.json() );
 
 // For logging
-app.use(morgan('combined', {
-  skip: function (req, res) { return res.statusCode < 400 }
-}));
+app.use( morgan( 'combined', {
+  skip: function( req, res ) {
+    return res.statusCode < 400
+  }
+} ) );
 
 // For time
-app.locals.moment = require('moment');
+app.locals.moment = require( 'moment' );
 
 // Our app local object
 app.locals.bjjtech = {
@@ -28,7 +32,8 @@ app.locals.bjjtech = {
     year: app.locals.moment().year()
   },
   company: {
-    name: 'Austin Jiu-Jitsu.',
+    name: 'Austin Jiu-Jitsu',
+    url: 'http://austinjiujitsu.com',
     birthyear: 2003
   },
   author: {
@@ -38,49 +43,50 @@ app.locals.bjjtech = {
   }
 };
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-app.use('/public', express.static(__dirname + '/public'));
-app.use(favicon(__dirname + '/public/img/favicon.ico'));
+app.set( 'views', path.join( __dirname, 'views' ) );
+app.set( 'view engine', 'ejs' );
+app.use( '/public', express.static( __dirname + '/public' ) );
+app.use( favicon( __dirname + '/public/img/favicon.ico' ) );
 
-if ( 'development' == app.get('env')){
+if ( 'development' == app.get( 'env' ) ) {
   app.locals.pretty = true;
 }
 
 // Defile routes for web app
-var router = express.Router();              // get an instance of the express Router
+var router = express.Router(); // get an instance of the express Router
 
-var root = require('./routes/root');        // root.js has our web logic
+var root = require( './routes/root' ); // root.js has our web logic
 
-router.get('/', root.getIndex);
-router.get('/index', root.getIndex);
-router.get('/about', root.getAbout);
-router.get('/tech/:id', root.getTech);            // support /tech/86
-router.get('/tech', root.getTech);                // support query parameter for old version (/tech?id=86)
-                                                  // http://bjjtech.com/tech/tech-detail.asp?id=387
-router.get('/tech/tech-detail.asp', root.getTech); // Attempt compatibility with old url format
-router.get('/tech/text/:str', root.getTechFromStr);
+router.get( '/', root.getIndex );
+router.get( '/index', root.getIndex );
+router.get( '/about', root.getAbout );
+router.get( '/tech/:id', root.getTech ); // support /tech/86
+router.get( '/tech', root.getTech ); // support query parameter for old version (/tech?id=86)
+// http://bjjtech.com/tech/tech-detail.asp?id=387
+router.get( '/tech/tech-detail.asp', root.getTech ); // Attempt compatibility with old url format
+router.get( '/tech/text/:str', root.getTechFromStr );
 
 // Register DB routes: Our API to the DB
-var db = require('./routes/queries');       // queries.js has our DB logic
+var db = require( './routes/queries' ); // queries.js has our DB logic
 
-router.get('/api/tech/all', db.getAllTech);
-router.get('/api/tech/topics', db.getAllTopics);
-router.get('/api/tech/topic/:id', db.getAllTechInTopic);
-router.get('/api/tech/:id', db.getTech);    // suppoert new style /api/tech/86
-router.get('/api/tech', db.getTech);        // support query parameter for old version (/api/tech?id=86)
-router.get('/api/tech/brief/:id', db.getTechBrief);
-router.get('/api/tech/text/:str', db.getTechFromStr);
-router.post('/api/tech', db.createTech);
+router.get( '/api/tech/all', db.getAllTech );
+router.get( '/api/tech/topics', db.getAllTopics );
+router.get( '/api/tech/topic/:id', db.getAllTechInTopic );
+router.get( '/api/tech/:id', db.getTech ); // suppoert new style /api/tech/86
+router.get( '/api/tech', db.getTech ); // support query parameter for old version (/api/tech?id=86)
+router.get( '/api/tech/brief/:id', db.getTechBrief );
+router.get( '/api/tech/text/:str', db.getTechFromStr );
+router.post( '/api/tech', db.createTech );
 // router.put('/api/tech/:id', db.updateTech);
 // router.delete('/api/tech/:id', db.removeTech);
 
-app.use('/', router);
+app.use( '/', router );
 module.exports = router;
 
 // Kick off the server
-app.set('port', (process.env.PORT || 5000));
+app.set( 'port', ( process.env.PORT || 5000 ) );
 
-var server = app.listen(app.get('port'), function() {
-  console.log(app.locals.bjjtech.general.title + " is running at :" + server.address().address+":" + app.get('port'));
-});
+var server = app.listen( app.get( 'port' ), function() {
+  console.log( app.locals.bjjtech.general.title + " is running at :" +
+    server.address().address + ":" + app.get( 'port' ) );
+} );

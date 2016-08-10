@@ -64,7 +64,7 @@ function getAllTech( req, res, next ) {
 }
 
 function getAllTopics( req, res, next ) {
-  db.any( 'select * from topic' )
+  db.any( 'select * from topic ORDER BY topic' )
     .then( function( data ) {
       res.status( 200 )
         .json( {
@@ -82,7 +82,7 @@ function getAllTechInTopic( req, res, next ) {
   var topicID = parseInt( req.params.id );
   db.any(
       'SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN ' +
-      'technique ON topic.index = technique.topic WHERE topic.index = $1',
+      'technique ON topic.index = technique.topic WHERE topic.index = $1 ORDER BY technique.name',
       topicID )
     .then( function( data ) {
       res.status( 200 )
