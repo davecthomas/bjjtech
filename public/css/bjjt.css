@@ -144,6 +144,7 @@ body {
   /*min-height: 60vh;*/
 }
 
+
  /*On click we make the text bigger also*/
 .bjjt_hover_click{
   background-color: rgba(0,0,0,0.5);
@@ -161,15 +162,20 @@ body {
 
 .bjjt_button_parent{
   position: absolute;
-  width 100%;
+  min-width: 100%;
 }
 .bjjt_button{
   position: absolute;
-  bottom: 0;
-  padding-bottom: 4rem;
-  margin:0px auto; //here it will make center 
+  bottom: 0.8rem; right: 1.8rem;
+  padding-bottom: 1rem;
+  font-size: 1.6rem;
+  font-weight: bold;
 }
-
+.bjjt_button:hover{
+  background-color: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.75);
+  font-size: 2rem;
+}
 
 .nudge{
   font-size: 1.5rem;

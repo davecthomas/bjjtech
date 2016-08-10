@@ -1,37 +1,40 @@
 <% include ../partials/top %>
-        <div class="container-fluid">
-          <% include ../partials/belowtop %>
-        <div class="row ">
-          <div class="col-sm-12 panel panel-default content-panel">
+<div class="container-fluid">
+<% include ../partials/belowtop %>
+    <div class="row ">
+        <div class="col-sm-12 panel panel-default content-panel">
 
-  <script>
-  $(document).ready(function () {
+            <script>
+                $(document).ready(function() {
+
+                });
+            </script>
+        <%
+
+        function replaceAll( str, search, replacement ) {
+          return str.replace( new RegExp( search, 'g' ), replacement );
+        };
+
+        function isNumeric( n ) {
+          return !isNaN( parseFloat( n ) ) && isFinite( n );
+        };
 
 
+        var tech = JSON.parse(response);
+        if (tech.status === 'success'){
+          var tech_detail = tech.data;
+          if (tech.data.details.length > 0){
+            var details = replaceAll(tech.data.details, "\n", "<br>");
+          } else {
+            var details = "Sorry, homie, I haven't written this yet.";
+          } %>
+      <%- "<h3>"+tech_detail.name+"</h3><h4>Setup</h4><p>"+tech_detail.setup+"</p><h4>Detail</h4><p>"+details+ "</p>"%>
+  <%
+        } else { %>
+      <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
+  <%
+        } %>
 
-  });
-
-  </script>
-            <%
-    // String.prototype.replaceAll = function(search, replacement) {
-    // var target = this;
-    // return target.replace(new RegExp(search, 'g'), replacement);
-    //};
-              var tech = JSON.parse(response);
-              if (tech.status === 'success'){
-                var tech_detail = tech.data;
-                if (tech.data.details.length > 0){
-                  var details = tech.data.details.replace("\n", "<br>");
-                } else {
-                  var details = "Sorry, homie, I haven't written this yet.";
-                } %>
-                <%- "<h3>"+tech_detail.name+"</h3><h4>Setup</h4><p>"+tech_detail.setup+"</p><h4>Detail</h4><p>"+details+ "</p>"%>
-            <%
-              } else { %>
-                <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
-              <%
-              } %>
-
-          </div>
-      </div>
+    </div>
+</div>
 <% include ../partials/bottom %>
