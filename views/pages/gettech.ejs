@@ -2,27 +2,68 @@
 <div class="container-fluid">
 <% include ../partials/belowtop %>
     <div class="row ">
-        <div class="col-sm-12 panel panel-default content-panel">
+<%
 
-            <script>
-                $(document).ready(function() {
+      function replaceAll( str, search, replacement ) {
+        return str.replace( new RegExp( search, 'g' ), replacement );
+      };
 
-                });
-            </script>
+      function isNumeric( n ) {
+        return !isNaN( parseFloat( n ) ) && isFinite( n );
+      };
+
+
+      var tech = JSON.parse(response);
+      if (tech.status === 'success'){
+        var tech_detail = tech.data;
+
+        // If there is video or pix, split screen in half
+        if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
+        </div>
+        <div class="col-sm-6 panel panel-default content-panel">
+<%
+        }
+        if (tech_detail.name) { %>
+          <h3><%- tech_detail.name %></h3>
         <%
+        }
+        if (tech_detail.imageurl) { %>
+          <img src="<%- tech_detail.imageurl %>"</img>
+        <%
+        }
+        if (tech_detail.videoid) { %>
+          <script>
+          // Load the IFrame Player API code asynchronously.
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/player_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        function replaceAll( str, search, replacement ) {
-          return str.replace( new RegExp( search, 'g' ), replacement );
-        };
+          // Replace the 'ytplayer' element with an <iframe> and
+          // YouTube player after the API code downloads.
+          var player;
+          function onYouTubePlayerAPIReady() {
+            player = new YT.Player('ytplayer', {
+              height: '390',
+              width: '640',
+              videoId: '<%- tech_detail.videoid %>'
+            });
+          }
+        </script>
+          <div id="ytplayer"></div>
+        </div>
+        <%
+        }
+        // If there is video or pix, split screen in half
+        if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
+          <div class="col-sm-6 panel panel-default content-panel">
 
-        function isNumeric( n ) {
-          return !isNaN( parseFloat( n ) ) && isFinite( n );
-        };
+<%
+        } else { %>
+          <div class="col-sm-12 panel panel-default content-panel">
 
-
-        var tech = JSON.parse(response);
-        if (tech.status === 'success'){
-          var tech_detail = tech.data;
+<%
+        }
           if (tech.data.details){
             var details = replaceAll(tech.data.details, "\n", "<br>");
           } else {
@@ -59,33 +100,6 @@
           }
           if (details) { %>
             <h4>Steps</h4><p><%- details %></p>
-          <%
-          }
-          if (tech_detail.imageurl) { %>
-            <img src="<%- tech_detail.imageurl %>"</img>
-          <%
-          }
-          console.log(tech_detail);
-          if (tech_detail.videoid) { %>
-            <script>
-            // Load the IFrame Player API code asynchronously.
-            var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/player_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            // Replace the 'ytplayer' element with an <iframe> and
-            // YouTube player after the API code downloads.
-            var player;
-            function onYouTubePlayerAPIReady() {
-              player = new YT.Player('ytplayer', {
-                height: '390',
-                width: '640',
-                videoId: '<%- tech_detail.videoid %>'
-              });
-            }
-          </script>
-            <div id="ytplayer"></div>
           <%
           }
 
