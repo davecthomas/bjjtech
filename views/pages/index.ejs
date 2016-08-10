@@ -33,13 +33,6 @@
       var topic_id = $(this).data('id');
       list_index = $(this).data('listindex');   // Save which item is selected for arrow key support
 
-      // if (prev_topic_id != 0){
-      //   $("#"+prev_topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
-      // }
-      // prev_topic_id = topic_id;
-      // $("#"+topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
-
-      // alert( event.target);
       $.ajax({
           url: "<%-api_url %>"+"tech/topic/"+topic_id,
           success: function(result) {
@@ -54,7 +47,8 @@
                 if (i == 0){
                   $('#num_techs').append(len+"&nbsp;"+techs.data[i].topic_name+"&nbsp;");
                 }
-                $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
+                // $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
+                $('#techs').append("<a href='#' class='list-group-item get_tech_detail' id='"+ techs.data[i].index+"' data-listindex='"+i+"' data-id='"+techs.data[i].index+"'><h5 class='list-group-item-heading'>"+techs.data[i].name+"</h5></a>");
               }
               if (len > 0){
                 $("#nudge_tech").show();
@@ -96,9 +90,11 @@
             } else {
               var details = "Sorry, homie, I haven't written this yet.";
             }
-            $('#details').append('<div class="col-md-6 bjjt_button_parent">'+
-            '<div class=""><button id="moredetail" data-id="'+tech.data.index+'" name="moredetail" class="btn btn-outline-primary bjjt_button">'+
-            'Click for more&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button></div></div>');
+//            $('#details').append('<div class="col-md-6 bjjt_button_parent">'+
+            // '<div class=""><button id="moredetail" data-id="'+tech.data.index+'" name="moredetail" class="btn btn-outline-primary bjjt_button pulsor">'+
+            // 'Click for more detail.&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button></div></div>');
+            // Set moredetail button data
+            $('#moredetail').data('id', tech.data.index)
             $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
           }
         }
@@ -109,7 +105,7 @@
 
 });
   </script>
-<%- "<h3>"+len+"&nbsp;Jits Topics&nbsp;<span id='nudge_topic' class='valign center pulsor nudge'>Click one!</span></h3>" %>
+<%- "<h3>"+len+"&nbsp;Jits Topics&nbsp;<span id='nudge_topic' class='valign center pulsor nudge'>Click a topic.</span></h3>" %>
       <div class="list-group">
     <%
       for(i = 0; i < len; i++){ %>
@@ -123,14 +119,22 @@
         </div>
 
       </div>
-      <div class="col-sm-3 panel panel-default content-panel content-panel-hidden" id="techlist-content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech'class='valign center pulsor nudge' style="display: none">Click one!</span></h3>
-      <span id="techs">
-      </span>
+      <div class="col-sm-3 panel panel-default content-panel content-panel-hidden" id="techlist-content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech' class='valign center pulsor nudge' style="display: none">Click a tech.</span></h3>
+        <div class="list-group">
+      <div id="techs">
+      </div>
     </div>
-      <div class="col-sm-6 panel panel-default content-panel content-panel-hidden" id="detail-content-panel"><div id='nudge_detail' class='valign center pulsor nudge' style="display: none">Click anywhere for more detail!</div><h3 id="detail_h"></h3>
-      <span id="details">
-      </span></div>
     </div>
+    <div class="col-sm-6 panel panel-default content-panel content-panel-hidden" id="detail-content-panel">
+        <div class="container-fluid">
+            <h3 id="detail_h"></h3>
+            <div id="details"></div>
+            <div class="col-md-6 bjjt_button_parent">
+                <button id="moredetail" data-id="" name="moredetail" class="btn btn-outline-primary bjjt_button ">Click for more detail.&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+</div> <!-- row !-->
 
-  </div>
+  </div> <!-- container !-->
 <% include ../partials/bottom %>
