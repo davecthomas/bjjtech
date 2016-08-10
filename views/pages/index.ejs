@@ -30,8 +30,8 @@
       $("#nudge_topic").hide();
       $("#detail-content-panel").hide();
 
-      var topic_id = $(this).data('id');
-      list_index = $(this).data('listindex');   // Save which item is selected for arrow key support
+      var topic_id = $(this).attr('data-id');
+      list_index = $(this).attr('data-listindex');   // Save which item is selected for arrow key support
 
       $.ajax({
           url: "<%-api_url %>"+"tech/topic/"+topic_id,
@@ -59,12 +59,12 @@
       return false;
   });
   $(document).on('click', '#moredetail', function () {
-    var id = $(this).data('id');
+    var id = $(this).attr('data-id');
     window.location = "<%-root_url%>tech/"+id;
   });
 
   $(document).on('click', '.get_tech_detail', function () {
-    var id = $(this).data('id');
+    var id = $(this).attr('data-id');
     if (prev_tech_id != 0){
       $("#"+prev_tech_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
     }
@@ -85,16 +85,13 @@
             // $("#nudge_detail").show();
             $('#detail_h').append(tech.data.name );
             // Swap \n with <br>
-            if (tech.data.details.length > 0){
+            if (tech.data.details){
               var details = replaceAll(tech.data.details, "\n", "<br>");
             } else {
               var details = "Sorry, homie, I haven't written this yet.";
             }
-//            $('#details').append('<div class="col-md-6 bjjt_button_parent">'+
-            // '<div class=""><button id="moredetail" data-id="'+tech.data.index+'" name="moredetail" class="btn btn-outline-primary bjjt_button pulsor">'+
-            // 'Click for more detail.&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button></div></div>');
-            // Set moredetail button data
-            $('#moredetail').data('id', tech.data.index)
+            $('#moredetail').attr('data-id', tech.data.index);
+            alert(tech.data.index);
             $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
           }
         }
@@ -130,7 +127,7 @@
             <h3 id="detail_h"></h3>
             <div id="details"></div>
             <div class="col-md-6 bjjt_button_parent">
-                <button id="moredetail" data-id="" name="moredetail" class="btn btn-outline-primary bjjt_button ">Click for more detail.&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>
+                <button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button ">Click for more detail.&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>

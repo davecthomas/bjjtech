@@ -23,12 +23,73 @@
         var tech = JSON.parse(response);
         if (tech.status === 'success'){
           var tech_detail = tech.data;
-          if (tech.data.details.length > 0){
+          if (tech.data.details){
             var details = replaceAll(tech.data.details, "\n", "<br>");
           } else {
             var details = "Sorry, homie, I haven't written this yet.";
           } %>
-      <%- "<h3>"+tech_detail.name+"</h3><h4>Setup</h4><p>"+tech_detail.setup+"</p><h4>Detail</h4><p>"+details+ "</p>"%>
+          <% if (tech_detail.name) { %>
+            <h3><%- tech_detail.name %></h3>
+          <%
+          }
+          if (tech_detail.techniquetype_techniquetype) { %>
+            <h4>Technique Type</h4><p><%- tech_detail.techniquetype_techniquetype %></p>
+          <%
+          }
+          if (tech_detail.position_name) { %>
+            <h4>Your Starting Position</h4><p><%- tech_detail.position_name %></p>
+          <%
+          }
+          if (tech_detail.sport_sport) { %>
+            <h4>Discipline (Sport)</h4><p><%- tech_detail.sport_sport %></p>
+          <%
+          }
+          if (tech_detail.topic_topic) { %>
+            <h4>Topic</h4><p><%- tech_detail.topic_topic %></p>
+          <%
+          }
+          if (tech_detail.level_name) { %>
+            <h4>Skill Level</h4><p><%- tech_detail.level_name %></p>
+          <%
+          }
+          // "numimages": null,
+          if (tech_detail.setup) { %>
+            <h4>Setup: The Initial Situation</h4><p><%- tech_detail.setup %></p>
+          <%
+          }
+          if (details) { %>
+            <h4>Steps</h4><p><%- details %></p>
+          <%
+          }
+          if (tech_detail.imageurl) { %>
+            <img src="<%- tech_detail.imageurl %>"</img>
+          <%
+          }
+          console.log(tech_detail);
+          if (tech_detail.videoid) { %>
+            <script>
+            // Load the IFrame Player API code asynchronously.
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/player_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            // Replace the 'ytplayer' element with an <iframe> and
+            // YouTube player after the API code downloads.
+            var player;
+            function onYouTubePlayerAPIReady() {
+              player = new YT.Player('ytplayer', {
+                height: '390',
+                width: '640',
+                videoId: '<%- tech_detail.videoid %>'
+              });
+            }
+          </script>
+            <div id="ytplayer"></div>
+          <%
+          }
+
+      %>
   <%
         } else { %>
       <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
