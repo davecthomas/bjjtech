@@ -3,65 +3,82 @@
           <% include ../partials/belowtop %>
         <div class="row">
           <div class="col-sm-3 panel panel-default content-panel">
+
   <script>
   $(document).ready(function () {
+    var prev_topic_id = 0;
+    var prev_tech_id = 0;
+
   <% var api_url = 'http://localhost:'+process.env.PORT+'/api/'; %>
 
-      $(document).on('click', '.get_techs_topic', function () {
+    $(document).on('click', '.get_techs_topic', function () {
+      // Hide the nudge
+      $("#nudge_topic").hide();
 
-        var topic_id = $(this).data('id');
-        $("#"+topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
-        $('#techs').empty();
-        $('#num_techs').empty();
-
-        // alert( event.target);
-        $.ajax({
-            url: "<%-api_url %>"+"tech/topic/"+topic_id,
-            success: function(result) {
-              // alert( JSON.stringify(result));
-              var techs = result;
-              if (techs.status === 'success'){
-                var len = techs.data.length;
-                for(i = 0; i < len; i++){
-                  if (i == 0){
-                    $('#num_techs').append(len+"&nbsp;"+techs.data[i].topic_name+"&nbsp;");
-                  }
-                  $('#techs').append("<div class='get_tech_detail bjjt_hover' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
-                }
-              }
-            }
-        });
-        return false;
-    });
-
-    $(document).on('click', '.get_tech_detail', function () {
-      var id = $(this).data('id');
-      $('#detail_h').empty();
-      $('#details').empty();
+      var topic_id = $(this).data('id');
+      if (prev_topic_id != 0){
+        $("#"+prev_topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
+      }
+      prev_topic_id = topic_id;
+      $("#"+topic_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
+      $('#techs').empty();
+      $('#num_techs').empty();
 
       // alert( event.target);
       $.ajax({
-          url: "<%-api_url %>"+"tech/brief/"+id,
+          url: "<%-api_url %>"+"tech/topic/"+topic_id,
           success: function(result) {
             // alert( JSON.stringify(result));
-            var tech = result;
-            if (tech.status === 'success'){
-              $('#detail_h').append(tech.data.name );
-              // Swap \n with <br>
-              if (tech.data.details.length > 0){
-                var details = tech.data.details.replace("\n", "<br>");
-              } else {
-                var details = "Sorry, homie, I haven't written this yet.";
+            var techs = result;
+            if (techs.status === 'success'){
+              var len = techs.data.length;
+              for(i = 0; i < len; i++){
+                if (i == 0){
+                  $('#num_techs').append(len+"&nbsp;"+techs.data[i].topic_name+"&nbsp;");
+                }
+                $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
               }
-              $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
-              $('#details').append('<div class="col-md-6 text-center bjjt_button">');
-              $('#details').append('<button id="moredetail" name="moredetail" class="btn btn-primary">More Detail</button> ');
-              $('#details').append('</div>');
+              if (len > 0){
+                $("#nudge_tech").show();
+              }
             }
           }
       });
       return false;
+  });
+
+  $(document).on('click', '.get_tech_detail', function () {
+    var id = $(this).data('id');
+    if (prev_tech_id != 0){
+      $("#"+prev_tech_id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
+    }
+    prev_tech_id = id;
+    $("#"+id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
+    $('#detail_h').empty();
+    $('#details').empty();
+
+    // alert( event.target);
+    $.ajax({
+        url: "<%-api_url %>"+"tech/brief/"+id,
+        success: function(result) {
+          // alert( JSON.stringify(result));
+          var tech = result;
+          if (tech.status === 'success'){
+            $("#nudge_tech").hide();
+            $('#detail_h').append(tech.data.name );
+            // Swap \n with <br>
+            if (tech.data.details.length > 0){
+              var details = tech.data.details.replace("\n", "<br>");
+            } else {
+              var details = "Sorry, homie, I haven't written this yet.";
+            }
+            $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
+            $('#details').append('<div class="col-md-6 bjjt_button_parent"><div class="bjjt_button"><button id="moredetail" name="moredetail" class="btn btn-primary">More Detail</button></div></div>');
+          }
+        }
     });
+    return false;
+  });
 
 
 });
@@ -71,7 +88,7 @@
               var topics = JSON.parse(response);
               if (topics.status === 'success'){
                 var len = topics.data.length; %>
-                <%- "<h3>Topics (" + len + ")</h3>" %>
+                <%- "<h3>"+len+"&nbsp;Jits Topics&nbsp;<span id='nudge_topic' class='valign center pulsor nudge'>Click one!</span></h3>" %>
               <%
                 for(i = 0; i < len; i++){ %>
                   <%- "<div class='get_techs_topic bjjt_hover' id='"+topics.data[i].index+"' data-id='"+topics.data[i].index +"'>"+topics.data[i].topic + "</div>"; %>
@@ -86,7 +103,7 @@
               } %>
 
           </div>
-          <div class="col-sm-3 panel panel-default content-panel"><h3><span id="num_techs"></span>Techniques</h3>
+          <div class="col-sm-3 panel panel-default content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech'class='valign center pulsor nudge' style="display: none">Click one!</span></h3>
           <span id="techs">
           </span>
         </div>

@@ -39,10 +39,12 @@ module.exports = {
   getTechFromStr: getTechFromStr,
 
   getTechBrief: getTechBrief,
-  getSingleTech: getSingleTech,
+  getTech: getTech,
   createTech: createTech,
   updateTech: updateTech,
-  removeTech: removeTech
+  removeTech: removeTech,
+
+  isNumeric: isNumeric          // A utility that should move elsewhere eventually
 };
 
 function isNumeric(n) {
@@ -146,7 +148,7 @@ function getTechBrief(req, res, next) {
 }
 
 
-function getSingleTech(req, res, next) {
+function getTech(req, res, next) {
   var techniqueID = 0;                            // See if this is coming from old ASP-style link ...asp?id=100
   if (! isNumeric(req.query.id) || (isNaN(req.query.id))){
     if (isNumeric(req.params.id)){

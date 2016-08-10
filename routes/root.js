@@ -2,6 +2,7 @@ var web = require('../server');
 
 var request = require('request');
 var api_url = 'http://localhost:'+process.env.PORT+'/api/';
+var queries = require('./queries');
 
 
 // add query functions
@@ -11,7 +12,7 @@ module.exports = {
   getAbout: getAbout,
   getAllTech: getAllTech,
   getTechFromStr: getTechFromStr,
-  getSingleTech: getSingleTech
+  getTech: getTech
 };
 
 // define the home page route
@@ -31,12 +32,19 @@ function getAllTech(req, res) {
   res.render('pages/getalltech');
 };
 
-function getSingleTech(req, res) {
-  var techniqueID = parseInt(req.params.id);
-  request(api_url+'tech/'+techniqueID, function (error, response, body) {
+function getTech(req, res) {
+  var techniqueID = 0;                            // See if this is coming from old ASP-style link ...asp?id=100
+  if (! queries.isNumeric(req.query.id) || (isNaN(req.query.id))){
+    if (queries.isNumeric(req.params.id)){
+      techniqueID = parseInt(req.params.id);    // Coming from new-style format
+    }
+  } else {
+    techniqueID = parseInt(req.query.id);
+  }
+
+  request(api_url+'tech/86', function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      var topics = JSON.parse(body);
-      res.render('pages/getsingletech', {response: topics});
+      res.render('pages/gettech', {response: body});
     }
   })
 };

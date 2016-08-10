@@ -141,22 +141,66 @@ body {
   background-color: rgba(255,255,255,0.8);
   border-color: rgba(0,0,0,0.1);
   color: rgba(0,0,0,1);
+  /*min-height: 60vh;*/
 }
 
+ /*On click we make the text bigger also*/
 .bjjt_hover_click{
   background-color: rgba(0,0,0,0.5);
-  color: rgba(255,255,255,0.75)
-
+  color: rgba(255,255,255,0.75);
+  font-size: 2.3rem;
 }
 
 .bjjt_hover_clickoff{
 
 }
 .bjjt_hover:hover{
-  background-color: rgba(0,0,0,0.5);
-  color: rgba(255,255,255,0.75)
+  /*background-color: rgba(0,0,0,0.5);*/
+  color: rgba(50,50,255,0.75)
 }
 
+.bjjt_button_parent{
+  position: absolute;
+  width 100%;
+}
 .bjjt_button{
+  position: absolute;
+  bottom: 0;
   padding-bottom: 4rem;
+  margin:0px auto; //here it will make center 
+}
+
+
+.nudge{
+  font-size: 1.5rem;
+  display: inline-block;
+  border-radius: 3.3rem;
+  color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(0,0,0, 0.5);
+}
+/* Pulsing nudge on landing page */
+.pulsor {
+  opacity:0;
+  -webkit-animation: pulsate 2.3s infinite alternate;
+  -moz-animation: pulsate 2.3s infinite alternate;
+  -animation: pulsate 2.3s infinite alternate;
+  -webkit-animation-delay: 2.8s; /* Chrome, Safari, Opera */
+  animation-delay: 2.8s;
+  animation-timing-function: ease-in-out;
+}
+
+.pulsor:hover {
+
+}
+@keyframes pulsate {
+  0% {
+    opacity: .01;
+    /*top right bottom left*/
+    padding: 1px 3px 1px 3px;
+
+  }
+  100% {
+    opacity: .65;
+    padding: 1px 9px 1px 9px;
+  }
 }

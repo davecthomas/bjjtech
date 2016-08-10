@@ -55,19 +55,20 @@ var root = require('./routes/root');        // root.js has our web logic
 router.get('/', root.getIndex);
 router.get('/index', root.getIndex);
 router.get('/about', root.getAbout);
-router.get('/tech/:id', root.getSingleTech);
-                                                        // http://bjjtech.com/tech/tech-detail.asp?id=387
-router.get('/tech/tech-detail.asp', root.getSingleTech); // Attempt compatibility with old url format
+router.get('/tech/:id', root.getTech);            // support /tech/86
+router.get('/tech', root.getTech);                // support query parameter for old version (/tech?id=86)
+                                                  // http://bjjtech.com/tech/tech-detail.asp?id=387
+router.get('/tech/tech-detail.asp', root.getTech); // Attempt compatibility with old url format
 router.get('/tech/text/:str', root.getTechFromStr);
 
 // Register DB routes: Our API to the DB
 var db = require('./routes/queries');       // queries.js has our DB logic
 
-router.get('/api/tech', db.getAllTech);
+router.get('/api/tech/all', db.getAllTech);
 router.get('/api/tech/topics', db.getAllTopics);
 router.get('/api/tech/topic/:id', db.getAllTechInTopic);
-router.get('/api/tech/:id', db.getSingleTech);    // suppoert new style /api/tech/86
-router.get('/api/tech', db.getSingleTech);        // support query parameter for old version (/api/tech?id=86)
+router.get('/api/tech/:id', db.getTech);    // suppoert new style /api/tech/86
+router.get('/api/tech', db.getTech);        // support query parameter for old version (/api/tech?id=86)
 router.get('/api/tech/brief/:id', db.getTechBrief);
 router.get('/api/tech/text/:str', db.getTechFromStr);
 router.post('/api/tech', db.createTech);
