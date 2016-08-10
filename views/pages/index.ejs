@@ -39,7 +39,6 @@
             $("#techlist-content-panel").show();
             $('#techs').empty();
             $('#num_techs').empty();
-            // alert( JSON.stringify(result));
             var techs = result;
             if (techs.status === 'success'){
               var len = techs.data.length;
@@ -71,11 +70,9 @@
     prev_tech_id = id;
     $("#"+id).toggleClass("bjjt_hover_click bjjt_hover_clickoff");
 
-    // alert( event.target);
     $.ajax({
         url: "<%-api_url %>"+"tech/brief/"+id,
         success: function(result) {
-          // alert( JSON.stringify(result));
           var tech = result;
           if (tech.status === 'success'){
             $('#detail_h').empty();
@@ -91,7 +88,6 @@
               var details = "Sorry, homie, I haven't written this yet.";
             }
             $('#moredetail').attr('data-id', tech.data.index);
-            alert(tech.data.index);
             $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
           }
         }

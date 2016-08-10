@@ -46,7 +46,7 @@ function getTech( req, res ) {
     techniqueID = parseInt( req.query.id );
   }
 
-  request( api_url + 'tech/86', function( error, response, body ) {
+  request( api_url + 'tech/' + techniqueID, function( error, response, body ) {
     if ( !error && response.statusCode == 200 ) {
       res.render( 'pages/gettech', {
         response: body
