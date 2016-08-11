@@ -24,10 +24,13 @@ winstonPapertrail.on( 'error', function( err ) {
 } );
 
 var logger = new winston.Logger( {
-  transports: [ winstonPapertrail ]
+  transports: [
+    winstonPapertrail,
+    new( winston.transports.Console )()
+  ]
 } );
 
-logger.info( 'this is my message' );
+logger.info( 'BJJ Tech Started' );
 
 
 
