@@ -16,7 +16,8 @@ module.exports = {
 
 // define the home page route
 function getIndex( req, res ) {
-  req.app.locals.bjjtech.server.logger.info( 'getIndex' );
+  req.app.locals.bjjtech.server.logger.info( 'getIndex route calling' + api_url +
+    'tech/topics' );
   request( api_url + 'tech/topics', function( error, response, body ) {
     if ( !error && response.statusCode == 200 ) {
       res.render( 'pages/index', {

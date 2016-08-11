@@ -64,6 +64,9 @@ function getAllTech( req, res, next ) {
 }
 
 function getAllTopics( req, res, next ) {
+  req.app.locals.bjjtech.server.logger.info( 'getAllTopics using db: ' +
+    connectionString );
+
   db.any( 'select * from topic ORDER BY topic' )
     .then( function( data ) {
       res.status( 200 )
