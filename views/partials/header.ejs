@@ -1,14 +1,40 @@
 <div class="container-fluid bjjt_header">
-  <div class="row">
-  <form class="navbar-form navbar-right" role="search">
-    <div class="form-group">
-      <input type="text" class="form-control" placeholder="triangle choke">
-    </div>
-    <button type="submit" class="btn-default btn"><span class="glyphicon glyphicon-search"></span></i></button>
-      </form>
-    <a href="#" class="navbar-brand"><span id="bjjt_brand"><%=bjjtech.general.title %>:&nbsp;</span><wbr/><span id="bjjt_tag"><%=bjjtech.general.tagline %></span>
-      <br class="bjjt_br"><span id="bjjt_dave">&nbsp;by <%=bjjtech.author.name %></span>
-</a>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <div id="bjjt_brand" class="navbar-brand" data-target="<%- bjjtech.general.url %>">
+                <span id="bjjt_brand" data-target="<%- bjjtech.company.url %>"><%=bjjtech.general.title %>:&nbsp;</span><wbr/>
+                <span id="bjjt_tag"><%=bjjtech.general.tagline %></span>
+                <br class="bjjt_br">
+                <span id="bjjt_dave">&nbsp;by&nbsp;<%=bjjtech.author.name %></span>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <form class="navbar-form navbar-right" role="search">
+                <div class="input-group">
+                    <input type="text" id="bjjt_searchtext" class="form-control bjjt_searchinput" placeholder="triangle choke">
+                    <span class="input-group-addon" id="bjjt_search">
+                        <i class="fa fa-search" ></i>
+                    </span>
 
-</div>
+                </div>
+
+            </form>
+        </div>
+        <script>
+            $(document).on('click', '#bjjt_search', function() {
+                alert($('#bjjt_searchtext').val());
+                return false;
+            });
+            $(document).on('click', '#bjjt_brand', function() {
+                var target = $(this).attr('data-target');
+                window.location = target;
+                return false;
+            });
+            $(document).on('click', '#bjjt_dave', function() {
+                window.location = "http://www.austinjujitsu.com/post/dave-thomas/";
+                return false;
+            });
+        </script>
+
+    </div>
 </div>

@@ -20,8 +20,8 @@
     var list_index = 0;
 
   <%
-    var api_url = 'http://localhost:'+process.env.PORT+'/api/';
-    var root_url = 'http://localhost:'+process.env.PORT+'/';
+    var api_url = process.env.BJJT_API_ROOT_URL + ":" + process.env.PORT + "/api/";
+    var root_url = process.env.BJJT_WEB_ROOT_URL + ":" + process.env.PORT + "/";
   %>
 
   //
@@ -112,7 +112,7 @@
         </div>
 
       </div>
-      <div class="col-sm-3 panel panel-default content-panel content-panel-hidden" id="techlist-content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech' class='valign center pulsor nudge' style="display: none">Click a tech.</span></h3>
+      <div class="col-sm-3 panel panel-default content-panel content-panel-hidden" id="techlist-content-panel"><h3><span id="num_techs"></span>Techniques<span id='nudge_tech' class='valign center pulsor nudge' style="display: none">Click a technique.</span></h3>
         <div class="list-group">
       <div id="techs">
       </div>

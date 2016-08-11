@@ -38,18 +38,7 @@ body {
     filter:         drop-shadow(10px 10px 10px rgba(0,0,0,0.6));
   }
 
-/*Hide excess stuff on iPhone-sized devices*/
-  @media screen and (max-width: 480px), screen and (max-height: 435px) {
-      #bjjt_tag {
-          display: none;
-      }
-      #bjjt_br{
-        display: static;
-      }
-      .content-panel-belowtop{
-        display: none;
-      }
-  }
+
 
 /* The top left Company name */
 #bjjt_brand {
@@ -60,6 +49,7 @@ body {
     top: 12px;
     right: 0.8rem;*/
     font-size: xx-large;
+    cursor: pointer;      /* clickable */
 }
 /* The top left tagline */
 #bjjt_tag {
@@ -85,6 +75,20 @@ body {
     font-size: 1.2rem;
 }
 
+#bjjt_searchinput{
+   display: block;
+  width: auto;
+}
+
+#bjjt_search{
+  font-size: large;
+  cursor: pointer;      /* clickable */
+}
+
+#bjjt_search:hover{
+  background-color: rgba(0, 0, 0, 1);
+  color: rgba(255, 255, 255, 1);
+}
 .caret {
     position: absolute;
     left: 85%;
@@ -228,4 +232,31 @@ body {
     color: rgba(255, 255, 255, 0);
     /*padding: 2px 9px 2px 9px;*/
   }
+}
+
+/*Hide excess stuff on iPhone-sized devices*/
+  @media screen and (max-width: 480px), screen and (max-height: 435px) {
+      #bjjt_tag {
+          display: none;
+      }
+      #bjjt_br{
+        display: static;
+      }
+      .content-panel-belowtop{
+        display: none;
+      }
+
+}
+ /*Squish the topic list on small portrait mode screens*/
+@media (max-width: 320px) and (orientation: portrait) {
+  .content-panel{
+      max-height: 40vh;
+  }
+  .content-panel-belowtop{
+    display: none;
+  }
+}
+
+.content-panel-tech {
+  max-height: 77vh;
 }

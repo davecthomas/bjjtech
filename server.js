@@ -26,6 +26,7 @@ app.locals.moment = require( 'moment' );
 app.locals.bjjtech = {
   general: {
     dotcom: 'BJJTech.com',
+    url: 'http://BJJTech.com',
     title: 'BJJTech',
     description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
     tagline: 'Austin Jiu-Jitsu techniques',

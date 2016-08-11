@@ -1,7 +1,7 @@
 var web = require( '../server' );
 
 var request = require( 'request' );
-var api_url = 'http://localhost:' + process.env.PORT + '/api/';
+var api_url = process.env.BJJT_API_ROOT_URL + ":" + process.env.PORT + '/api/';
 var queries = require( './queries' );
 var bjjt_utils = require( './bjjt_utils' );
 
