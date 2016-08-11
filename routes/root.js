@@ -7,7 +7,7 @@ var bjjt_utils = require( './bjjt_utils' );
 
 module.exports = {
   getIndex: getIndex,
-  getAbout: getAbout,
+  getHeader: getHeader,
   getAllTech: getAllTech,
   getTechFromStr: getTechFromStr,
   getTech: getTech
@@ -16,8 +16,7 @@ module.exports = {
 
 // define the home page route
 function getIndex( req, res ) {
-  req.app.locals.bjjtech.server.logger.info( 'getIndex route calling: ' +
-    api_url + 'tech/topics' );
+  // req.app.locals.bjjtech.server.logger.info( 'getIndex route calling: ' +  api_url + 'tech/topics' );
   request( api_url + 'tech/topics', function( error, response, body ) {
     if ( !error && response.statusCode == 200 ) {
       res.render( 'pages/index', {
@@ -27,8 +26,8 @@ function getIndex( req, res ) {
   } )
 };
 
-function getAbout( req, res ) {
-  res.render( 'pages/about' );
+function getHeader( req, res ) {
+  res.render( 'pages/gettechfromstr' );
 };
 
 function getAllTech( req, res ) {

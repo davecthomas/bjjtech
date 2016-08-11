@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="col-xs-9 col-sm-6 col-m-6">
-            <form class="navbar-form navbar-right navbar-bjjt-search" role="search">
+            <div class="navbar-form navbar-right navbar-bjjt-search" role="search">
                 <div class="input-group">
                     <input type="text" id="bjjt_searchtext" class="form-control bjjt_searchinput" placeholder="Search BJJTech.com">
                     <span class="input-group-addon" id="bjjt_search">
@@ -18,50 +18,84 @@
 
                 </div>
 
-            </form>
+            </div>
         </div>
         <script>
             function doSearch(str) {
-                $('#search').addClass('open');
-            }
-            $(document).on('click', '#bjjt_search', function() {
-                doSearch($('#bjjt_searchtext').val())
-                return false;
-            });
-            $('#bjjt_searchtext').bind("enterKey", function(e) {
-                doSearch($('#bjjt_searchtext').val())
-            });
-            $('#bjjt_searchtext').keyup(function(e) {
-                if (e.keyCode == 13) {
-                    $(this).trigger("enterKey");
-                }
-            });
-            $(document).on('click', '#bjjt_brand', function() {
-                var target = $(this).attr('data-target');
-                window.location = target;
-                return false;
-            });
-            $(document).on('click', '#bjjt_dave', function() {
-                window.location = "http://www.austinjujitsu.com/post/dave-thomas/";
-                return false;
-            });
+                $('#search_title_replace').empty();
+                $('#search_title_replace').append(str);
 
-            $('a[href="#search"]').on('click', function(event) {
+                $.ajax({
+                    url: "<%-api_url %>tech/text/" + str,
+                    success: function(result) {
+                        $('#num_search_techs').empty();
+                        $('#search_techs').empty();
+                        var techs = result;
+                        if (techs.status === 'success') {
+                            var len = techs.data.length;
+                            for (i = 0; i < len; i++) {
+                                if (i == 0) {
+                                    $('#num_search_techs').append(len + "&nbsp;" + techs.data[i].topic_name + "&nbsp;");
+                                }
+                                // $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
+                                $('#search_techs').append("<a href='#' class='list-group-item get_tech_detail' id='" + techs.data[i].index + "' data-listindex='" + i + "' data-id='" + techs.data[i].index + "'><h5 class='list-group-item-heading'>" + techs.data[i].name + "</h5></a>");
+                            }
+
+                        }
+                    }
+                });
+
                 $('#search').addClass('open');
-            });
-            $(document).keyup(function(e) {
-                 if (e.keyCode == 27) { // escape key maps to keycode `27`
+
+            }
+
+            $(function() {
+                $(document).on('click', '#bjjt_search', function() {
+                    doSearch($('#bjjt_searchtext').val())
+                    return false;
+                });
+                $('#bjjt_searchtext').bind("enterKey", function(e) {
+                    doSearch($('#bjjt_searchtext').val())
+                    return false;
+                });
+
+                $('#bjjt_searchtext').keyup(function(e) {
+                    if (e.keyCode == 13) {
+                        $(this).trigger("enterKey");
+                    }
+                });
+                $(document).on('click', '#bjjt_brand', function() {
+                    var target = $(this).attr('data-target');
+                    window.location = target;
+                    return false;
+                });
+                $(document).on('click', '#bjjt_dave', function() {
+                    window.location = "http://www.austinjujitsu.com/post/dave-thomas/";
+                    return false;
+                });
+
+                $('a[href="#search"]').on('click', function(event) {
+                    $('#search').addClass('open');
+                });
+                $(document).keyup(function(e) {
+                    if (e.keyCode == 27) { // escape key maps to keycode `27`
+                        $("#search").removeClass('open');
+                    }
+                });
+                $('.close').on('click', function(event) {
                     $("#search").removeClass('open');
-                }
-            });
-            $('.close').on('click', function(event) {
-               console.log(event);
-            });
-            $('#search, #search ').on('click keyup', function(event) {
-               console.log(event);
-                if (event.target == this || event.target.className == 'close' || event.keyCode == 27) {
+                    event.preventDefault();
+                });
+                $(document).on('click', '#search.close', function(event) {
                     $("#search").removeClass('open');
-                }
+                    event.preventDefault();
+                });
+                $('#search.close').on('click keyup', function(event) {
+                    if (event.target == this || event.target.className == 'close' || event.keyCode == 27) {
+                        $("#search").removeClass('open');
+                    }
+                });
+
             });
         </script>
 
@@ -69,5 +103,21 @@
 </div>
 
 <div id="search">
-    <button type="button" class="close">×</button>
+    <div class="container-fluid">
+        <row>
+            <div class="col-sm-12 col-m-12">
+                <button type="button" class="close">×</button>
+                <div id="search_title">Search for&nbsp;<span id="search_title_replace"></span>
+                </div>
+            </div>
+        </row>
+        <row>
+            <div class="col-sm-6 panel panel-default content-panel">
+                <h3><span id="num_search_techs"></span>&nbsp;Techniques</h3>
+                <div class="list-group">
+                    <div id="search_techs"></div>
+                </div>
+            </div>
+        </row>
+    </div>
 </div>

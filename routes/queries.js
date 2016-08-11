@@ -64,8 +64,7 @@ function getAllTech( req, res, next ) {
 }
 
 function getAllTopics( req, res, next ) {
-  req.app.locals.bjjtech.server.logger.info( 'getAllTopics using db: ' +
-    connectionString );
+  // req.app.locals.bjjtech.server.logger.info( 'getAllTopics using db: ' + connectionString );
 
   db.any( 'select * from topic ORDER BY topic' )
     .then( function( data ) {
@@ -101,16 +100,20 @@ function getAllTechInTopic( req, res, next ) {
 }
 
 function getTechFromStr( req, res, next ) {
-  var strSearch = parseInt( req.params.str );
+  var strSearch = req.params.str;
+
   db.any(
-      "select * from technique where name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'",
+      "SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN " +
+      "technique ON topic.index = technique.topic WHERE " +
+      "name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'" +
+      "ORDER BY technique.name",
       strSearch )
     .then( function( data ) {
       res.status( 200 )
         .json( {
           status: 'success',
           data: data,
-          message: 'Retrieved tech with str ' + strSearch
+          message: 'Retrieved techs with search str: ' + strSearch
         } );
     } )
     .catch( function( err ) {
