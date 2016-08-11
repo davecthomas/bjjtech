@@ -8,12 +8,12 @@
                 <span id="bjjt_dave">&nbsp;by&nbsp;<%=bjjtech.author.name %></span>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-6">
-            <form class="navbar-form navbar-right" role="search">
+        <div class="col-xs-9 col-sm-6 col-m-6">
+            <form class="navbar-form navbar-right navbar-bjjt-search" role="search">
                 <div class="input-group">
-                    <input type="text" id="bjjt_searchtext" class="form-control bjjt_searchinput" placeholder="triangle choke">
+                    <input type="text" id="bjjt_searchtext" class="form-control bjjt_searchinput" placeholder="Search BJJTech.com">
                     <span class="input-group-addon" id="bjjt_search">
-                        <i class="fa fa-search" ></i>
+                        <i class="fa fa-search"></i>
                     </span>
 
                 </div>
@@ -21,9 +21,20 @@
             </form>
         </div>
         <script>
+            function doSearch(str) {
+                $('#search').addClass('open');
+            }
             $(document).on('click', '#bjjt_search', function() {
-                alert($('#bjjt_searchtext').val());
+                doSearch($('#bjjt_searchtext').val())
                 return false;
+            });
+            $('#bjjt_searchtext').bind("enterKey", function(e) {
+                doSearch($('#bjjt_searchtext').val())
+            });
+            $('#bjjt_searchtext').keyup(function(e) {
+                if (e.keyCode == 13) {
+                    $(this).trigger("enterKey");
+                }
             });
             $(document).on('click', '#bjjt_brand', function() {
                 var target = $(this).attr('data-target');
@@ -34,7 +45,29 @@
                 window.location = "http://www.austinjujitsu.com/post/dave-thomas/";
                 return false;
             });
+
+            $('a[href="#search"]').on('click', function(event) {
+                $('#search').addClass('open');
+            });
+            $(document).keyup(function(e) {
+                 if (e.keyCode == 27) { // escape key maps to keycode `27`
+                    $("#search").removeClass('open');
+                }
+            });
+            $('.close').on('click', function(event) {
+               console.log(event);
+            });
+            $('#search, #search ').on('click keyup', function(event) {
+               console.log(event);
+                if (event.target == this || event.target.className == 'close' || event.keyCode == 27) {
+                    $("#search").removeClass('open');
+                }
+            });
         </script>
 
     </div>
+</div>
+
+<div id="search">
+    <button type="button" class="close">×</button>
 </div>

@@ -1,6 +1,5 @@
 <% include ../partials/top %>
 <div class="container-fluid">
-<% include ../partials/belowtop %>
     <div class="row ">
 <%
 
@@ -67,25 +66,23 @@
           if (tech_detail.name) { %>
             <h3><%- tech_detail.name %></h3>
           <%
+       } %>
+       <p>
+<%
+          if (tech_detail.sport_sport) { %>
+            This technique works with&nbsp;<%- tech_detail.sport_sport.toLowerCase() %>, and is suitable for&nbsp;<%- tech_detail.level_name.toLowerCase() %>&nbsp;level practitioners.&nbsp;
+          <%
           }
           if (tech_detail.techniquetype_techniquetype) { %>
-            <h4>Technique Type</h4><p><%- tech_detail.techniquetype_techniquetype %></p>
-          <%
-          }
-          if (tech_detail.position_name) { %>
-            <h4>Your Starting Position</h4><p><%- tech_detail.position_name %></p>
-          <%
-          }
-          if (tech_detail.sport_sport) { %>
-            <h4>Discipline (Sport)</h4><p><%- tech_detail.sport_sport %></p>
+            Broadly, this technique is in the&nbsp;<%- tech_detail.techniquetype_techniquetype.toLowerCase() %>&nbsp;category of moves.&nbsp;
           <%
           }
           if (tech_detail.topic_topic) { %>
-            <h4>Topic</h4><p><%- tech_detail.topic_topic %></p>
+            Specifically, it is a <%- tech_detail.topic_topic.toLowerCase() %>&nbsp;move.&nbsp;
           <%
           }
-          if (tech_detail.level_name) { %>
-            <h4>Skill Level</h4><p><%- tech_detail.level_name %></p>
+          if (tech_detail.position_name) { %>
+            You will start in in the&nbsp;<%- tech_detail.position_name.toLowerCase() %>&nbsp;position.&nbsp;
           <%
           }
           // "numimages": null,
@@ -99,7 +96,9 @@
             var details = "Sorry, homie, I haven't written this yet.";
           }
           if (details) { %>
-            <h4>Steps</h4><p><%- details %></p>
+            <div class="content-panel-detail">
+               <h4>Steps</h4><p><%- details %></p>
+            </div>
           <%
           }
 
@@ -109,7 +108,20 @@
       <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
   <%
         } %>
+        <script>
+        <%
+          var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
+          var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
+        %>
 
+        $(document).on('click', '#moredetail', function () {
+         //  var id = $(this).attr('data-id');
+          window.location = "<%-root_url%>";
+        });
+        </script>
+        <div class="col-md-6 bjjt_button_parent">
+           <button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button "><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;Return</button>
+        </div>
     </div>
 </div>
 <% include ../partials/bottom %>
