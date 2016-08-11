@@ -1,10 +1,7 @@
-var web = require( '../server' );
-
 var request = require( 'request' );
 var api_url = process.env.BJJT_API_ROOT_URL + ":" + process.env.PORT + '/api/';
 var queries = require( './queries' );
 var bjjt_utils = require( './bjjt_utils' );
-
 
 // add query functions
 
@@ -19,6 +16,7 @@ module.exports = {
 
 // define the home page route
 function getIndex( req, res ) {
+  req.app.locals.bjjtech.server.logger.info( 'getIndex' );
   request( api_url + 'tech/topics', function( error, response, body ) {
     if ( !error && response.statusCode == 200 ) {
       res.render( 'pages/index', {

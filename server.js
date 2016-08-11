@@ -1,6 +1,6 @@
 // server.js
 var express = require( 'express' ),
-  app = module.exports = express(),
+  app = express(),
   path = require( 'path' ),
   favicon = require( 'serve-favicon' ),
   morgan = require( 'morgan' ),
@@ -31,8 +31,6 @@ var logger = new winston.Logger( {
 } );
 
 logger.info( 'BJJ Tech Started' );
-
-
 
 app.use( expressWinston.logger( {
   transports: [
@@ -67,28 +65,6 @@ app.use( morgan( 'combined', {
 
 // For time
 app.locals.moment = require( 'moment' );
-
-// Our app local object
-app.locals.bjjtech = {
-  general: {
-    dotcom: 'BJJTech.com',
-    url: 'http://BJJTech.com',
-    title: 'BJJTech',
-    description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
-    tagline: 'Austin Jiu-Jitsu techniques',
-    year: app.locals.moment().year()
-  },
-  company: {
-    name: 'Austin Jiu-Jitsu',
-    url: 'http://austinjiujitsu.com',
-    birthyear: 2003
-  },
-  author: {
-    name: 'Dave Thomas',
-    contact: 'davidcthomas@gmail.com',
-    github: 'davecthomas@github.com'
-  }
-};
 
 app.set( 'views', path.join( __dirname, 'views' ) );
 app.set( 'view engine', 'ejs' );
@@ -128,7 +104,32 @@ router.post( '/api/tech', db.createTech );
 // router.delete('/api/tech/:id', db.removeTech);
 
 app.use( '/', router );
-module.exports = router;
+
+// Our app local object
+app.locals.bjjtech = {
+  general: {
+    dotcom: 'BJJTech.com',
+    url: 'http://BJJTech.com',
+    title: 'BJJTech',
+    description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
+    tagline: 'Austin Jiu-Jitsu techniques',
+    year: app.locals.moment().year()
+  },
+  company: {
+    name: 'Austin Jiu-Jitsu',
+    url: 'http://austinjiujitsu.com',
+    birthyear: 2003
+  },
+  author: {
+    name: 'Dave Thomas',
+    contact: 'davidcthomas@gmail.com',
+    github: 'davecthomas@github.com'
+  },
+  server: {
+    logger: logger,
+    router: router
+  }
+};
 
 // Kick off the server
 app.set( 'port', ( process.env.PORT || 5000 ) );
@@ -137,3 +138,5 @@ var server = app.listen( app.get( 'port' ), function() {
   console.log( app.locals.bjjtech.general.title + " is running at :" +
     server.address().address + ":" + app.get( 'port' ) );
 } );
+
+logger.info( 'Server started' );
