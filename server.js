@@ -4,7 +4,50 @@ var express = require( 'express' ),
   path = require( 'path' ),
   favicon = require( 'serve-favicon' ),
   morgan = require( 'morgan' ),
-  bodyParser = require( 'body-parser' );
+  bodyParser = require( 'body-parser' ),
+  winston = require( 'winston' ),
+  expressWinston = require( 'express-winston' );
+
+//
+// Requiring `winston-papertrail` will expose
+// `winston.transports.Papertrail`
+//
+require( 'winston-papertrail' ).Papertrail;
+
+var winstonPapertrail = new winston.transports.Papertrail( {
+  host: 'logs3.papertrailapp.com',
+  port: 30625
+} )
+
+winstonPapertrail.on( 'error', function( err ) {
+  // Handle, report, or silently ignore connection errors and failures
+} );
+
+var logger = new winston.Logger( {
+  transports: [ winstonPapertrail ]
+} );
+
+logger.info( 'this is my message' );
+
+
+
+app.use( expressWinston.logger( {
+  transports: [
+    new winston.transports.Console( {
+      json: true,
+      colorize: true
+    } ),
+    winstonPapertrail
+  ],
+  meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+  msg: "HTTP {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+  expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
+  colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+  ignoreRoute: function( req, res ) {
+      return false;
+    } // optional: allows to skip some log messages based on request and/or response
+} ) );
+
 
 // For JSON parsing
 app.use( bodyParser.urlencoded( {
