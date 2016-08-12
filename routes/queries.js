@@ -106,7 +106,7 @@ function getTechFromStr( req, res, next ) {
       "SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN " +
       "technique ON topic.index = technique.topic WHERE " +
       "name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'" +
-      "ORDER BY technique.name",
+      "ORDER BY topic_name, technique.name",
       strSearch )
     .then( function( data ) {
       res.status( 200 )

@@ -21,6 +21,10 @@
             </div>
         </div>
         <script>
+        <%
+          var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
+          var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
+        %>
             function doSearch(str) {
                 $('#search_title_replace').empty();
                 $('#search_title_replace').append(str);
@@ -35,10 +39,10 @@
                             var len = techs.data.length;
                             for (i = 0; i < len; i++) {
                                 if (i == 0) {
-                                    $('#num_search_techs').append(len + "&nbsp;" + techs.data[i].topic_name + "&nbsp;");
+                                    $('#num_search_techs').append(len);
                                 }
                                 // $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
-                                $('#search_techs').append("<a href='#' class='list-group-item get_tech_detail' id='" + techs.data[i].index + "' data-listindex='" + i + "' data-id='" + techs.data[i].index + "'><h5 class='list-group-item-heading'>" + techs.data[i].name + "</h5></a>");
+                                $('#search_techs').append("<a href='#' class='list-group-item get_tech_search' id='" + techs.data[i].index + "' data-listindex='" + i + "' data-id='" + techs.data[i].index + "'><h5 class='list-group-item-heading'>" + techs.data[i].topic_name + ":&emsp;&emsp;&emsp;&emsp;<strong>"+ techs.data[i].name + "</strong></h5></a>");
                             }
 
                         }
@@ -96,28 +100,32 @@
                     }
                 });
 
+
+                $(document).on('click', '.get_tech_search', function () {
+                 var id = $(this).attr('data-id');
+                 window.location = "<%-root_url%>tech/"+id;
+                });
+
             });
         </script>
 
     </div>
 </div>
 
-<div id="search">
-    <div class="container-fluid">
-        <row>
-            <div class="col-sm-12 col-m-12">
+
+    <div class="container-fluid" id="search">
+           <row>
+            <div class="col-sm-12 col-m-12 col-centered">
                 <button type="button" class="close">×</button>
-                <div id="search_title">Search for&nbsp;<span id="search_title_replace"></span>
-                </div>
             </div>
         </row>
         <row>
-            <div class="col-sm-6 panel panel-default content-panel">
-                <h3><span id="num_search_techs"></span>&nbsp;Techniques</h3>
+            <div class="col-sm-12 col-centered panel panel-default content-panel search-content-panel">
+                <h3><span id="num_search_techs"></span>&nbsp;techniques found containing&nbsp;&quot;<span id="search_title_replace"></span>&quot;</h3>
                 <div class="list-group">
                     <div id="search_techs"></div>
                 </div>
             </div>
         </row>
-    </div>
+
 </div>
