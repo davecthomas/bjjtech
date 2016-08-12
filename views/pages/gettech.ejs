@@ -18,18 +18,91 @@
 
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
-        </div>
+
         <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech">
 <%
-          if (tech_detail.name) { %>
+          if (tech_detail.name) {                        %>
+
             <h3><%- tech_detail.name %></h3>
-          <%
+
+<%
           }
-          if (tech_detail.imageurl) { %>
-            <img src="<%- tech_detail.imageurl %>"</img>
-          <%
+          if (tech_detail.imageurl) {
+             if (tech_detail.numimages){
+                var numimages = parseInt(tech_detail.numimages); %>
+                <div class="container-fluid bjjt_image">
+<%                 if (numimages > 1) {
+%>
+                   <span class="bjjt_image_chevron bjjt_image_chevron_left bjjt_vertical_center bjjt_image_chevron_disabled" id="bjjt_image_class_swapper_left"><i class="fa fa-chevron-left"></i></span>
+                   <span id="img_text_tester"></span>
+                  <span class="bjjt_image_chevron bjjt_image_chevron_right bjjt_vertical_center" id="bjjt_image_class_swapper_right"><i class="fa fa-chevron-right"></i></span>
+                  <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src=""></img></div>
+                  <script>
+                  var img_array = [];
+                  current_image = 0;
+                  numimages = <%= numimages %>;
+<%                for (i = 0; i < numimages; i++){         // Unforgunate limit of this: must be jpg
+%>
+                  img_array[<%= i %>] = '<%- tech_detail.imageurl + '-' + (parseInt(i+1)) +'.jpg' %>';
+<%                } %>
+                  $("#bjjt_image_img").attr("src", img_array[current_image]);
+                  var txt = '<span class="fa-stack fa-3x bjj_image_num">'+
+                     '<i class="fa fa-circle-o fa-stack-2x"></i>' +
+                     '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
+                  '</span>';
+                  $('#img_text_tester').append(txt);
+
+                  $(".bjjt_image_chevron_left").on('click', function () {
+                     if ((current_image-1) > -1){
+                        $('#bjjt_image_class_swapper_right').removeClass( "bjjt_image_chevron_disabled" );
+                        current_image--;
+                        if (current_image == 0){
+                           $('#bjjt_image_class_swapper_left').addClass( "bjjt_image_chevron_disabled" );
+                        }
+                        $("#bjjt_image_img").attr("src", img_array[current_image]);
+                        var txt = '<span class="fa-stack fa-3x bjj_image_num">'+
+                           '<i class="fa fa-circle-o fa-stack-2x"></i>' +
+                           '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
+                        '</span>';
+                        $('#img_text_tester').empty();
+                        $('#img_text_tester').append(txt);
+                     } else {
+                        $('#bjjt_image_class_swapper_left').addClass( "bjjt_image_chevron_disabled" );
+                     }
+
+                  });
+                  $(".bjjt_image_chevron_right").on('click', function () {
+                     if ((current_image) < (numimages-1)){
+                        $('#bjjt_image_class_swapper_left').removeClass( "bjjt_image_chevron_disabled" );
+                        current_image++;
+                        if (current_image == (numimages-1)){
+                           $('#bjjt_image_class_swapper_right').addClass( "bjjt_image_chevron_disabled" );
+                        }
+                        $("#bjjt_image_img").attr("src", img_array[current_image]);
+                        var txt = '<span class="fa-stack fa-3x bjj_image_num">'+
+                           '<i class="fa fa-circle-o fa-stack-2x"></i>' +
+                           '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
+                        '</span>';
+                        $('#img_text_tester').empty();
+                        $('#img_text_tester').append(txt);
+                     } else {
+                        $('#bjjt_image_class_swapper_right').addClass( "bjjt_image_chevron_disabled" );
+                     }
+                  });
+
+
+                  </script>
+<%                }  else {
+%>
+                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div>
+<%
+                  }
+%>
+               </div>
+<%           }
           }
-          if (tech_detail.videoid) { %>
+          if (tech_detail.videoid) {
+%>
             <script>
             // Load the IFrame Player API code asynchronously.
             var tag = document.createElement('script');
@@ -49,12 +122,13 @@
             }
           </script>
             <div id="ytplayer"></div>
-          </div>
+
           <%
           }
         }
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
+         </div>
           <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech">
 
 <%
