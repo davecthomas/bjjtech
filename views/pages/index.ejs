@@ -83,14 +83,18 @@
             $('#detail_h').append(tech.data.name );
             // Swap \n with <br>
             if (tech.data.details){
-              var details = replaceAll(tech.data.details, "\n", "<br>");
+               var details= replaceAllNumlist(tech.data.details, '<br><br><i class="fa fa-chevron-circle-right"></i>&nbsp;');
+              details = replaceAll( details, "\n", "");
+              if (details.indexOf('<br><br>') == 0){
+                 details = details.replace('<br><br>','');
+              }
               document.title = bjjtech_pagetitle+ ": "+ tech.data.name;
 
             } else {
               var details = "Sorry, homie, I haven't written this yet.";
             }
             $('#moredetail').attr('data-id', tech.data.index);
-            $('#details').append("<h5>Set Up</h5><p>"+ tech.data.setup+ "</p><h5>Details</h5><p>"+details +"</p>");
+            $('#details').append("<h4>Set Up</h4><p>"+ tech.data.setup+ "</p><h4>Details</h4><p>"+details +"</p>");
           }
         }
     });
@@ -123,10 +127,10 @@
     <div class="col-sm-6 panel panel-default content-panel content-panel-slideout" id="detail-content-panel">
         <div class="container-fluid">
             <h3 id="detail_h"></h3>
-            <div id="details"></div>
             <div class="col-md-6 bjjt_button_parent">
                 <button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button ">Click for more detail.&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>
             </div>
+            <div id="details"></div>
         </div>
     </div>
 </div> <!-- row !-->
