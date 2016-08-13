@@ -1,4 +1,11 @@
-<title><%=bjjtech.general.title %></title>
+<%
+if (typeof title != 'undefined'){
+   var pagetitle = title;
+} else {
+   pagetitle = "";
+}
+%>
+<title><%=bjjtech.general.title + pagetitle %></title>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +20,16 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <link rel="stylesheet" href="/public/css/bjjt.css">
 <link rel="shortcut icon" href="/public/img/favicon.ico?v=<%=Math.floor(Math.random() *100) %>"/>
+<style>
+@font-face {
+    font-family: 'Campton';
+    src: url('/public/fonts/CamptonMedium.otf');
+}
+@font-face {
+    font-family: 'Pythia';
+    src: url('/public/fonts/pythia.ttf');
+}
+</style>
 <script>
     (function(i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;

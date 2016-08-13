@@ -96,6 +96,7 @@ app.locals.bjjtech = {
     dotcom: 'BJJTech.com',
     url: 'http://BJJTech.com',
     title: 'BJJTech',
+    pagetitle: 'BJJTech, the Brazilian Jiu-Jitsu Technique Catalog ',
     description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
     tagline: 'Austin Jiu-Jitsu techniques',
     year: app.locals.moment().year()

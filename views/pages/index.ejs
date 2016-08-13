@@ -1,3 +1,10 @@
+<%
+  var topics = JSON.parse(response);
+  if (topics.status === 'success'){
+    var len = topics.data.length;
+    var title = ": Topics List";
+%>
+
 <% include ../partials/top %>
         <div class="container-fluid">
           <% include ../partials/belowtop %>
@@ -8,12 +15,10 @@
 
   $(document).ready(function () {
 
-<%
-  var topics = JSON.parse(response);
-  if (topics.status === 'success'){
-    var len = topics.data.length; %>
+
 
     var len_topic_list = <%- len %>;
+    var bjjtech_pagetitle = '<%- bjjtech.general.title %>';
 
     var prev_topic_id = 0;
     var prev_tech_id = 0;
@@ -45,6 +50,7 @@
               for(i = 0; i < len; i++){
                 if (i == 0){
                   $('#num_techs').append(len+"&nbsp;"+techs.data[i].topic_name+"&nbsp;");
+                  document.title = bjjtech_pagetitle+ ": Topic: "+ techs.data[i].topic_name;
                 }
                 // $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
                 $('#techs').append("<a href='#' class='list-group-item get_tech_detail' id='"+ techs.data[i].index+"' data-listindex='"+i+"' data-id='"+techs.data[i].index+"'><h5 class='list-group-item-heading'>"+techs.data[i].name+"</h5></a>");
@@ -84,6 +90,8 @@
             // Swap \n with <br>
             if (tech.data.details){
               var details = replaceAll(tech.data.details, "\n", "<br>");
+              document.title = bjjtech_pagetitle+ ": "+ tech.data.name;
+
             } else {
               var details = "Sorry, homie, I haven't written this yet.";
             }
@@ -129,5 +137,6 @@
     </div>
 </div> <!-- row !-->
 
-  </div> <!-- container !-->
+</div> <!-- container !-->
+</main>
 <% include ../partials/bottom %>

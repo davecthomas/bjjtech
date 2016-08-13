@@ -1,3 +1,6 @@
+<%
+var title = ": Technique";
+%>
 <% include ../partials/top %>
 <div class="container-fluid">
     <div class="row ">
@@ -94,7 +97,7 @@
                   </script>
 <%                }  else {
 %>
-                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div>
+                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div
 <%
                   }
 %>
@@ -138,6 +141,9 @@
 <%
         }
           if (tech_detail.name) { %>
+             <script>
+             document.title = '<%- bjjtech.general.title + ": " + tech_detail.name %>';
+             </script>
             <h3><%- tech_detail.name %></h3>
           <%
        } %>
