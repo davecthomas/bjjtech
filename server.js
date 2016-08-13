@@ -84,7 +84,8 @@ router.get( '/api/tech/:id', db.getTech ); // suppoert new style /api/tech/86
 router.get( '/api/tech', db.getTech ); // support query parameter for old version (/api/tech?id=86)
 router.get( '/api/tech/brief/:id', db.getTechBrief );
 router.get( '/api/tech/text/:str', db.getTechFromStr );
-router.post( '/api/tech', db.createTech );
+router.get( '/api/tech/tag/:tag/:id', db.getTechsFromTag );
+// router.post( '/api/tech', db.createTech );
 // router.put('/api/tech/:id', db.updateTech);
 // router.delete('/api/tech/:id', db.removeTech);
 

@@ -42,9 +42,10 @@ module.exports = {
 
   getTechBrief: getTechBrief,
   getTech: getTech,
-  createTech: createTech,
-  updateTech: updateTech,
-  removeTech: removeTech
+  getTechsFromTag: getTechsFromTag
+    // createTech: createTech,
+    // updateTech: updateTech,
+    // removeTech: removeTech
 
 };
 
@@ -66,7 +67,12 @@ function getAllTech( req, res, next ) {
 function getAllTopics( req, res, next ) {
   // req.app.locals.bjjtech.server.logger.info( 'getAllTopics using db: ' + connectionString );
 
-  db.any( 'select * from topic ORDER BY topic' )
+  db.any( "( select positionnames.positionname as name, index, 'position' " +
+      "as tag from positionnames where positionname != 'N/A' ) union all( select topic.topic as name, " +
+      "index, 'topic' " +
+      "as tag from topic ) union all( select techniquetype.techniquetype as name, index, " +
+      "'type' " +
+      "as tag from techniquetype ) order by 1; " )
     .then( function( data ) {
       res.status( 200 )
         .json( {
@@ -195,6 +201,62 @@ function getTech( req, res, next ) {
       return next( err );
     } );
 }
+
+function getTechsFromTag( req, res, next ) {
+  var tag = req.params.tag;
+  var id = req.params.id;
+  var strSQL = "";
+  var goodRequest = false;
+
+  switch ( tag ) {
+    case "topic":
+      strSQL =
+        'SELECT technique.name, technique.index, topic.topic AS tag_name FROM topic INNER JOIN ' +
+        'technique ON topic.index = technique.topic WHERE topic.index = $1 ORDER BY technique.name';
+      goodRequest = true;
+      break;
+
+    case "position":
+      strSQL =
+        'SELECT technique.name, technique.index, positionnames.positionname AS tag_name FROM positionnames INNER JOIN ' +
+        'technique ON positionnames.index = technique.startingpos WHERE positionnames.index = $1 ORDER BY technique.name';
+      goodRequest = true;
+      break;
+
+    case "type":
+      strSQL =
+        'SELECT technique.name, technique.index, techniquetype.techniquetype AS tag_name FROM techniquetype INNER JOIN ' +
+        'technique ON techniquetype.index = technique.type WHERE techniquetype.index = $1 ORDER BY technique.name';
+      goodRequest = true;
+      break;
+
+    default:
+      res.status( 400 )
+        .json( {
+          status: 'error',
+          message: 'Nope. No. Nah gah do it.'
+        } );
+      return;
+  }
+  if ( goodRequest && ( parseInt( id ) != NaN ) ) {
+    db.any(
+        strSQL,
+        id )
+      .then( function( data ) {
+        res.status( 200 )
+          .json( {
+            status: 'success',
+            data: data,
+            message: 'Retrieved techs with tag: ' + tag
+          } );
+      } )
+      .catch( function( err ) {
+        return next( err );
+      } );
+  }
+}
+
+
 
 function updateTech( req, res, next ) {
   db.none(
