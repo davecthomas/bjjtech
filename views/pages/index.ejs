@@ -83,11 +83,8 @@
             $('#detail_h').append(tech.data.name );
             // Swap \n with <br>
             if (tech.data.details){
-               var details= replaceAllNumlist(tech.data.details, '<br><br><i class="fa fa-chevron-circle-right"></i>&nbsp;');
-              details = replaceAll( details, "\n", "");
-              if (details.indexOf('<br><br>') == 0){
-                 details = details.replace('<br><br>','');
-              }
+               var details = cleanDetailText(tech.data.details);
+
               document.title = bjjtech_pagetitle+ ": "+ tech.data.name;
 
             } else {

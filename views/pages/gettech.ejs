@@ -14,6 +14,21 @@ var title = ": Technique";
         return !isNaN( parseFloat( n ) ) && isFinite( n );
       };
 
+      function replaceAllNumlist( str, replacement ) {
+        re = new RegExp( /\d+(\.)/, 'g' );
+        return str.replace( re, replacement );
+      };
+
+      function cleanDetailText( detailIn ) {
+        var details = replaceAllNumlist( detailIn,
+          '<br><br><i class="fa fa-chevron-circle-right"></i>&nbsp;' );
+        details = replaceAll( details, "\n", "" );
+        if ( details.indexOf( '<br><br>' ) == 0 ) {
+          details = details.replace( '<br><br>', '' );
+        }
+        return details;
+      }
+
 
       var tech = JSON.parse(response);
       if (tech.status === 'success'){
@@ -37,7 +52,7 @@ var title = ": Technique";
 <%                 if (numimages > 1) {
 %>
                    <span class="bjjt_image_chevron bjjt_image_chevron_left bjjt_vertical_center bjjt_image_chevron_disabled" id="bjjt_image_class_swapper_left"><i class="fa fa-chevron-left"></i></span>
-                   <span id="img_text_tester"></span>
+                   <span id="img_text_fa_imgnum"></span>
                   <span class="bjjt_image_chevron bjjt_image_chevron_right bjjt_vertical_center" id="bjjt_image_class_swapper_right"><i class="fa fa-chevron-right"></i></span>
                   <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src=""></img></div>
                   <script>
@@ -53,7 +68,7 @@ var title = ": Technique";
                      '<i class="fa fa-circle-o fa-stack-2x"></i>' +
                      '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
                   '</span>';
-                  $('#img_text_tester').append(txt);
+                  $('#img_text_fa_imgnum').append(txt);
 
                   $(".bjjt_image_chevron_left").on('click', function () {
                      if ((current_image-1) > -1){
@@ -67,8 +82,8 @@ var title = ": Technique";
                            '<i class="fa fa-circle-o fa-stack-2x"></i>' +
                            '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
                         '</span>';
-                        $('#img_text_tester').empty();
-                        $('#img_text_tester').append(txt);
+                        $('#img_text_fa_imgnum').empty();
+                        $('#img_text_fa_imgnum').append(txt);
                      } else {
                         $('#bjjt_image_class_swapper_left').addClass( "bjjt_image_chevron_disabled" );
                      }
@@ -86,18 +101,20 @@ var title = ": Technique";
                            '<i class="fa fa-circle-o fa-stack-2x"></i>' +
                            '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
                         '</span>';
-                        $('#img_text_tester').empty();
-                        $('#img_text_tester').append(txt);
+                        $('#img_text_fa_imgnum').empty();
+                        $('#img_text_fa_imgnum').append(txt);
                      } else {
                         $('#bjjt_image_class_swapper_right').addClass( "bjjt_image_chevron_disabled" );
                      }
                   });
 
+                  // Make the image tha same width as the content-panel-tech div
+                  $('#bjjt_image_img').width($('.content-panel-tech').width());
 
                   </script>
 <%                }  else {
 %>
-                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div
+                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div>
 <%
                   }
 %>
@@ -109,7 +126,7 @@ var title = ": Technique";
             <script>
             // Load the IFrame Player API code asynchronously.
             var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/player_api";
+            tag.src = "http://www.youtube.com/player_api";
             var firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -119,7 +136,7 @@ var title = ": Technique";
             function onYouTubePlayerAPIReady() {
               player = new YT.Player('ytplayer', {
                 height: '390',
-                width: '640',
+                width: $('.content-panel-tech').width(),
                 videoId: '<%- tech_detail.videoid %>'
               });
             }
@@ -171,37 +188,69 @@ var title = ": Technique";
           <%
           }
           if (tech.data.details){
-            var details = replaceAll(tech.data.details, "\n", "<br>");
+            var details = cleanDetailText(tech.data.details);
           } else {
             var details = "Sorry, homie, I haven't written this yet.";
           }
-          if (details) { %>
+          if (details) {
+%>
             <div class="content-panel-detail">
                <h4>Steps</h4><p><%- details %></p>
             </div>
-          <%
+<%
           }
-
-      %>
-  <%
-        } else { %>
-      <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
-  <%
+%>
+<%
+        } else {
+%>
+         <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
+<%
         } %>
-        <script>
-        <%
+<%
           var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
           var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
-        %>
-
-        $(document).on('click', '#moredetail', function () {
-         //  var id = $(this).attr('data-id');
-          window.location = "<%-root_url%>";
+          var this_url = root_url;
+          if (tech_detail.index) {
+             this_url += "tech/"+parseInt(tech_detail.index);
+          }
+%>
+        <script>
+        // Video and image responsiveness follows parent div
+        // Make the image tha same width as the content-panel-tech div
+        $(window).on('resize', function () {
+          $('#ytplayer').width($('.content-panel-tech').width());
+          $('#bjjt_image_img').width($('.content-panel-tech').width());
         });
         </script>
-        <div class="col-md-6 bjjt_button_parent">
-           <button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button "><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;Return</button>
-        </div>
+
     </div>
+    <row>
+      <div class="col-xs-12 col-sm-12 panel panel-default content-panel content-panel-share">
+         <nav class="navbar navbar-default bjjt_navbar_share">
+            <ul class="nav navbar-nav horizontal">
+               <li class="bjjt_share_cta">Please Share</li>
+
+              <li class="bjjt_share">
+              <a class="btn btn-outline-primary bjjt_button_share fa fa-twitter fa-2x sharea " href="https://twitter.com/share?text=<%- encodeURIComponent(bjjtech.general.title + ": " + tech_detail.name) %>&amp;url=<%-this_url%>"
+                  onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                  <span class="bjjt_share_logo">Tweet</span>
+              </a>
+            </li>
+              <li class="bjjt_share">
+              <a class="btn btn-outline-primary bjjt_button_share fa fa-facebook fa-2x sharea" href="https://www.facebook.com/sharer/sharer.php?u=<%-this_url%>"
+                  onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                  <span class="bjjt_share_logo">Facebook</span>
+              </a>
+            </li>
+              <li class="bjjt_share">
+                <a class="btn btn-outline-primary bjjt_button_share fa fa-google-plus fa-2x sharea" href="https://plus.google.com/share?url=<%-this_url%>"
+                 onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                  <span class="bjjt_share_logo">Plus</span>
+                </a>
+            </li>
+         </ul>
+      </nav>
+      </div>
+    </row>
 </div>
 <% include ../partials/bottom %>

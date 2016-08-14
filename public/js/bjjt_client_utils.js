@@ -7,9 +7,17 @@ function replaceAllNumlist( str, replacement ) {
   return str.replace( re, replacement );
 };
 
-// function breakBeforeNum(
-//   {[0-9]+.}
-// )
+function cleanDetailText( detailIn ) {
+  var details = replaceAllNumlist( detailIn,
+    '<br><br><i class="fa fa-chevron-circle-right"></i>&nbsp;' );
+  details = replaceAll( details, "\n", "" );
+  if ( details.indexOf( '<br><br>' ) == 0 ) {
+    details = details.replace( '<br><br>', '' );
+  }
+  return details;
+}
+
+
 function insertAt( src, index, str ) {
   return src.substr( 0, index ) + str + src.substr( index )
 }

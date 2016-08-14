@@ -1,4 +1,4 @@
-@import url(//fonts.googleapis.com/css?family=Syncopate:400,300,700);
+/*@import url(//fonts.googleapis.com/css?family=Syncopate:400,300,700);*/
 body {
     background: rgba(0, 0, 0, .9) url(../img/bjj-tech-logo-fullres.png) no-repeat center center fixed;
     position: relative;
@@ -207,10 +207,17 @@ h2, .h2, h3, .h3 {
 .list-group-item {
     background-color: rgba(255, 255, 255, 0);
     color: rgba(0, 0, 0, 1);
+    text-decoration: none;
 }
 .list-group-item:hover {
     background-color: rgba(0, 0, 0, 1);
     color: rgba(255, 255, 255, 1);
+    text-decoration: none;
+}
+.list-group-item:active,.list-group-item:focus {
+  background-color: rgba(255, 255, 255, 0);
+  color: rgba(0, 0, 0, 1);
+    text-decoration: none !important;
 }
 .bjjt {
     display: none;
@@ -455,6 +462,43 @@ ul.no-list-float li {
     list-style-type: none;
     /*top right bottom left*/
     /*padding: 5px 5px 0px 0px;*/
+}
+
+.content-panel-share{
+  font-family: 'Syncopate', sans-serif;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 1);
+    /*overflow-x: scroll;*/
+  max-height: 10vh;
+  text-align: center;
+}
+.bjjt_navbar_share{
+  margin-top: 0px;
+}
+.bjjt_share li{
+  font-size: large;
+  font-family: 'Syncopate', sans-serif;
+  margin: 0;
+}
+.bjjt_button_share{
+  margin-left: .5rem;
+  margin-right: .5rem;
+    /*top right bottom left*/
+  padding:2px 5px 1px 5px;
+  min-width: 80px;
+}
+.bjjt_share_cta{
+  font-size: large;
+}
+.bjjt_share_logo{
+  font-size: x-small;
+  font-family: 'Campton', sans-serif;
+}
+
+/*This is for the clickable tags embedded in text.*/
+.tag_chip{
+
 }
 @media (max-width: 320px) and (orientation: portrait) {
     .content-panel {
