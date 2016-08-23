@@ -70,7 +70,7 @@ ul.no-list-float li {
 }
 .bjjt_footermenu:hover{
   color: #0275d8 !important;
-  background-color: black;
+  background-color: rgba(0,0,0,0.2);
   text-shadow: none;
 }
 .bjjt_footermenu_ajj {
