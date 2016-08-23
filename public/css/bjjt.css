@@ -19,6 +19,11 @@ h2, .h2, h3, .h3 {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+/*Don't turn links blue*/
+a {
+  color: inherit;
+  text-decoration: underline;
+}
 .bjjt_header {
     background-color: rgba(0, 0, 0, 0);
     padding-bottom: 0rem;
@@ -423,6 +428,16 @@ h2, .h2, h3, .h3 {
 }
 .ajjfont {
     font-family: 'Pythia';
+}
+.ajjfont a{
+  text-decoration: none;
+  vertical-align: bottom;
+}
+.ajj-attribution {
+  font-size: medium;
+}
+.author-attribution{
+  font-weight: bold;
 }
 .campton-font {
     font-family: 'Campton';
