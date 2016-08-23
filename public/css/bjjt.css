@@ -24,6 +24,20 @@ a {
   color: inherit;
   text-decoration: underline;
 }
+ul.main-page-footer li {
+    color: #FFF;
+    font-size: 0.9em;
+}
+ul.main-page-footer li a {
+    color: #FFF;
+}
+ul.nav li a:hover {
+    color: #000;
+}
+ul.no-list-float li {
+    float: none;
+}
+
 .bjjt_header {
     background-color: rgba(0, 0, 0, 0);
     padding-bottom: 0rem;
@@ -466,19 +480,6 @@ a {
 }
 .no-margin {
     margin: 0px;
-}
-ul.main-page-footer li {
-    color: #FFF;
-    font-size: 0.9em;
-}
-ul.main-page-footer li a {
-    color: #FFF;
-}
-ul.nav li a:hover {
-    color: #000;
-}
-ul.no-list-float li {
-    float: none;
 }
 .horizontal li {
     display: inline;
