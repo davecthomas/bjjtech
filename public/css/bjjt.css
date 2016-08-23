@@ -475,7 +475,7 @@ ul.main-page-footer li a {
     color: #FFF;
 }
 ul.nav li a:hover {
-    color: #000 !important;
+    color: #000;
 }
 ul.no-list-float li {
     float: none;
