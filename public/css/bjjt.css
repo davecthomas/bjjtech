@@ -502,6 +502,7 @@ ul.no-list-float li {
     /*top right bottom left*/
   padding:2px 5px 1px 5px;
   min-width: 80px;
+  text-decoration: none;
 }
 .bjjt_share_cta{
   font-size: large;
