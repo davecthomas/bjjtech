@@ -52,11 +52,20 @@ a {
     vertical-align: middle;
     border-radius: 4px;
     text-decoration: none;
+    text-shadow: 0 0 0.3em rgba(0, 0, 0, 0.9), 0 0 0.3em rgba(0, 0, 0, 0.9), 0 0 0.3em rgba(0, 0, 0, 0.9);
+}
+.bjjt_footermenu:hover{
+  color: #0275d8;
+  background-color: black;
 }
 .bjjt_footermenu_ajj {
     max-width: 165px;
     text-align: left;
 }
+.shadow{
+  text-shadow: 0 0 0.3em rgba(0, 0, 0, 0.9), 0 0 0.3em rgba(0, 0, 0, 0.9), 0 0 0.3em rgba(0, 0, 0, 0.9);
+}
+
 .bjjt_footer_container {
     margin-left: 0px;
     padding-left: 0px;
