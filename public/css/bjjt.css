@@ -51,6 +51,7 @@ a {
     text-align: center;
     vertical-align: middle;
     border-radius: 4px;
+    text-decoration: none;
 }
 .bjjt_footermenu_ajj {
     max-width: 165px;
@@ -501,7 +502,7 @@ ul.no-list-float li {
   margin-right: .5rem;
     /*top right bottom left*/
   padding:2px 5px 1px 5px;
-  min-width: 80px;
+  min-width: 70px;
   text-decoration: none;
 }
 .bjjt_share_cta{
@@ -522,6 +523,13 @@ ul.no-list-float li {
     }
     .content-panel-belowtop {
         display: none;
+    }
+    .bjjt_share_logo{
+      display: none;
+    }
+    .bjjt_button_share{
+      min-width: 10px;
+
     }
 }
 @media (max-width: 768px)  {
