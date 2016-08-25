@@ -89,7 +89,7 @@ function getAllTopics( req, res, next ) {
 function getAllTechInTopic( req, res, next ) {
   var topicID = parseInt( req.params.id );
   db.any(
-      'SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN ' +
+      'SELECT technique.name, technique.index, technique.videoid, topic.topic AS topic_name FROM topic INNER JOIN ' +
       'technique ON topic.index = technique.topic WHERE topic.index = $1 ORDER BY technique.name',
       topicID )
     .then( function( data ) {
@@ -110,7 +110,7 @@ function getTechFromStr( req, res, next ) {
 
   db.any(
       // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
-      "SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN " +
+      "SELECT technique.name, technique.index, technique.videoid, topic.topic AS topic_name FROM topic INNER JOIN " +
       "technique ON topic.index = technique.topic WHERE " +
       "name ~* $1 OR setup ~* $1 OR details ~* $1 " +
       "ORDER BY topic_name, technique.name",
@@ -149,7 +149,7 @@ function getTechFromStrInTopic( req, res, next ) {
 
 function getTechBrief( req, res, next ) {
   var techniqueID = parseInt( req.params.id );
-  db.one( 'select index, name, setup, details from technique where index = $1',
+  db.one( 'select index, name, setup, details, videoid from technique where index = $1',
       techniqueID )
     .then( function( data ) {
       res.status( 200 )
@@ -212,21 +212,21 @@ function getTechsFromTag( req, res, next ) {
   switch ( tag ) {
     case "topic":
       strSQL =
-        'SELECT technique.name, technique.index, topic.topic AS tag_name FROM topic INNER JOIN ' +
+        'SELECT technique.name, technique.index, technique.videoid, topic.topic AS tag_name FROM topic INNER JOIN ' +
         'technique ON topic.index = technique.topic WHERE topic.index = $1 ORDER BY technique.name';
       goodRequest = true;
       break;
 
     case "position":
       strSQL =
-        'SELECT technique.name, technique.index, positionnames.positionname AS tag_name FROM positionnames INNER JOIN ' +
+        'SELECT technique.name, technique.index, technique.videoid, positionnames.positionname AS tag_name FROM positionnames INNER JOIN ' +
         'technique ON positionnames.index = technique.startingpos WHERE positionnames.index = $1 ORDER BY technique.name';
       goodRequest = true;
       break;
 
     case "type":
       strSQL =
-        'SELECT technique.name, technique.index, techniquetype.techniquetype AS tag_name FROM techniquetype INNER JOIN ' +
+        'SELECT technique.name, technique.index, technique.videoid, techniquetype.techniquetype AS tag_name FROM techniquetype INNER JOIN ' +
         'technique ON techniquetype.index = technique.type WHERE techniquetype.index = $1 ORDER BY technique.name';
       goodRequest = true;
       break;

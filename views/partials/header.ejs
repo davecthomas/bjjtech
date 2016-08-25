@@ -36,14 +36,16 @@
                         var techs = result;
                         if (techs.status === 'success') {
                             var len = techs.data.length;
-                            for (i = 0; i < len; i++) {
-                                if (i == 0) {
-                                    $('#num_search_techs').append(len);
-                                }
-                                // $('#techs').append("<div class='get_tech_detail bjjt_hover' id='"+techs.data[i].index+"' data-id='"+techs.data[i].index+"'>"+techs.data[i].name +'</div>');
-                                $('#search_techs').append("<a href='#' class='list-group-item get_tech_search' id='" + techs.data[i].index + "' data-listindex='" + i + "' data-id='" + techs.data[i].index + "'><h5 class='list-group-item-heading'>" + techs.data[i].topic_name + ":&emsp;&emsp;&emsp;&emsp;<strong>"+ techs.data[i].name + "</strong></h5></a>");
-                            }
+                            $('#num_search_techs').append(len);
 
+                            for (i = 0; i < len; i++) {
+                                if (techs.data[i].videoid){
+                                   video = '<i class="fa fa-video-camera"></i>&nbsp;';
+                                } else {
+                                   video = "&emsp;";
+                                }
+                                $('#search_techs').append("<a href='#' class='list-group-item get_tech_search' id='" + techs.data[i].index + "' data-listindex='" + i + "' data-id='" + techs.data[i].index + "'><h5 class='list-group-item-heading'>"+video+"<strong>"+ techs.data[i].name +"</strong>("+ techs.data[i].topic_name +")</h5></a>");
+                            }
                         }
                     }
                 });
