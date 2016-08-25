@@ -556,7 +556,7 @@ ul.no-list-float li {
 
 /*Hide excess stuff on iPhone-sized devices*/
 
-@media (max-width: 480px), and (max-height: 435px) {
+@media (max-width: 480px) and (max-height: 737px) {
     #bjjt_tag {
         display: none;
     }
