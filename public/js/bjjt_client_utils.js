@@ -3,7 +3,7 @@ function replaceAll( str, search, replacement ) {
 };
 
 function replaceAllNumlist( str, replacement ) {
-  re = new RegExp( /\d+(\.)/ );
+  re = new RegExp( /\d+(\.)/g );
   return str.replace( re, replacement );
 };
 
@@ -17,6 +17,9 @@ function cleanDetailText( detailIn ) {
   return details;
 }
 
+function fixQuotes( str ) {
+  return str.replace( /'/g, '&rsquo;' );
+}
 
 function insertAt( src, index, str ) {
   return src.substr( 0, index ) + str + src.substr( index )

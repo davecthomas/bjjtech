@@ -85,6 +85,9 @@
             if (tech.data.details){
                var details = cleanDetailText(tech.data.details);
 
+               details = fixQuotes(details);
+               tech.data.name = fixQuotes(tech.data.name);
+
               document.title = bjjtech_pagetitle+ ": "+ tech.data.name;
 
             } else {

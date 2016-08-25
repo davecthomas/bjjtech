@@ -29,10 +29,16 @@ var title = ": Technique";
         return details;
       }
 
+      function fixQuotes( str ) {
+        return str.replace( /'/g, '&rsquo;' );
+      }
 
       var tech = JSON.parse(response);
       if (tech.status === 'success'){
         var tech_detail = tech.data;
+        if (tech_detail.name){
+           tech_detail.name = fixQuotes(tech_detail.name);
+        }
 
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
@@ -157,7 +163,8 @@ var title = ": Technique";
 
 <%
         }
-          if (tech_detail.name) { %>
+          if (tech_detail.name) {
+%>
              <script>
              document.title = '<%- bjjtech.general.title + ": " + tech_detail.name %>';
              </script>
@@ -189,6 +196,7 @@ var title = ": Technique";
           }
           if (tech.data.details){
             var details = cleanDetailText(tech.data.details);
+            details = fixQuotes(details);
           } else {
             var details = "Sorry, homie, I haven't written this yet.";
           }
