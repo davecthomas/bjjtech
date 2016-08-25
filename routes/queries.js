@@ -109,9 +109,10 @@ function getTechFromStr( req, res, next ) {
   var strSearch = req.params.str;
 
   db.any(
+      // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
       "SELECT technique.name, technique.index, topic.topic AS topic_name FROM topic INNER JOIN " +
       "technique ON topic.index = technique.topic WHERE " +
-      "name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'" +
+      "name ~* $1 OR setup ~* $1 OR details ~* $1 " +
       "ORDER BY topic_name, technique.name",
       strSearch )
     .then( function( data ) {
@@ -131,7 +132,7 @@ function getTechFromStr( req, res, next ) {
 function getTechFromStrInTopic( req, res, next ) {
   var strSearch = parseInt( req.params.str );
   db.any(
-      "select * from technique where name LIKE '%' || $1 || '%' OR setup LIKE '%' || $1 || '%' OR details LIKE '%' || $1 || '%'",
+      "select * from technique where name ~* $1 OR setup ~* $1 || OR details ~* $1 ",
       strSearch )
     .then( function( data ) {
       res.status( 200 )
