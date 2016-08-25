@@ -21,6 +21,10 @@ function fixQuotes( str ) {
   return str.replace( /'/g, '&rsquo;' );
 }
 
+function escapeQuotes( str ) {
+  return str.replace( /(['"])/g, "\\$1" );
+}
+
 function insertAt( src, index, str ) {
   return src.substr( 0, index ) + str + src.substr( index )
 }

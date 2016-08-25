@@ -33,11 +33,18 @@ var title = ": Technique";
         return str.replace( /'/g, '&rsquo;' );
       }
 
+      function escapeQuotes( str ) {
+        return str.replace( /(['"])/g, "\\$1" );
+      }
+
+      var document_title = "";
+      var tech_detail_name = "";
       var tech = JSON.parse(response);
       if (tech.status === 'success'){
         var tech_detail = tech.data;
         if (tech_detail.name){
-           tech_detail.name = fixQuotes(tech_detail.name);
+           document_title = escapeQuotes(tech_detail.name);    // This escapes quotes (for document.title)
+           tech_detail_name = fixQuotes(tech_detail.name);     // This replaces quotes with HTML entities (for HTML use)
         }
 
         // If there is video or pix, split screen in half
@@ -45,9 +52,9 @@ var title = ": Technique";
 
         <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech">
 <%
-          if (tech_detail.name) {                        %>
+          if (tech_detail_name) {                        %>
 
-            <h3><%- tech_detail.name %></h3>
+            <h3><%- tech_detail_name %></h3>
 
 <%
           }
@@ -163,12 +170,12 @@ var title = ": Technique";
 
 <%
         }
-          if (tech_detail.name) {
+          if (tech_detail_name) {
 %>
              <script>
-             document.title = '<%- bjjtech.general.title + ": " + tech_detail.name %>';
+             document.title = '<%- bjjtech.general.title + ": " + document_title %>';
              </script>
-            <h3><%- tech_detail.name %></h3>
+            <h3><%- tech_detail_name %></h3>
           <%
        } %>
        <p>
