@@ -3,7 +3,7 @@ function replaceAll( str, search, replacement ) {
 };
 
 function replaceAllNumlist( str, replacement ) {
-  re = new RegExp( /\d+(\.)/, 'g' );
+  re = new RegExp( /\d+(\.)/ );
   return str.replace( re, replacement );
 };
 
