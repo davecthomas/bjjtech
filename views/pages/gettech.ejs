@@ -1,11 +1,16 @@
 <%
 var title = ": Technique";
+var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
+var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
 %>
 <% include ../partials/top %>
+<script>
+var api_url = '<%-api_url %>';
+var root_url = '<%-root_url %>';
+</script>
 <div class="container-fluid">
-    <div class="row ">
+    <row>
 <%
-
       function replaceAll( str, search, replacement ) {
         return str.replace( new RegExp( search, 'g' ), replacement );
       };
@@ -76,55 +81,8 @@ var title = ": Technique";
 %>
                   img_array[<%= i %>] = '<%- tech_detail.imageurl + '-' + (parseInt(i+1)) +'.jpg' %>';
 <%                } %>
-                  $("#bjjt_image_img").attr("src", img_array[current_image]);
-                  var txt = '<span class="fa-stack fa-3x bjj_image_num">'+
-                     '<i class="fa fa-circle-o fa-stack-2x"></i>' +
-                     '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
-                  '</span>';
-                  $('#img_text_fa_imgnum').append(txt);
-
-                  $(".bjjt_image_chevron_left").on('click', function () {
-                     if ((current_image-1) > -1){
-                        $('#bjjt_image_class_swapper_right').removeClass( "bjjt_image_chevron_disabled" );
-                        current_image--;
-                        if (current_image == 0){
-                           $('#bjjt_image_class_swapper_left').addClass( "bjjt_image_chevron_disabled" );
-                        }
-                        $("#bjjt_image_img").attr("src", img_array[current_image]);
-                        var txt = '<span class="fa-stack fa-3x bjj_image_num">'+
-                           '<i class="fa fa-circle-o fa-stack-2x"></i>' +
-                           '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
-                        '</span>';
-                        $('#img_text_fa_imgnum').empty();
-                        $('#img_text_fa_imgnum').append(txt);
-                     } else {
-                        $('#bjjt_image_class_swapper_left').addClass( "bjjt_image_chevron_disabled" );
-                     }
-
-                  });
-                  $(".bjjt_image_chevron_right").on('click', function () {
-                     if ((current_image) < (numimages-1)){
-                        $('#bjjt_image_class_swapper_left').removeClass( "bjjt_image_chevron_disabled" );
-                        current_image++;
-                        if (current_image == (numimages-1)){
-                           $('#bjjt_image_class_swapper_right').addClass( "bjjt_image_chevron_disabled" );
-                        }
-                        $("#bjjt_image_img").attr("src", img_array[current_image]);
-                        var txt = '<span class="fa-stack fa-3x bjj_image_num">'+
-                           '<i class="fa fa-circle-o fa-stack-2x"></i>' +
-                           '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt(current_image+1) + '</span></strong>' +
-                        '</span>';
-                        $('#img_text_fa_imgnum').empty();
-                        $('#img_text_fa_imgnum').append(txt);
-                     } else {
-                        $('#bjjt_image_class_swapper_right').addClass( "bjjt_image_chevron_disabled" );
-                     }
-                  });
-
-                  // Make the image tha same width as the content-panel-tech div
-                  $('#bjjt_image_img').width($('.content-panel-tech').width());
-
                   </script>
+                  <script src="/public/js/bjjt_gettech.js"></script>
 <%                }  else {
 %>
                      <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div>
@@ -136,24 +94,7 @@ var title = ": Technique";
           }
           if (tech_detail.videoid) {
 %>
-            <script>
-            // Load the IFrame Player API code asynchronously.
-            var tag = document.createElement('script');
-            tag.src = "http://www.youtube.com/player_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            // Replace the 'ytplayer' element with an <iframe> and
-            // YouTube player after the API code downloads.
-            var player;
-            function onYouTubePlayerAPIReady() {
-              player = new YT.Player('ytplayer', {
-                height: '390',
-                width: $('.content-panel-tech').width(),
-                videoId: '<%- tech_detail.videoid %>'
-              });
-            }
-          </script>
+            <script src="/public/js/bjjt_ytplayer.js"></script>
             <div id="ytplayer"></div>
 
           <%
@@ -214,20 +155,17 @@ var title = ": Technique";
             </div>
 <%
           }
-%>
-<%
         } else {
 %>
-         <%- "<p>Sorry, homie, I got nothin' for you on this one.</p>" %>
+         <p>Sorry, homie, I got nothin for you on this one.</p>
 <%
-        } %>
-<%
-          var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
-          var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
-          var this_url = root_url;
-          if (tech_detail.index) {
-             this_url += "tech/"+parseInt(tech_detail.index);
-          }
+        }
+       var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
+       var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
+       var this_url = root_url;
+       if (tech_detail.index) {
+          this_url += "tech/"+parseInt(tech_detail.index);
+       }
 %>
         <script>
         // Video and image responsiveness follows parent div
@@ -239,6 +177,7 @@ var title = ": Technique";
         </script>
 
     </div>
+    </row>
     <row>
       <div class="col-xs-12 col-sm-12 panel panel-default content-panel">
          <p>Posted by <span class="ajjfont ajj-attribution"><a href="http://austinjiujitsu.com">AustIn JIu-JItsu</a></span> coach <span class="author-attribution"><a href="http://www.austinjujitsu.com/coaches/dave-thomas/">Dave Thomas</a></span></p>

@@ -54,7 +54,18 @@ function getTech( req, res ) {
 };
 
 function getTechFromStr( req, res ) {
-  res.render( 'pages/gettechfromstr' );
+  var search = "";
+  if ( req.params.str.length > 0 ) {
+    search = req.params.str;
+  }
+  request( api_url + 'tech/text/' + search, function( error, response, body ) {
+    if ( !error && response.statusCode == 200 ) {
+      res.render( 'pages/gettechfromstr', {
+        response: body
+      } );
+    }
+  } )
+
 };
 
 
