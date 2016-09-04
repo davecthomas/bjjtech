@@ -1,3 +1,30 @@
+<%
+  var search = JSON.parse(response);
+  var title = "";
+
+  if (search.status === 'success'){
+    var searchstr = search.search;
+    var len = search.data.length;
+    title = ": Search for " +searchstr;
+    var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
+    var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
+%>
 <% include ../partials/top %>
+    <script>
+      var api_url = '<%-api_url %>';
+      var root_url = '<%-root_url %>';
+      var len = <%= len %>;
+      var bjjtech_pagetitle = '<%- bjjtech.general.title + title %>';
+      var techs = <%- JSON.stringify(search) %>;
+    </script>
+    <script src="/public/js/bjjt_gettechfromstr.js"></script>
+<%
+   } else {
+%>
+<% include ../partials/top %>
+<%
+      title = "no results";
+   }
+%>
 
 <% include ../partials/bottom %>

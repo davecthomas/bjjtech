@@ -4,10 +4,7 @@ var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
 var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
 %>
 <% include ../partials/top %>
-<script>
-var api_url = '<%-api_url %>';
-var root_url = '<%-root_url %>';
-</script>
+
 <div class="container-fluid">
     <row>
 <%
@@ -46,23 +43,46 @@ var root_url = '<%-root_url %>';
       var tech_detail_name = "";
       var tech = JSON.parse(response);
       if (tech.status === 'success'){
-        var tech_detail = tech.data;
-        if (tech_detail.name){
-           document_title = escapeQuotes(tech_detail.name);    // This escapes quotes (for document.title)
-           tech_detail_name = fixQuotes(tech_detail.name);     // This replaces quotes with HTML entities (for HTML use)
-        }
+         var tech_detail = tech.data;
+         if (tech_detail.name){
+            document_title = escapeQuotes(tech_detail.name);    // This escapes quotes (for document.title)
+            tech_detail_name = fixQuotes(tech_detail.name);     // This replaces quotes with HTML entities (for HTML use)
+         }
+
+         var title_cols = '12';
+         if (searchparam.length > 0){
+            title_cols = '9';
+         }
+%>
+         <script>
+         var api_url = '<%-api_url %>';
+         var root_url = '<%-root_url %>';
+         var searchStr = '<%= searchparam %>';
+         document.title = '<%- bjjtech.general.title + ": " + document_title %>';
+         </script>
+         <script src="/public/js/bjjt_gettech_load.js"></script>
+
+         <div class="col-xs-3 panel panel-default content-panel-noscroll bjjt_hide" id="return_to_search_parent">
+             <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button"></button>
+         </div>
+         <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll content-panel-tech">
+<%
+         if (tech_detail_name) {
+%>
+            <h3><%- tech_detail_name %></h3>
+<%
+         }
+%>
+         </div>
+         </row>
+         <row>
+<%
 
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
 
         <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech">
 <%
-          if (tech_detail_name) {                        %>
-
-            <h3><%- tech_detail_name %></h3>
-
-<%
-          }
           if (tech_detail.imageurl) {
              if (tech_detail.numimages){
                 var numimages = parseInt(tech_detail.numimages); %>
@@ -108,17 +128,9 @@ var root_url = '<%-root_url %>';
 <%
         } else { %>
           <div class="col-sm-12 panel panel-default content-panel content-panel-tech">
-
 <%
         }
-          if (tech_detail_name) {
 %>
-             <script>
-             document.title = '<%- bjjtech.general.title + ": " + document_title %>';
-             </script>
-            <h3><%- tech_detail_name %></h3>
-          <%
-       } %>
        <p>
 <%
           if (tech_detail.sport_sport) { %>

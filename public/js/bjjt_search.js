@@ -87,7 +87,8 @@ $( function() {
 
   $( document ).on( 'click', '.get_tech_search', function() {
     var id = $( this ).attr( 'data-id' );
-    window.location = root_url + "tech/" + id;
+    window.location = root_url + "tech/" + id + "?search=" + encodeURIComponent(
+      $( '#search_title_replace' ).text() );
   } );
 
 } );

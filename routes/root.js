@@ -35,6 +35,7 @@ function getAllTech( req, res ) {
 };
 
 function getTech( req, res ) {
+  var searchStr = "";
   var techniqueID = 0; // See if this is coming from old ASP-style link ...asp?id=100
   if ( !bjjt_utils.isNumeric( req.query.id ) || ( isNaN( req.query.id ) ) ) {
     if ( bjjt_utils.isNumeric( req.params.id ) ) {
@@ -44,10 +45,15 @@ function getTech( req, res ) {
     techniqueID = parseInt( req.query.id );
   }
 
+  if ( ( req.query.search ) && ( req.query.search.length > 0 ) ) {
+    searchStr = req.query.search;
+  }
+
   request( api_url + 'tech/' + techniqueID, function( error, response, body ) {
     if ( !error && response.statusCode == 200 ) {
       res.render( 'pages/gettech', {
-        response: body
+        response: body,
+        searchparam: searchStr
       } );
     }
   } )

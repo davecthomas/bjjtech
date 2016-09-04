@@ -120,6 +120,7 @@ function getTechFromStr( req, res, next ) {
         .json( {
           status: 'success',
           data: data,
+          search: strSearch,
           message: 'Retrieved techs with search str: ' + strSearch
         } );
     } )
