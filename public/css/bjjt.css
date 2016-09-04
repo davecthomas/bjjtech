@@ -216,9 +216,15 @@ ul.no-list-float li {
     background-color: rgba(255, 255, 255, 0.8);
     border-color: rgba(0, 0, 0, 0.1);
     color: rgba(0, 0, 0, 1);
-    overflow-y: scroll;
+    overflow-y: auto;
     /*overflow-x: scroll;*/
     max-height: 77vh;
+}
+.content-panel-left {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 1);
+    max-height: 77vh;
+    overflow-y: auto;
 }
 .content-panel-noscroll{
   background-color: rgba(255, 255, 255, 0.8);
@@ -247,10 +253,10 @@ ul.no-list-float li {
     opacity: 1;
 }
 .content-panel-detail {
-    border-radius: 5px;
-    border-color: rgba(0, 0, 0, 0.5);
-    color: rgba(0, 0, 0, 1);
-    overflow-y: scroll;
+    /*border-radius: 5px;
+    border-color: rgba(0, 0, 0, 0.5);*/
+    /*color: rgba(0, 0, 0, 1);*/
+    /*overflow-y: scroll;*/
     /*overflow-x: scroll;*/
 }
 .list-group-item {
@@ -282,7 +288,7 @@ ul.no-list-float li {
     background-color: Transparent;
     border-radius: 5px;
     border-width: medium;
-    border-color: rgba(0, 0, 0, 1);
+    border-color: rgba(0, 0, 0, .65);
     font-weight: bold;
 }
 .bjjt_button:hover {
@@ -329,6 +335,8 @@ ul.no-list-float li {
 
 .content-panel-tech {
     max-height: 69vh;
+    /*overflow-y: scroll;*/
+
 }
 #search {
     position: fixed;
@@ -374,20 +382,6 @@ ul.no-list-float li {
     opacity: 1;
 }
 
-/*#search_title {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    text-align: center;
-    width: 100%;
-    color: rgb(255, 255, 255);
-    background: rgba(0, 0, 0, 0);
-    font-size: 3rem;
-    font-weight: bold;
-    text-align: center;
-    margin: 0px auto;
-}*/
-
 #search .close {
     position: fixed;
     top: 10px;
@@ -412,38 +406,45 @@ ul.no-list-float li {
     display: table;
 }
 .bjjt_image_chevron {
-    bottom: .3rem;
+    /*bottom: 0rem;*/
     display: block;
-    font-size: 6rem;
+    font-size: 4rem;
     position: absolute;
     color: white;
     background: rgba(0, 0, 0, 0);
     cursor: pointer;
-    /*not supported by IE7<*/
-    -webkit-filter: drop-shadow(5px 5px 5px #444);
-    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.6));
+    text-shadow: 0 0 0.3em rgba(0, 0, 0, 0.45), 0 0 0.3em rgba(0, 0, 0, 0.5), 0 0 0.3em rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 .bjjt_image_chevron:hover {
-    color: black;
+    color: rgba(100,100,250,.6);
 }
 .bjj_image_num {
-    right: 0px;
-    top: 0px;
-    font-size: 3rem;
+    font-size: 2.5rem;
+    top: -0.3rem;
     margin: 0px;
     display: block;
     position: absolute;
+    width: 100%;
     color: rgba(255, 255, 255, .6);
     background: rgba(0, 0, 0, 0);
-    /*not supported by IE7<*/
-    -webkit-filter: drop-shadow(5px 5px 5px #444);
-    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.6));
+    /*-webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;*/
+    align-items: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    text-shadow: 0 0 0.3em rgba(0, 0, 0, 0.6), 0 0 0.3em rgba(0, 0, 0, 0.6), 0 0 0.3em rgba(0, 0, 0, 0.6);
 }
 .bjjt_image_chevron_left {
-    left: .3rem;
+    left: 0.5rem;
 }
 .bjjt_image_chevron_right {
-    right: 3rem;
+    right: -0.3rem;
 }
 .bjjt_image_chevron_disabled {
     color: gray;
@@ -451,24 +452,24 @@ ul.no-list-float li {
 .bjjt_image_chevron_disabled:hover {
     color: gray;
 }
-.bjjt_vertical_center {
-    height: 100%;
+.bjjt_vertical_top {
+    height: 10%;
     /* Make it a flex container */
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    -moz-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-    -ms-flex-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
+    -webkit-box-align: top;
+    -webkit-align-items: top;
+    -moz-box-align: top;
+    -ms-flex-align: top;
+    align-items: top;
+    -webkit-box-pack: top;
+    -moz-box-pack: top;
+    -ms-flex-pack: top;
+    -webkit-justify-content: top;
+    justify-content: top;
 }
 .ajjfont {
     font-family: 'Pythia';

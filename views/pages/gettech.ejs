@@ -65,7 +65,7 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
          <div class="col-xs-3 panel panel-default content-panel-noscroll bjjt_hide" id="return_to_search_parent">
              <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="Return to search results" data-placement="bottom"></button>
          </div>
-         <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll">
+         <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll" id="gettech_name">
 <%
          if (tech_detail_name) {
 %>
@@ -81,7 +81,7 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
 
-        <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech">
+        <div class="col-xs-12 col-sm-6 panel panel-default content-panel-left" id="tech_detail_left_pane">
 <%
           if (tech_detail.imageurl) {
              if (tech_detail.numimages){
@@ -89,9 +89,9 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
                 <div class="container-fluid bjjt_image">
 <%                 if (numimages > 1) {
 %>
-                   <span class="bjjt_image_chevron bjjt_image_chevron_left bjjt_vertical_center bjjt_image_chevron_disabled" id="bjjt_image_class_swapper_left"><i class="fa fa-chevron-left"></i></span>
+                   <span class="bjjt_image_chevron bjjt_image_chevron_left bjjt_vertical_top bjjt_image_chevron_disabled" id="bjjt_image_class_swapper_left"><i class="fa fa-chevron-left"></i></span>
                    <span id="img_text_fa_imgnum"></span>
-                  <span class="bjjt_image_chevron bjjt_image_chevron_right bjjt_vertical_center" id="bjjt_image_class_swapper_right"><i class="fa fa-chevron-right"></i></span>
+                  <span class="bjjt_image_chevron bjjt_image_chevron_right bjjt_vertical_top" id="bjjt_image_class_swapper_right"><i class="fa fa-chevron-right"></i></span>
                   <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src=""></img></div>
                   <script>
                   var img_array = [];
@@ -126,11 +126,11 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
          </div>
-          <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech">
+          <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech" id="tech_detail_right_pane">
 
 <%
         } else { %>
-          <div class="col-sm-12 panel panel-default content-panel content-panel-tech">
+          <div class="col-sm-12 panel panel-default content-panel content-panel-tech" id="tech_detail_right_pane">
 <%
         }
 %>
@@ -182,15 +182,6 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
           this_url += "tech/"+parseInt(tech_detail.index);
        }
 %>
-        <script>
-        // Video and image responsiveness follows parent div
-        // Make the image tha same width as the content-panel-tech div
-        $(window).on('resize', function () {
-          $('#ytplayer').width($('.content-panel-tech').width());
-          $('#bjjt_image_img').width($('.content-panel-tech').width());
-        });
-        </script>
-
     </div>
     </row>
     <row>

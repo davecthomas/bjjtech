@@ -45,6 +45,3 @@ $( ".bjjt_image_chevron_right" ).on( 'click', function() {
     $( '#bjjt_image_class_swapper_right' ).addClass( "bjjt_image_chevron_disabled" );
   }
 } );
-
-// Make the image tha same width as the content-panel-tech div
-$( '#bjjt_image_img' ).width( $( '.content-panel-tech' ).width() );
