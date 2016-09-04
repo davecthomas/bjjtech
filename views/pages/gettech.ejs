@@ -63,9 +63,9 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
          <script src="/public/js/bjjt_gettech_load.js"></script>
 
          <div class="col-xs-3 panel panel-default content-panel-noscroll bjjt_hide" id="return_to_search_parent">
-             <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button"></button>
+             <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="Return to search results" data-placement="bottom"></button>
          </div>
-         <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll content-panel-tech">
+         <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll">
 <%
          if (tech_detail_name) {
 %>
@@ -114,6 +114,9 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
           }
           if (tech_detail.videoid) {
 %>
+            <script>
+            const videoid = '<%- tech_detail.videoid %>';
+            </script>
             <script src="/public/js/bjjt_ytplayer.js"></script>
             <div id="ytplayer"></div>
 

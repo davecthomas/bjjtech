@@ -12,6 +12,6 @@ function onYouTubePlayerAPIReady() {
   player = new YT.Player( 'ytplayer', {
     height: '390',
     width: $( '.content-panel-tech' ).width(),
-    videoId: '<%- tech_detail.videoid %>'
+    videoId: videoid
   } );
 }

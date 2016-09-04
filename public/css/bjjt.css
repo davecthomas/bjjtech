@@ -40,7 +40,14 @@ ul.nav li a:hover {
 ul.no-list-float li {
     float: none;
 }
-
+.tooltip > .tooltip-inner {
+  background-color: rgba(255, 255, 255, 0.98);
+  color: black;
+}
+.tooltip-arrow {
+  border-bottom-color: white!important;
+  border-top-color: white!important;
+}
 .bjjt_header {
     background-color: rgba(0, 0, 0, 0);
     padding-bottom: 0rem;
@@ -244,7 +251,7 @@ ul.no-list-float li {
     border-color: rgba(0, 0, 0, 0.5);
     color: rgba(0, 0, 0, 1);
     overflow-y: scroll;
-    overflow-x: scroll;
+    /*overflow-x: scroll;*/
 }
 .list-group-item {
     background-color: rgba(255, 255, 255, 0);

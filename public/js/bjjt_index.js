@@ -3,6 +3,7 @@ $( document ).ready( function() {
 
 
   var len_topic_list = len;
+  $( '[data-toggle="tooltip"]' ).tooltip();
 
 
   //
@@ -80,10 +81,14 @@ $( document ).ready( function() {
             tech.data.name = fixQuotes( tech.data.name );
             if ( tech.data.videoid ) {
               video =
-                '<button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button "><i class="fa fa-video-camera"></i>&nbsp;Click for detail&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>';
+                '<button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="See video plus more on ' +
+                tech.data.name +
+                '"><i class="fa fa-video-camera"></i>&nbsp;Tap for detail&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>';
             } else {
               video =
-                '<button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button ">Click for detail&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>';
+                '<button id="moredetail" data-id="initiallyundefined" name="moredetail" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="More on ' +
+                tech.data.name +
+                '">Tap for detail&nbsp;<i class="fa fa-expand" aria-hidden="true"></i></button>';
             }
             $( '#moredetail' ).replaceWith( video );
 
