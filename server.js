@@ -50,6 +50,7 @@ app.locals.moment = require( 'moment' );
 app.set( 'views', path.join( __dirname, 'views' ) );
 app.set( 'view engine', 'ejs' );
 app.use( '/public', express.static( __dirname + '/public' ) );
+app.use( express.static( __dirname + '/root' ) );
 app.use( favicon( __dirname + '/public/img/favicon.ico' ) );
 
 if ( 'development' == app.get( 'env' ) ) {
