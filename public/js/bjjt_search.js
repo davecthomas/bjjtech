@@ -16,7 +16,12 @@ function doSearch( str ) {
           if ( techs.data[ i ].videoid ) {
             video = '<i class="fa fa-video-camera"></i>&nbsp;';
           } else {
-            video = "&emsp;";
+            if ( techs.data[ i ].tech_detail.numimages ) {
+              video = '<i class="fa fa-picture-o"></i>&nbsp;';
+            } else {
+
+              video = "&emsp;";
+            }
           }
           $( '#search_techs' ).append(
             "<a href='#' class='list-group-item get_tech_search' id='" + techs.data[ i ].index +

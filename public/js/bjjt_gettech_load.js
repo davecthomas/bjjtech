@@ -6,12 +6,13 @@ $( document ).ready( function() {
       searchStr = searchStr.slice( 0, maxlenSearchStrDisplayed ) + "...";
     }
     $( '#return_to_search' ).html(
-      '<i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;' +
-      searchStr + '&nbsp;<i class="fa fa-search" aria-hidden="true">' );
+      '<i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;<i class="fa fa-search" aria-hidden="true">"' +
+      searchStr + '"' );
     // Make the "return to search" button parent div as tall as the title area next to it
     $( '#return_to_search_parent' ).height( $( '#gettech_name' ).height() );
     $( '#return_to_search_parent' ).show();
     $( '[data-toggle="tooltip"]' ).tooltip();
+    $( '#return_to_search' ).width( $( '#return_to_search_parent' ).width() - 30 );
   }
 
   // Make the left pane as tall as the right (only important on landscape large screens)
@@ -73,4 +74,10 @@ $( window ).on( 'resize', function() {
   $( '#bjjt_image_img' ).width( $( '.content-panel-left' ).width() );
   $( '#tech_detail_left_pane' ).height( $( '#tech_detail_right_pane' ).height() );
   $( '#return_to_search_parent' ).height( $( '#gettech_name' ).height() );
+  $( '#return_to_search' ).width( $( '#return_to_search_parent' ).width() - 30 );
+  if ( $( '#return_to_search' ).innerWidth() > $( '#return_to_search_parent' ).innerWidth() ) {
+    console.log( $( '#return_to_search' ).innerWidth() + " " + $( '#return_to_search_parent' ).innerWidth() );
+    $( '#return_to_search' ).innerWidth( $( '#return_to_search_parent' ).innerWidth() - 30 );
+  }
+
 } );
