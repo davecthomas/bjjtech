@@ -1,43 +1,41 @@
 <%
 var title = ": Technique";
-var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
-var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
 %>
 <% include ../partials/top %>
 
 <div class="container-fluid">
     <row>
 <%
-      function replaceAll( str, search, replacement ) {
-        return str.replace( new RegExp( search, 'g' ), replacement );
-      };
+function replaceAll( str, search, replacement ) {
+  return str.replace( new RegExp( search, 'g' ), replacement );
+};
 
-      function isNumeric( n ) {
-        return !isNaN( parseFloat( n ) ) && isFinite( n );
-      };
+function isNumeric( n ) {
+  return !isNaN( parseFloat( n ) ) && isFinite( n );
+};
 
-      function replaceAllNumlist( str, replacement ) {
-        re = new RegExp( /\d+(\.)/, 'g' );
-        return str.replace( re, replacement );
-      };
+function replaceAllNumlist( str, replacement ) {
+  re = new RegExp( /\d+(\.)/, 'g' );
+  return str.replace( re, replacement );
+};
 
-      function cleanDetailText( detailIn ) {
-        var details = replaceAllNumlist( detailIn,
-          '<br><br><i class="fa fa-chevron-circle-right"></i>&nbsp;' );
-        details = replaceAll( details, "\n", "" );
-        if ( details.indexOf( '<br><br>' ) == 0 ) {
-          details = details.replace( '<br><br>', '' );
-        }
-        return details;
-      }
+function cleanDetailText( detailIn ) {
+  var details = replaceAllNumlist( detailIn,
+    '<br><br><i class="fa fa-chevron-circle-right"></i>&nbsp;' );
+  details = replaceAll( details, "\n", "" );
+  if ( details.indexOf( '<br><br>' ) == 0 ) {
+    details = details.replace( '<br><br>', '' );
+  }
+  return details;
+}
 
-      function fixQuotes( str ) {
-        return str.replace( /'/g, '&rsquo;' );
-      }
+function fixQuotes( str ) {
+  return str.replace( /'/g, '&rsquo;' );
+}
 
-      function escapeQuotes( str ) {
-        return str.replace( /(['"])/g, "\\$1" );
-      }
+function escapeQuotes( str ) {
+  return str.replace( /(['"])/g, "\\$1" );
+}
 
       var document_title = "";
       var tech_detail_name = "";
@@ -175,8 +173,6 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
          <p>Sorry, homie, I got nothin for you on this one.</p>
 <%
         }
-       var api_url = process.env.BJJT_API_ROOT_URL + "/api/";
-       var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
        var this_url = root_url;
        if (tech_detail.index) {
           this_url += "tech/"+parseInt(tech_detail.index);
@@ -186,7 +182,7 @@ var root_url = process.env.BJJT_WEB_ROOT_URL + "/";
     </row>
     <row>
       <div class="col-xs-12 col-sm-12 panel panel-default content-panel">
-         <p>Posted by <span class="ajjfont ajj-attribution"><a href="http://austinjiujitsu.com">AustIn JIu-JItsu</a></span> coach <span class="author-attribution"><a href="http://www.austinjujitsu.com/coaches/dave-thomas/">Dave Thomas</a></span></p>
+         <p>Posted by <span class="ajjfont ajj-attribution"><a href="http://seattlejiujitsu.com">SEAttlE JIu-JItsu</a></span> coach <span class="author-attribution"><a href="http://www.austinjujitsu.com/coaches/dave-thomas/">Dave Thomas</a></span></p>
       </div>
     </row>
     <row>

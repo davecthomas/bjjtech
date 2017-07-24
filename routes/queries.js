@@ -1,7 +1,7 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
-var app = require( '../server' );
+var server = require( '../server' );
 var promise = require( 'bluebird' );
-var bjjt_utils = require( './bjjt_utils' );
+var bjjt_utils = require( '../bjjt_utils' );
 var options = {
   // Initialization Options
   promiseLib: promise
@@ -11,16 +11,18 @@ var pgp = require( 'pg-promise' )( options );
 
 var connectionString;
 
-if ( process.env.NODE_ENV === 'development' ) {
+if ( server.app.get('env') === 'development' ) {
+  server.logger.debug( 'dev DB connection : user: ' + process.env.DB_user + ', host: '+ process.env.DB_host+':'+process.env.DB_port + ", ssl: "+process.env.DB_ssl);
   connectionString = {
     user: process.env.DB_user,
     password: process.env.DB_password,
     database: process.env.DB_database,
     port: process.env.DB_port,
     host: process.env.DB_host,
-    ssl: process.env.DB_ssl
+    ssl: false
   };
 } else {
+  server.logger.info( 'Production connection' );
   connectionString =
     'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
 }
@@ -50,6 +52,7 @@ module.exports = {
 };
 
 function getAllTech( req, res, next ) {
+  server.logger.debug('getalltech')
   db.any( 'select * from technique' )
     .then( function( data ) {
       res.status( 200 )
@@ -110,7 +113,7 @@ function getTechFromStr( req, res, next ) {
 
   db.any(
       // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
-      "SELECT technique.name, technique.index, technique.videoid, topic.topic AS topic_name FROM topic INNER JOIN " +
+      "SELECT technique.name, technique.index, technique.videoid, technique.numimages, topic.topic AS topic_name FROM topic INNER JOIN " +
       "technique ON topic.index = technique.topic WHERE " +
       "name ~* $1 OR setup ~* $1 OR details ~* $1 " +
       "ORDER BY topic_name, technique.name",

@@ -6,10 +6,7 @@ var express = require( 'express' ),
   morgan = require( 'morgan' ),
   bodyParser = require( 'body-parser' ),
   winston = require( 'winston' );
-//
-// Requiring `winston-papertrail` will expose
-// `winston.transports.Papertrail`
-//
+
 require( 'winston-papertrail' ).Papertrail;
 
 var winstonPapertrail = new winston.transports.Papertrail( {
@@ -24,12 +21,20 @@ winstonPapertrail.on( 'error', function( err ) {
 var logger = new winston.Logger( {
   transports: [
     winstonPapertrail,
-    new( winston.transports.Console )()
+    new( winston.transports.Console )(
+      {
+        level: app.get( 'env' ) === 'development' ? 'debug' : 'info'
+      }
+    )
   ]
 } );
 
 logger.info( 'BJJ Tech Started' );
 
+module.exports = {
+  app: app,
+  logger: logger
+}
 
 // For JSON parsing
 app.use( bodyParser.urlencoded( {
@@ -54,7 +59,10 @@ app.use( express.static( __dirname + '/root' ) );
 app.use( favicon( __dirname + '/public/img/favicon.ico' ) );
 
 if ( 'development' == app.get( 'env' ) ) {
+  logger.info( 'Development environment' );
   app.locals.pretty = true;
+} else {
+
 }
 
 // Defile routes for web app
@@ -99,13 +107,13 @@ app.locals.bjjtech = {
     url: 'http://BJJTech.com',
     title: 'BJJTech',
     pagetitle: 'BJJTech, the Brazilian Jiu-Jitsu Technique Catalog ',
-    description: 'Austin Jiu-Jitsu\'s Brazilian Jiu-Jitsu technique catalog.',
-    tagline: 'Austin Jiu-Jitsu techniques',
+    description: 'Dave Thomas\' Brazilian Jiu-Jitsu technique catalog.',
+    tagline: 'Brazilian Jiu-Jitsu techniques',
     year: app.locals.moment().year()
   },
   company: {
-    name: 'Austin Jiu-Jitsu',
-    url: 'http://austinjiujitsu.com',
+    name: 'Seattle Jiu-Jitsu, LLC',
+    url: 'http://seattlejiujitsu.com',
     birthyear: 2003
   },
   author: {
@@ -120,7 +128,7 @@ app.locals.bjjtech = {
 };
 
 // Kick off the server
-app.set( 'port', ( process.env.PORT || 5000 ) );
+app.set( 'port', ( process.env.PORT || 5006 ) );
 
 var server = app.listen( app.get( 'port' ), function() {
   console.log( app.locals.bjjtech.general.title + " is running at :" +

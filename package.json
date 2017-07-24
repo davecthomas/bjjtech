@@ -1,27 +1,37 @@
 {
   "name": "bjjtechniques",
-  "description": "Brazilian Jiu-Jitsu Techniques by David Thomas of Austin Jiu-Jitsu",
+  "description": "Brazilian Jiu-Jitsu Techniques by David Thomas of Seattle",
   "version": "1.0.0",
   "author": "Dave Thomas",
   "private": true,
   "scripts": {
-    "start": "nf server.js"
+    "postinstall": "gulp default",
+    "start": "nf server.js",
+    "start-dev": "NODE_DEBUG=request nf start"
   },
   "engines": {
-    "node": "6.3.x",
+    "node": "6.11.x",
     "npm": "3.10.x"
   },
   "dependencies": {
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "browserify": "^14.4.0",
+    "del": "^3.0.0",
     "ejs": "^2.5.1",
     "express": "^4.14.0",
-    "foreman": "1.4.1",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.7",
     "moment": "^2.14.1",
     "morgan": "^1.7.0",
     "pg-promise": "^5.2.7",
-    "request": "^2.74.0",
+    "request": "^2.81.0",
     "serve-favicon": "^2.3.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "winston": "^2.2.0",
     "winston-papertrail": "^1.0.2"
   },
@@ -38,10 +48,16 @@
   },
   "homepage": "https://github.com/davecthomas/bjjtech#readme",
   "main": "server.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "foreman": "1.4.1",
+    "nf": "0.0.3",
+    "request-debug": "^0.2.0"
+  },
   "keywords": [
     "bjj",
     "techniques",
-    "austinjiujitsu"
+    "brazilian jiu-jitsu",
+    "seattlejiujitsu.com",
+    "bjjtech.com"
   ]
 }

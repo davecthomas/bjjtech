@@ -4,7 +4,7 @@ TODO: Write a project description
 
 ## Installation
 
-TODO: Describe the installation process
+1. npm install
 
 ## Usage
 

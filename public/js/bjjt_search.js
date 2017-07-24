@@ -16,7 +16,7 @@ function doSearch( str ) {
           if ( techs.data[ i ].videoid ) {
             video = '<i class="fa fa-video-camera"></i>&nbsp;';
           } else {
-            if ( techs.data[ i ].tech_detail.numimages ) {
+            if ( techs.data[ i ].numimages ) {
               video = '<i class="fa fa-picture-o"></i>&nbsp;';
             } else {
 
@@ -63,7 +63,7 @@ $( function() {
     return false;
   } );
   $( document ).on( 'click', '#bjjt_dave', function() {
-    window.location = "http://www.austinjujitsu.com/post/dave-thomas/";
+    window.location = "http://www.seattlejiujitsu.com/post/dave-thomas/";
     return false;
   } );
 
