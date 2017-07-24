@@ -76,6 +76,9 @@ $( function() {
     }
   } );
   $( '.close' ).on( 'click', function( event ) {
+    if (search_results){
+      window.location.replace(root_url);
+    }
     $( "#search" ).removeClass( 'open' );
     event.preventDefault();
   } );

@@ -1,5 +1,7 @@
+var search_results = true;
+
 $( document ).ready( function() {
-  $( '#close_search_button' ).hide();
+  // $( '#close_search_button' ).hide();
   $( '#search' ).addClass( 'open' );
   document.title = bjjtech_pagetitle;
   var len_topic_list = len;
