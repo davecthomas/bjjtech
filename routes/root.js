@@ -10,7 +10,7 @@ function getAPI( req){
 }
 
 function getRoot( req){
-  var root_url = process.env.BJJT_API_ROOT_URL;
+  var root_url = process.env.BJJT_API_ROOT_URL + "/";
   if (req.app.get('env') === 'development' ){
     root_url = process.env.BJJT_API_ROOT_URL + ":"+ req.app.get( 'port' ) + "/";
     req.app.locals.bjjtech.server.logger.info( 'Dev environment root url set to ' +  root_url );
