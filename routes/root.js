@@ -77,6 +77,8 @@ function getTech( req, res ) {
     }
   } else {
     techniqueID = parseInt( req.query.id );
+    req.app.locals.bjjtech.server.logger.info( 'YouTube tech/tech-detail.asp?id= ' + techniqueID);
+
   }
 
   if ( ( req.query.search ) && ( req.query.search.length > 0 ) ) {

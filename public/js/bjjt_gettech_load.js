@@ -62,10 +62,6 @@ $( document ).on( 'click', '#return_to_search', function() {
   window.location = root_url + "tech/text/" + searchStr;
 } );
 
-$( document ).on( 'click', "#dave", function() {
-  alert( "hi" );
-} );
-
 
 // Video and image responsiveness follows parent div
 // Make the image tha same width as the content-panel-tech div

@@ -1,5 +1,3 @@
-var search_results = true;
-
 $( document ).ready( function() {
   // $( '#close_search_button' ).hide();
   $( '#search' ).addClass( 'open' );
@@ -8,6 +6,7 @@ $( document ).ready( function() {
 
   $( '#search_title_replace' ).append( techs.search );
   $( '#num_search_techs' ).append( len );
+  search_results = true;
 
   for ( i = 0; i < len; i++ ) {
     if ( techs.data[ i ].videoid ) {

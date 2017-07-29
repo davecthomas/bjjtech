@@ -1,3 +1,5 @@
+var search_results;
+
 function doSearch( str ) {
   $( '#search_title_replace' ).empty();
   $( '#search_title_replace' ).append( str );
@@ -63,7 +65,7 @@ $( function() {
     return false;
   } );
   $( document ).on( 'click', '#bjjt_dave', function() {
-    window.location = "http://www.seattlejiujitsu.com/post/dave-thomas/";
+    window.location = "http://www.jitshappens.com/post/dave-thomas/";
     return false;
   } );
 
@@ -77,7 +79,7 @@ $( function() {
   } );
   $( '.close' ).on( 'click', function( event ) {
     if (search_results){
-      window.location.replace(root_url);
+       window.history.back();
     }
     $( "#search" ).removeClass( 'open' );
     event.preventDefault();
