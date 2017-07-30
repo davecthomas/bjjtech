@@ -113,7 +113,7 @@ app.locals.bjjtech = {
   },
   company: {
     name: 'Seattle Jiu-Jitsu, LLC',
-    url: 'http://seattlejiujitsu.com',
+    url: 'http://www.seattlejiujitsu.com',
     birthyear: 2003
   },
   author: {

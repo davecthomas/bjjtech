@@ -96,22 +96,6 @@ ul.no-list-float li {
     padding-left: 0px;
         min-width: 100vw;
 }
-
-/* The top left logo */
-
-#bjjt_topleft {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background: url(../img/bjj-tech-logo-100.png) no-repeat left top;
-    width: 400px;
-    height: 100px;
-    display: inline-block;
-    /*not supported by IE7<*/
-    -webkit-filter: drop-shadow(5px 5px 5px #444);
-    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.6));
-}
-
 /* The top left Company name */
 
 #bjjt_brand {
