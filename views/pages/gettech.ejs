@@ -15,7 +15,7 @@ function isNumeric( n ) {
 };
 
 function replaceAllNumlist( str, replacement ) {
-  re = new RegExp( /\d+(\.)/, 'g' );
+  re = new RegExp( /\d+(\.)/g );
   return str.replace( re, replacement );
 };
 
