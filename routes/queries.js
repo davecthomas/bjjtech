@@ -44,8 +44,9 @@ module.exports = {
 
   getTechBrief: getTechBrief,
   getTech: getTech,
+  createTech: createTech,
   getTechsFromTag: getTechsFromTag
-    // createTech: createTech,
+
     // updateTech: updateTech,
     // removeTech: removeTech
 
@@ -282,10 +283,32 @@ function updateTech( req, res, next ) {
 }
 
 function createTech( req, res, next ) {
-  req.body.age = parseInt( req.body.age );
+  var   type = 0;
+  if ( !bjjt_utils.isNumeric( req.body.type ) || ( isNaN( req.body.type ) ) ) {
+    if ( bjjt_utils.isNumeric( req.body.type ) ) {
+      type  = parseInt( req.params.type );
+    }
+  }
+  var topic = 0;
+  var name = "name stuff";
+  var setup = "Setup stuff";
+  var details = "Blah";
+  var credit = "";
+  var sport = 0;
+  var startingpos = 0;
+  var endingpos = 0;
+  var imageurl = "";
+  var numimages = 0;
+  var videoid = 0;
+  var opponentstartingpos = 0;
+  var skilllevel = 0;
+  var rating = 0;
+  var ratings = 0;
+
+
   db.none(
-      'insert into technique(type, topic, name, setup, details, credit, index, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings)' +
-      'values(${type}, ${topic}, ${name}, ${setup}, ${details}, ${credit}, ${index}, ${sport}, ${startingpos}, ${endingpos}, ${imageurl}, ${numimages}, ${videoid}, ${opponentstartingpos}, ${skilllevel}, ${lastteachdate})',
+      "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings)" +
+      "values(${type}, ${topic}, ${name}, ${setup}, ${details}, ${credit}, NEXTVAL('technique_id_seq'), ${sport}, ${startingpos}, ${endingpos}, ${imageurl}, ${numimages}, ${videoid}, ${opponentstartingpos}, ${skilllevel}, CURRENT_TIMESTAMP, ${rating}, ${ratings})",
       req.body )
     .then( function() {
       res.status( 200 )
@@ -300,8 +323,8 @@ function createTech( req, res, next ) {
 }
 
 function removeTech( req, res, next ) {
-  var pupID = parseInt( req.params.id );
-  db.result( 'delete from technique where index = $1', pupID )
+  var techniqueID = parseInt( req.params.id );
+  db.result( 'delete from technique where index = $1', techniqueID )
     .then( function( result ) {
       /* jshint ignore:start */
       res.status( 200 )

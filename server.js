@@ -89,8 +89,9 @@ var db = require( './routes/queries' ); // queries.js has our DB logic
 router.get( '/api/tech/all', db.getAllTech );
 router.get( '/api/tech/topics', db.getAllTopics );
 router.get( '/api/tech/topic/:id', db.getAllTechInTopic );
-router.get( '/api/tech/:id', db.getTech ); // suppoert new style /api/tech/86
+router.get( '/api/tech/:id', db.getTech ); // support new style /api/tech/86
 router.get( '/api/tech', db.getTech ); // support query parameter for old version (/api/tech?id=86)
+router.post( '/api/tech/new', db.createTech ); // support query parameter for old version (/api/tech?id=86)
 router.get( '/api/tech/brief/:id', db.getTechBrief );
 router.get( '/api/tech/text/:str', db.getTechFromStr );
 router.get( '/api/tech/tag/:tag/:id', db.getTechsFromTag );
