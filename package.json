@@ -7,7 +7,7 @@
   "scripts": {
     "postinstall": "gulp default",
     "start": "nf server.js",
-    "start-dev": "NODE_DEBUG=request nf start"
+    "build" : "gulp default"
   },
   "engines": {
     "node": "6.11.x",
@@ -20,7 +20,6 @@
     "del": "^3.0.0",
     "ejs": "^2.5.1",
     "express": "^4.14.0",
-    "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^2.0.0",
@@ -30,6 +29,7 @@
     "pg-promise": "^5.2.7",
     "request": "^2.81.0",
     "serve-favicon": "^2.3.0",
+    "speakeasy": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "winston": "^2.2.0",
@@ -50,6 +50,7 @@
   "main": "server.js",
   "devDependencies": {
     "foreman": "1.4.1",
+    "gulp": "^3.9.1",
     "nf": "0.0.3",
     "request-debug": "^0.2.0"
   },

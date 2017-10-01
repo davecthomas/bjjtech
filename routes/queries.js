@@ -1,13 +1,59 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
 var server = require( '../server' );
-var promise = require( 'bluebird' );
+var bluebird = require( 'bluebird' );
 var bjjt_utils = require( '../bjjt_utils' );
 var options = {
   // Initialization Options
-  promiseLib: promise
+  promiseLib: bluebird
 };
 
-var pgp = require( 'pg-promise' )( options );
+// "Guard";1
+// "Half Guard";2
+// "Side Control";3
+// "Mount";4
+// "Standing or standing inside guard";5
+// "Lying on back";6
+// "On all fours or Sprawling";7
+// "Kneeling or kneeling inside guard";8
+// "Turtle";9
+// "North-South";10
+// "Seated";11
+// "Rear Mount";12
+// "Kesa Gatame Side";13
+// "Reverse Kesa Side";14
+// "Executing Submission";15
+// "Lying on Stomach";16
+// "N/A";17
+var positions = {
+  NotAssigned: 17
+}
+
+// "Gi only";1
+// "No-gi only";2
+// "Either Gi or No-gi";3
+// "MMA";4
+var sports = {
+  Either: 3
+}
+// Recommended by pg-promise guy:
+// https://stackoverflow.com/questions/36120435/verify-database-connection-with-pg-promise-when-starting-an-app
+const initOptions = {
+    promiseLib: bluebird,
+    // global event notification;
+    error: (error, e) => {
+        if (e.cn) {
+            // A connection-related error;
+            //
+            // Connections are reported back with the password hashed,
+            // for safe errors logging, without exposing passwords.
+            console.log('CN:', e.cn);
+            console.log('EVENT:', error.message || error);
+        }
+    }
+};
+
+
+var pgp = require( 'pg-promise' )( initOptions );
 
 var connectionString;
 
@@ -33,7 +79,12 @@ var db = pgp( connectionString );
 
 module.exports = {
   getAllTech: getAllTech,
+  getAllTopicsExtended: getAllTopicsExtended,
+  getAllTypes: getAllTypes,
   getAllTopics: getAllTopics,
+  getAllSports: getAllSports,
+  getAllLevels: getAllLevels,
+  getAllPositions: getAllPositions,
   getAllTechInTopic: getAllTechInTopic,
 
   // Get tech from str
@@ -41,6 +92,7 @@ module.exports = {
   // getTechFromStrInPositionName: getTechFromStrInPositionName,
   // getTechFromStrInTechiqueType: getTechFromStrInTechiqueType,
   getTechFromStr: getTechFromStr,
+  //getTechByName: getTechByName,
 
   getTechBrief: getTechBrief,
   getTech: getTech,
@@ -53,7 +105,7 @@ module.exports = {
 };
 
 function getAllTech( req, res, next ) {
-  server.logger.debug('getalltech')
+  // server.logger.debug('getalltech')
   db.any( 'select * from technique' )
     .then( function( data ) {
       res.status( 200 )
@@ -68,8 +120,8 @@ function getAllTech( req, res, next ) {
     } );
 }
 
-function getAllTopics( req, res, next ) {
-  // req.app.locals.bjjtech.server.logger.info( 'getAllTopics using db: ' + connectionString );
+// This gets the index.html topic list, shich is actually way more than just topics
+function getAllTopicsExtended( req, res, next ) {
 
   db.any( "( select positionnames.positionname as name, index, 'position' " +
       "as tag from positionnames where positionname != 'N/A' ) union all( select topic.topic as name, " +
@@ -82,7 +134,92 @@ function getAllTopics( req, res, next ) {
         .json( {
           status: 'success',
           data: data,
+          message: 'Retrieved ALL topicsextended'
+        } );
+    } )
+    .catch( function( err ) {
+      return next( err );
+    } );
+}
+
+function getAllTypes( req, res, next ) {
+
+  db.any( "select techniquetype.techniquetype as name, index, 'type' " +
+      "as tag from techniquetype" )
+    .then( function( data ) {
+      res.status( 200 )
+        .json( {
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL techniquetypes'
+        } );
+    } )
+    .catch( function( err ) {
+      return next( err );
+    } );
+}
+
+function getAllTopics( req, res, next ) {
+
+  db.any( "select topic.topic as name, index, 'topic' " +
+      "as tag from topic" )
+    .then( function( data ) {
+      res.status( 200 )
+        .json( {
+          status: 'success',
+          data: data,
           message: 'Retrieved ALL topics'
+        } );
+    } )
+    .catch( function( err ) {
+      return next( err );
+    } );
+}
+
+
+function getAllSports( req, res, next ) {
+
+  db.any( "select sport.sport as name, index, 'sport' " +
+      "as tag from sport" )
+    .then( function( data ) {
+      res.status( 200 )
+        .json( {
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL sports'
+        } );
+    } )
+    .catch( function( err ) {
+      return next( err );
+    } );
+}
+
+function getAllLevels( req, res, next ) {
+
+  db.any( "select skilllevel.levelname as name, index, 'level' " +
+      "as tag from skilllevel" )
+    .then( function( data ) {
+      res.status( 200 )
+        .json( {
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL skillevels'
+        } );
+    } )
+    .catch( function( err ) {
+      return next( err );
+    } );
+}
+
+function getAllPositions( req, res, next ) {
+  db.any( "select positionnames.positionname as name, index, 'position' " +
+      "as tag from positionnames" )
+    .then( function( data ) {
+      res.status( 200 )
+        .json( {
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL positions'
         } );
     } )
     .catch( function( err ) {
@@ -132,7 +269,6 @@ function getTechFromStr( req, res, next ) {
       return next( err );
     } );
 }
-
 
 function getTechFromStrInTopic( req, res, next ) {
   var strSearch = parseInt( req.params.str );
@@ -283,43 +419,230 @@ function updateTech( req, res, next ) {
 }
 
 function createTech( req, res, next ) {
-  var   type = 0;
-  if ( !bjjt_utils.isNumeric( req.body.type ) || ( isNaN( req.body.type ) ) ) {
-    if ( bjjt_utils.isNumeric( req.body.type ) ) {
-      type  = parseInt( req.params.type );
-    }
-  }
-  var topic = 0;
-  var name = "name stuff";
-  var setup = "Setup stuff";
-  var details = "Blah";
-  var credit = "";
-  var sport = 0;
-  var startingpos = 0;
-  var endingpos = 0;
-  var imageurl = "";
-  var numimages = 0;
-  var videoid = 0;
-  var opponentstartingpos = 0;
-  var skilllevel = 0;
-  var rating = 0;
-  var ratings = 0;
+  server.logger.debug("Create "+ JSON.stringify(req.body));
+  var input_err = false;
+  var error_detail = "";
+  // Make sure it doesn't already exist
+  var name = req.body.name ;
+  if ((typeof name !== 'string' ) || (name.length < 1)){
+    input_err = true;
+    error_detail = "name";
+    res.status( 400 )
+      .json( {
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      } );
+  } else {
+    server.logger.debug("dbone=" + name);
 
 
-  db.none(
-      "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings)" +
-      "values(${type}, ${topic}, ${name}, ${setup}, ${details}, ${credit}, NEXTVAL('technique_id_seq'), ${sport}, ${startingpos}, ${endingpos}, ${imageurl}, ${numimages}, ${videoid}, ${opponentstartingpos}, ${skilllevel}, CURRENT_TIMESTAMP, ${rating}, ${ratings})",
-      req.body )
-    .then( function() {
-      res.status( 200 )
-        .json( {
-          status: 'success',
-          message: 'Inserted one tech'
-        } );
-    } )
+  db.oneOrNone(
+      // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
+      "SELECT index from technique WHERE name ilike $1",
+      name )
+    .then( function( data ) {
+      if (data != null) {
+        server.logger.debug("Exists: 1");
+        input_err = true;
+        error_detail = "Exists: " + JSON.stringify(data.index);
+        res.status( 400 )
+          .json( {
+            status: 'fail',
+            data: error_detail,
+            message: 'Duplicate'
+          } );
+      // } else if (( parseInt( data.index ) != NaN ) && (bjjt_utils.isNumeric( data.index))){
+      //     server.logger.debug("helper: 2");
+      //     input_err = true;
+      //     error_detail = data.index;
+      //     res.status( 400 )
+      //       .json( {
+      //         status: 'fail',
+      //         data: error_detail,
+      //         message: 'Bad input'
+      //       } );
+      } else {
+
+          // Tech does not exist, create it
+          server.logger.debug("Doesn't exist, time to create " + name);
+
+          // "Defenses";1
+          // "Escapes";2
+          // "Submissions";3
+          // "Drills";4
+          // "Positions";5
+          // "Unbalancing";6
+          var type = parseInt( req.body.type );
+          server.logger.debug( "type:"+type);
+          if ( !bjjt_utils.isNumeric( type) || ( isNaN( type ) ) || (skilllevel < 1)) {
+            input_err = true;
+            error_detail = "type";
+          }
+
+          // "Chokes";1
+          // "Arm attacks";2
+          // "Shoulder attacks";3
+          // "Knee attacks";4
+          // "Guard";5
+          // "Takedowns and Throws";7
+          // "Sweeps";8
+          // "Side Controls";9
+          // "Mounts";10
+          // "Rear Mounts";11
+          // "Drill with Partner";12
+          // "Drill without Partner";13
+          // "Neck or back attacks";14
+          // "Ankle attacks";15
+          // "Foot attacks";16
+          // "Crushes";17
+          // "Hip and thigh attacks";18
+          // "Conditioning or Flexibility";19
+          var topic = parseInt( req.body.topic );
+          server.logger.debug( "topic:"+topic);
+          if ( !bjjt_utils.isNumeric( topic) || ( isNaN( topic ) ) || (topic < 1) ) {
+            input_err = true;
+            error_detail = "topic";
+          }
+
+          var setup = req.body.setup ;
+          server.logger.debug( "setup:"+setup);
+          if (typeof setup !== 'string' ){
+            setup = "";
+          }
+          var details = req.body.details;
+          server.logger.debug( "details:"+details);
+          if ((typeof details !== 'string')|| (details.length < 1)){
+            input_err = true;
+            error_detail = "details";
+          }
+          var credit = req.body.credit;
+          server.logger.debug( "credit:"+credit);
+          if (typeof credit !== 'string' ){
+            credit = "";
+          }
+
+          // "Gi only";1
+          // "No-gi only";2
+          // "Either Gi or No-gi";3
+          // "MMA";4
+          var sport =parseInt( req.body.sport );
+          server.logger.debug( "sport:"+sport);
+          if ( !bjjt_utils.isNumeric( sport) || ( isNaN( sport ) ) || (sport < 1)) {
+            sport = sports.Either;
+
+          }
+          // "Guard";1
+          // "Half Guard";2
+          // "Side Control";3
+          // "Mount";4
+          // "Standing or standing inside guard";5
+          // "Lying on back";6
+          // "On all fours or Sprawling";7
+          // "Kneeling or kneeling inside guard";8
+          // "Turtle";9
+          // "North-South";10
+          // "Seated";11
+          // "Rear Mount";12
+          // "Kesa Gatame Side";13
+          // "Reverse Kesa Side";14
+          // "Executing Submission";15
+          // "Lying on Stomach";16
+          // "N/A";17
+          var startingpos =parseInt( req.body.startingpos );
+          if ( !bjjt_utils.isNumeric( startingpos) || ( isNaN( startingpos ) )|| (startingpos < 1) ) {
+            startingpos = positions.NotAssigned;
+          }
+          server.logger.debug( "startingpos:"+startingpos);
+
+          // We don't require this
+          var endingpos =parseInt( req.body.endingpos );
+          if ( !bjjt_utils.isNumeric( endingpos) || ( isNaN( endingpos ) ) || (endingpos < 1)) {
+            endingpos = positions.NotAssigned;
+          }
+          server.logger.debug( "endingpos:"+endingpos);
+
+          // We don't require this
+          var imageurl = "";
+          var numimages =parseInt( req.body.numimages );
+          if ( !bjjt_utils.isNumeric( numimages) || ( isNaN( numimages ) ) || (numimages < 0)) {
+            numimages = 0;
+          } else {
+            if (numimages > 0){
+              // Don't even attempt imageurl if numimages not set
+              imageurl = req.body.imageurl
+              if ((typeof imageurl !== 'string') || (imageurl.length < 1)){
+                input_err = true;
+                error_detail = "imageurl";
+             }
+           }
+          }
+          // We don't require this
+          var videoid = req.body.videoid;
+
+          // We don't require this
+          var opponentstartingpos =parseInt( req.body.opponentstartingpos );
+          if ( !bjjt_utils.isNumeric( opponentstartingpos) || ( isNaN( opponentstartingpos ) ) || (opponentstartingpos < 0) ) {
+            opponentstartingpos = positions.NotAssigned;
+          }
+          server.logger.debug( "opponentstartingpos:"+opponentstartingpos);
+
+          // 1: beginner, 2: intermed, 3: adv
+          var skilllevel = parseInt( req.body.skilllevel );
+          if ( !bjjt_utils.isNumeric( skilllevel) || ( isNaN( skilllevel ) ) || (skilllevel < 0) ) {
+            skilllevel = 1;
+          }
+
+          var rating = 0;
+          var ratings = 0;
+
+          if (input_err === true){
+            server.logger.debug( "error_detail:"+error_detail);
+
+            res.status( 400 )
+              .json( {
+                status: 'fail',
+                data: error_detail,
+                message: 'Bad input'
+              } );
+          } else {
+            // A mixed example for a dynamic column list:
+            // const columns = ['type', 'topic', 'name', 'setup', 'details', 'credit', 'sport', 'startingpos', 'endingpos',
+            // 'imageurl', 'numimages', 'videoid', 'opponentstartingpos', 'skilllevel', 'lastteachdate', 'rating', 'ratings'];
+            // db.query('INSERT INTO ${table~}(${columns^}) VALUES(${type}, ${topic}, ${name}, ${setup}, ${details}, ${credit}, NEXTVAL('technique_id_seq'), ${sport}, ${startingpos}, ${endingpos}, ${imageurl}, ${numimages}, ${videoid}, ${opponentstartingpos}, ${skilllevel}, CURRENT_TIMESTAMP, ${rating}, ${ratings) RETURNING id', {
+            //     table: 'technique',
+            //     columns: columns.map(pgp.as.name).join(),
+            // });
+            var strSQL = "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings) " +
+                    "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, $15, $16) " +
+                    "RETURNING index";
+            server.logger.debug( "strSQL:"+strSQL);
+            db.one(
+                strSQL,
+                [type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, rating, ratings])
+              .then( function( data) {
+                res.status( 200 )
+                  .json( {
+                    status: 'success',
+                    data: data.index,
+                    message: 'Inserted one tech: ' + name
+                  } );
+              } )
+              .catch( function( err ) {
+                server.logger.debug( "catch:"+err);
+                return next( err );
+              } );
+            }
+
+
+
+        }
+
+    })
     .catch( function( err ) {
       return next( err );
     } );
+  }
 }
 
 function removeTech( req, res, next ) {

@@ -26,6 +26,7 @@ var bjjt_utils = require( '../bjjt_utils' );
 module.exports = {
   getIndex: getIndex,
   getHeader: getHeader,
+  newTech: newTech,
   getAllTech: getAllTech,
   getTechFromStr: getTechFromStr,
   getTech: getTech
@@ -36,7 +37,7 @@ module.exports = {
 function getIndex( req, res ) {
   var api_url = getAPI(req);
   var root_url = getRoot(req);
-  request( api_url + 'tech/topics', function( error, response, body ) {
+  request( api_url + 'tech/topicsextended', function( error, response, body ) {
     if ( !error && response.statusCode == 200 ) {
       req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
       res.render( 'pages/index', {
@@ -62,9 +63,61 @@ function getAllTech( req, res ) {
   var root_url = getRoot(req);
   res.render( 'pages/getalltech',{
     api_url: api_url,
-    root_url: root_url,
+    root_url: root_url
   });
 };
+
+function newTech( req, res ) {
+  var api_url = getAPI(req);
+  var root_url = getRoot(req);
+
+  request( api_url + 'tech/topics', function( error, response, topics ) {
+    if ( !error && response.statusCode == 200 ) {
+      req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+      request( api_url + 'tech/levels', function( error, response, levels ) {
+        if ( !error && response.statusCode == 200 ) {
+          req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+
+
+          request( api_url + 'tech/sports', function( error, response, sports ) {
+            if ( !error && response.statusCode == 200 ) {
+              req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+
+
+              request( api_url + 'tech/positions', function( error, response, positions ) {
+                if ( !error && response.statusCode == 200 ) {
+                  req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+
+                  request( api_url + 'tech/types', function( error, response, types ) {
+                    if ( !error && response.statusCode == 200 ) {
+                      req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+                      res.render( 'pages/newtech', {
+                        api_url: api_url,
+                        root_url: root_url,
+                        topics: topics,
+                        levels: levels,
+                        sports: sports,
+                        positions: positions,
+                        types: types
+                      } );
+                    }
+                  } )
+                }
+              } )
+            }
+          } )
+        }
+      } )
+    }
+  } )
+
+};
+
 
 function getTech( req, res ) {
   var api_url = getAPI(req);

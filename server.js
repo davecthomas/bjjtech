@@ -37,10 +37,11 @@ module.exports = {
 }
 
 // For JSON parsing
+app.use( bodyParser.json() );
 app.use( bodyParser.urlencoded( {
   extended: true
 } ) );
-app.use( bodyParser.json() );
+
 
 // For logging
 app.use( morgan( 'combined', {
@@ -79,6 +80,8 @@ router.get( '/index', root.getIndex );
 router.get( '/hdr', root.getHeader );
 router.get( '/tech/:id', root.getTech ); // support /tech/86
 router.get( '/tech', root.getTech ); // support query parameter for old version (/tech?id=86)
+// Important! If you try to make this tech/new, it interprets the "new" as a techniqueID and calls the wrong url
+router.get( '/technew', root.newTech );
 // http://bjjtech.com/tech/tech-detail.asp?id=387
 router.get( '/tech/tech-detail.asp', root.getTech ); // Attempt compatibility with old url format
 router.get( '/tech/text/:str', root.getTechFromStr );
@@ -87,11 +90,17 @@ router.get( '/tech/text/:str', root.getTechFromStr );
 var db = require( './routes/queries' ); // queries.js has our DB logic
 
 router.get( '/api/tech/all', db.getAllTech );
+router.get( '/api/tech/topicsextended', db.getAllTopicsExtended );
+router.get( '/api/tech/types', db.getAllTypes );
 router.get( '/api/tech/topics', db.getAllTopics );
+router.get( '/api/tech/sports', db.getAllSports );
+router.get( '/api/tech/levels', db.getAllLevels );
+router.get( '/api/tech/positions', db.getAllPositions );
 router.get( '/api/tech/topic/:id', db.getAllTechInTopic );
 router.get( '/api/tech/:id', db.getTech ); // support new style /api/tech/86
 router.get( '/api/tech', db.getTech ); // support query parameter for old version (/api/tech?id=86)
-router.post( '/api/tech/new', db.createTech ); // support query parameter for old version (/api/tech?id=86)
+router.post( '/api/tech/new', db.createTech );
+//router.get( '/api/tech/name/:name', db.getTechByName );
 router.get( '/api/tech/brief/:id', db.getTechBrief );
 router.get( '/api/tech/text/:str', db.getTechFromStr );
 router.get( '/api/tech/tag/:tag/:id', db.getTechsFromTag );
@@ -99,6 +108,7 @@ router.get( '/api/tech/tag/:tag/:id', db.getTechsFromTag );
 // router.put('/api/tech/:id', db.updateTech);
 // router.delete('/api/tech/:id', db.removeTech);
 
+// Next line provides support for root url. Without this, you get a "Cannot get /" error at site root.
 app.use( '/', router );
 
 // Our app local object

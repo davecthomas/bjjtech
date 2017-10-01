@@ -264,6 +264,11 @@ ul.no-list-float li {
     /*overflow-x: scroll;*/
     max-height: 77vh;
 }
+.content-panel-darker{
+  background-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(255,255,255, 1);
+}
 .content-panel-left {
     background-color: rgba(255, 255, 255, 0.8);
     color: rgba(0, 0, 0, 1);
@@ -303,6 +308,20 @@ ul.no-list-float li {
     /*overflow-y: scroll;*/
     /*overflow-x: scroll;*/
 }
+.bjjt_expand_chevron {
+    font-size: 1.25rem;
+    color: white;
+    background: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    text-shadow: 0 0 0.3em rgba(0, 0, 0, 0.45), 0 0 0.3em rgba(0, 0, 0, 0.5), 0 0 0.3em rgba(0, 0, 0, 0.5);
+}
+.bjjt_expand_chevron:hover {
+  color: rgba(0, 0, 0, 1);
+  cursor: pointer;
+}
+.bjjt_expand_section{
+  display: none;
+}
 .list-group-item {
     background-color: rgba(255, 255, 255, 0);
     color: rgba(0, 0, 0, 1);
@@ -316,10 +335,25 @@ ul.no-list-float li {
 .list-group-item:active,.list-group-item:focus {
   background-color: rgba(255, 255, 255, 0);
   color: rgba(0, 0, 0, 1);
-    text-decoration: none !important;
+  text-decoration: none !important;
+}
+.select-group-item {
+  font-size: 1.25rem;
+  background-color: rgba(0, 0, 0, .1);
+  color: rgba(0, 0, 0, 1);
+  text-decoration: none;
+}
+.select-group-item:hover {
+  background-color: rgba(0, 0, 0, 1);
+  color: rgba(255, 255, 255, 1);
+  text-decoration: none;
+}
+.select-group-item:active,.select-group-item:focus {
+  background-color: rgba(255, 255, 255, 0);
+  text-decoration: none !important;
 }
 .bjjt {
-    display: none;
+  display: none;
 }
 .bjjt_button_parent {
     /*position: absolute;*/
@@ -586,6 +620,22 @@ ul.no-list-float li {
 .bjjt_share_logo{
   font-size: x-small;
   font-family: 'Campton', sans-serif;
+}
+
+.bjjt_title {
+  font-size: xx-large;
+}
+.bjjt_input_prompt {
+  font-size: x-large;
+}
+.bjjt_input {
+  font-size: large;
+  border-radius: .25rem;
+  border-width: 0;
+}
+.bjjt_right_edge{
+  float: right;
+
 }
 
 /*This is for the clickable tags embedded in text.*/
