@@ -99,6 +99,7 @@ router.get( '/api/tech/positions', db.getAllPositions );
 router.get( '/api/tech/topic/:id', db.getAllTechInTopic );
 router.get( '/api/tech/:id', db.getTech ); // support new style /api/tech/86
 router.get( '/api/tech', db.getTech ); // support query parameter for old version (/api/tech?id=86)
+router.get( '/api/tech/related/:id', db.getTechRelated ); 
 router.post( '/api/tech/new', db.createTech );
 //router.get( '/api/tech/name/:name', db.getTechByName );
 router.get( '/api/tech/brief/:id', db.getTechBrief );

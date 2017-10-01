@@ -2,7 +2,7 @@
 var title = ": Technique";
 %>
 <% include ../partials/top %>
-
+<script src="/public/js/bjjt_gettech.js"></script>
 <div class="container-fluid">
     <row>
 <%
@@ -99,8 +99,9 @@ function escapeQuotes( str ) {
 %>
                   img_array[<%= i %>] = '<%- tech_detail.imageurl + '-' + (parseInt(i+1)) +'.jpg' %>';
 <%                } %>
+
                   </script>
-                  <script src="/public/js/bjjt_gettech.js"></script>
+                  <script src="/public/js/bjjt_images.js"></script>
 <%                }  else {
 %>
                      <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div>
@@ -150,6 +151,9 @@ function escapeQuotes( str ) {
             You will start in in the&nbsp;<%- tech_detail.position_name.toLowerCase() %>&nbsp;position.&nbsp;
           <%
           }
+          if (tech_detail.credit){%>
+          <%
+          }
           // "numimages": null,
           if (tech_detail.setup) { %>
             <h4>Setup: The Initial Situation</h4><p><%- tech_detail.setup %></p>
@@ -165,6 +169,15 @@ function escapeQuotes( str ) {
 %>
             <div class="content-panel-detail">
                <h4>Steps</h4><p><%- details %></p>
+            </div>
+<%
+          }
+          if (tech.data.numrelated > 0) {
+%>
+            <div class="content-panel-detail">
+               <span class="bjjt_section_header">Related Techniques</span>&nbsp;<span id="getTechRelated" data-id="<%- tech_detail.index%>" class="bjjt_chiclet bjjt_chiclet-primary"><%- tech.data.numrelated%></span>
+               <div class=" bjjt_expand_section" id="related-expand-section">
+               </div>
             </div>
 <%
           }

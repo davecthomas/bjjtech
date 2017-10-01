@@ -1,47 +1,55 @@
-$( "#bjjt_image_img" ).attr( "src", img_array[ current_image ] );
-var txt = '<span class="fa-stack fa-3x bjj_image_num">' +
-  '<i class="fa fa-circle-o fa-stack-2x"></i>' +
-  '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt( current_image + 1 ) +
-  '</span></strong>' +
-  '</span>';
-$( '#img_text_fa_imgnum' ).append( txt );
 
-$( ".bjjt_image_chevron_left" ).on( 'click', function() {
-  if ( ( current_image - 1 ) > -1 ) {
-    $( '#bjjt_image_class_swapper_right' ).removeClass( "bjjt_image_chevron_disabled" );
-    current_image--;
-    if ( current_image == 0 ) {
-      $( '#bjjt_image_class_swapper_left' ).addClass( "bjjt_image_chevron_disabled" );
-    }
-    $( "#bjjt_image_img" ).attr( "src", img_array[ current_image ] );
-    var txt = '<span class="fa-stack fa-3x bjj_image_num">' +
-      '<i class="fa fa-circle-o fa-stack-2x"></i>' +
-      '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt( current_image + 1 ) +
-      '</span></strong>' +
-      '</span>';
-    $( '#img_text_fa_imgnum' ).empty();
-    $( '#img_text_fa_imgnum' ).append( txt );
-  } else {
-    $( '#bjjt_image_class_swapper_left' ).addClass( "bjjt_image_chevron_disabled" );
+
+$( document ).ready( function() {
+
+  function toggleShow( section){
+    $('#'+section+'-expand-section').css('display','inline');
+
   }
 
-} );
-$( ".bjjt_image_chevron_right" ).on( 'click', function() {
-  if ( ( current_image ) < ( numimages - 1 ) ) {
-    $( '#bjjt_image_class_swapper_left' ).removeClass( "bjjt_image_chevron_disabled" );
-    current_image++;
-    if ( current_image == ( numimages - 1 ) ) {
-      $( '#bjjt_image_class_swapper_right' ).addClass( "bjjt_image_chevron_disabled" );
-    }
-    $( "#bjjt_image_img" ).attr( "src", img_array[ current_image ] );
-    var txt = '<span class="fa-stack fa-3x bjj_image_num">' +
-      '<i class="fa fa-circle-o fa-stack-2x"></i>' +
-      '<strong class="fa-stack-1x"><span id="bjjt_image_num_fa">' + parseInt( current_image + 1 ) +
-      '</span></strong>' +
-      '</span>';
-    $( '#img_text_fa_imgnum' ).empty();
-    $( '#img_text_fa_imgnum' ).append( txt );
-  } else {
-    $( '#bjjt_image_class_swapper_right' ).addClass( "bjjt_image_chevron_disabled" );
+  function toggleHide( section){
+    $('#'+section+'-expand-section').css('display','none');
+
   }
+
+  function toggleSection( section, relateds){
+    if ($('#'+section+'-expand-section').css('display') == 'none'){
+      var numrelateds = relateds.length;
+      var relatedlist = "";
+      if (numrelateds > 0){
+        for(i = 0; i < numrelateds; i++){
+          relatedlist += `<a href="#" class="list-group-item select-group-item related-group-item" id="`+relateds[i].related+`" data-listindex="`+i+`" data-id="`+relateds[i].related+`" data-tag="relatedtechnique">`+relateds[i].name+`</a>`;
+        }
+        $("#related-expand-section").html(relatedlist);
+      }
+      toggleShow(section);
+    } else {
+      toggleHide(section);
+    }
+  }
+
+  $( document ).on( 'click', '.related-group-item', function() {
+    var id = $( this ).attr( 'data-id' );
+    window.location = root_url + "tech/" + id;
+  } );
+
+  // Get related techniques
+  $( document ).on( 'click', '#getTechRelated', function() {
+    var id = $( '#getTechRelated' ).attr( 'data-id');
+
+    $.ajax( {
+      url: api_url + "tech/related/"+id,
+      success: function( result ) {
+          if ( result.status === 'success' ) {;
+            toggleSection('related', result.data);
+
+          } else {
+            alert( result.message)
+          }
+        }
+    } );
+
+    return false;
+  } );
+
 } );

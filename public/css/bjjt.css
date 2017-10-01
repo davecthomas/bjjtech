@@ -352,6 +352,132 @@ ul.no-list-float li {
   background-color: rgba(255, 255, 255, 0);
   text-decoration: none !important;
 }
+/* This is taken from Bootstrap 4 alpha. When I tried to test V4 Alpha, everything broke
+   So, instead of fixing everything, I'm just taking what I want: badges. */
+   .bjjt_chiclet {
+     display: inline-block;
+     padding: 0.25em 0.4em;
+     font-size: x-large;
+     font-weight:500;
+     line-height: 1;
+     color: #fff;
+     text-align: center;
+     white-space: nowrap;
+     vertical-align: baseline;
+     border-radius: 0.5rem;
+   }
+
+   .bjjt_chiclet:empty {
+     display: none;
+   }
+
+   .btn .bjjt_chiclet {
+     position: relative;
+     top: -1px;
+   }
+
+   .bjjt_chiclet-pill {
+     padding-right: 0.6em;
+     padding-left: 0.6em;
+     border-radius: 10rem;
+   }
+
+   .bjjt_chiclet-primary {
+     color: #fff;
+     background-color: rgba( 0, 0, 0, .4);
+   }
+
+   .bjjt_chiclet-primary:focus, .bjjt_chiclet-primary:hover {
+     color: #000;
+     text-decoration: none;
+     border-width: 0;
+     background-color: #007bff;
+   }
+
+   .-secondary {
+     color: #fff;
+     background-color: #868e96;
+   }
+
+   .bjjt_chiclet-secondary[href]:focus, .bjjt_chiclet-secondary[href]:hover {
+     color: #fff;
+     text-decoration: none;
+     background-color: #6c757d;
+   }
+
+   .bjjt_chiclet-success {
+     color: #fff;
+     background-color: #28a745;
+   }
+
+   .bjjt_chiclet-success[href]:focus, .bjjt_chiclet-success[href]:hover {
+     color: #fff;
+     text-decoration: none;
+     background-color: #1e7e34;
+   }
+
+   .bjjt_chiclet-info {
+     color: #fff;
+     background-color: #17a2b8;
+   }
+
+   .bjjt_chiclet-info[href]:focus, .bjjt_chiclet-info[href]:hover {
+     color: #fff;
+     text-decoration: none;
+     background-color: #117a8b;
+   }
+
+   .bjjt_chiclet-warning {
+     color: #111;
+     background-color: #ffc107;
+   }
+
+   .bjjt_chiclet-warning[href]:focus, .bjjt_chiclet-warning[href]:hover {
+     color: #111;
+     text-decoration: none;
+     background-color: #d39e00;
+   }
+
+   .bjjt_chiclet-danger {
+     color: #fff;
+     background-color: #dc3545;
+   }
+
+   .bjjt_chiclet-danger[href]:focus, .bjjt_chiclet-danger[href]:hover {
+     color: #fff;
+     text-decoration: none;
+     background-color: #bd2130;
+   }
+
+   .bjjt_chiclet-light {
+     color: #111;
+     background-color: #f8f9fa;
+   }
+
+   .bjjt_chiclet-light[href]:focus, .bjjt_chiclet-light[href]:hover {
+     color: #111;
+     text-decoration: none;
+     background-color: #dae0e5;
+   }
+
+   .bjjt_chiclet-dark {
+     color: #fff;
+     background-color: #343a40;
+   }
+
+   .bjjt_chiclet-dark[href]:focus, .bjjt_chiclet-dark[href]:hover {
+     color: #fff;
+     text-decoration: none;
+     background-color: #1d2124;
+   }
+
+/* Hide related techniques section by default (gettech) */
+#related-expand-section{
+  display: none;
+}
+
+
+
 .bjjt {
   display: none;
 }
@@ -636,6 +762,10 @@ ul.no-list-float li {
 .bjjt_right_edge{
   float: right;
 
+}
+.bjjt_section_header{
+  font-size: x-large;
+  font-weight:500;
 }
 
 /*This is for the clickable tags embedded in text.*/

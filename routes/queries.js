@@ -96,6 +96,7 @@ module.exports = {
 
   getTechBrief: getTechBrief,
   getTech: getTech,
+  getTechRelated: getTechRelated,
   createTech: createTech,
   getTechsFromTag: getTechsFromTag
 
@@ -316,18 +317,20 @@ function getTech( req, res, next ) {
     techniqueID = parseInt( req.query.id );
   }
   var strSQL =
-    "SELECT technique.*, technique.index AS technique_id, techniquetype.techniquetype AS techniquetype_techniquetype, " +
-    "positionnames.positionname AS position_name, " +
-    "sport.sport AS sport_sport, topic.topic AS topic_topic , skilllevel.levelname AS level_name FROM " +
-    "topic INNER JOIN (" +
-    "positionnames INNER JOIN (" +
-    "skilllevel INNER JOIN (" +
-    "sport INNER JOIN (" +
-    "techniquetype INNER JOIN technique ON techniquetype.index = technique.type) " +
-    "ON sport.index = technique.sport) " +
-    "ON skilllevel.index = technique.skilllevel)" +
-    "ON positionnames.index = technique.startingpos) " +
-    "ON topic.index = technique.topic WHERE technique.index = $1";
+    `SELECT * FROM (SELECT technique.*, technique.index AS technique_id, techniquetype.techniquetype AS techniquetype_techniquetype,
+    positionnames.positionname AS position_name,
+    sport.sport AS sport_sport, topic.topic AS topic_topic , skilllevel.levelname AS level_name FROM
+    topic INNER JOIN (
+    positionnames INNER JOIN (
+    skilllevel INNER JOIN (
+    sport INNER JOIN (
+    techniquetype INNER JOIN
+    technique ON techniquetype.index = technique.type)
+    ON sport.index = technique.sport)
+    ON skilllevel.index = technique.skilllevel)
+    ON positionnames.index = technique.startingpos)
+    ON topic.index = technique.topic WHERE technique.index = $1) t
+    CROSS JOIN (SELECT COUNT(relatedtechnique.techniquerelated) as numrelated from relatedtechnique where relatedtechnique.technique = $1) c`;
 
   // strSQL = "select * from technique where index = $1";
   db.one( strSQL, techniqueID )
@@ -337,6 +340,29 @@ function getTech( req, res, next ) {
           status: 'success',
           data: data,
           message: 'Retrieved ONE tech'
+        } );
+    } )
+    .catch( function( err ) {
+      return next( err );
+    } );
+}
+
+function getTechRelated( req, res, next ) {
+  var id = req.params.id;
+
+  db.any(
+      // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
+      `SELECT technique.index AS related, technique.name, relatedtechnique.techniquerelated as technique_id
+        FROM relatedtechnique, technique
+        WHERE relatedtechnique.technique = $1 and technique.index = relatedtechnique.techniquerelated`,
+      id )
+    .then( function( data ) {
+      res.status( 200 )
+        .json( {
+          status: 'success',
+          data: data,
+          id: id,
+          message: 'Retrieved techs related to: ' + id
         } );
     } )
     .catch( function( err ) {
