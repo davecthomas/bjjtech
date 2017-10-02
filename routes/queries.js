@@ -2,39 +2,80 @@
 var server = require( '../server' );
 var bluebird = require( 'bluebird' );
 var bjjt_utils = require( '../bjjt_utils' );
+var speakeasy = require("speakeasy");
+var qrcode = require("qrcode");
 var options = {
   // Initialization Options
   promiseLib: bluebird
 };
 
-// "Guard";1
-// "Half Guard";2
-// "Side Control";3
-// "Mount";4
-// "Standing or standing inside guard";5
-// "Lying on back";6
-// "On all fours or Sprawling";7
-// "Kneeling or kneeling inside guard";8
-// "Turtle";9
-// "North-South";10
-// "Seated";11
-// "Rear Mount";12
-// "Kesa Gatame Side";13
-// "Reverse Kesa Side";14
-// "Executing Submission";15
-// "Lying on Stomach";16
-// "N/A";17
+var types =  {
+  Undefined: 0,
+  Defenses: 1,
+  Escapes: 2,
+  Submissions:  3,
+  Drills: 4,
+  Positions: 5,
+  Unbalancing: 6
+};
+
+
 var positions = {
+  Undefined: 0,
+  Guard: 1,
+  HalfGuard: 2,
+  SideControl: 3,
+  Mount: 4,
+  Standingorstandinginsideguard: 5,
+  Lyingonback: 6,
+  OnallfoursorSprawling: 7,
+  Kneeling: 8,
+  Turtle: 9,
+  NorthSouth: 10,
+  Seated: 11,
+  RearMount: 12,
+  KesaGatameSide: 13,
+  ReverseKesaSide: 14,
+  ExecutingSubmission: 15,
+  LyingonStomach: 16,
   NotAssigned: 17
-}
+};
+
+var topics = {
+  Undefined: 0,
+  Chokes: 1,
+  Armattacks: 2,
+  Shoulderattacks: 3,
+  Kneeattacks: 4,
+  Guard: 5,
+  TakedownsandThrows: 7,
+  Sweeps: 8,
+  SideControls: 9,
+  Mounts: 10,
+  RearMounts: 11,
+  DrillwithPartner: 12,
+  DrillwithoutPartner: 13,
+  Neckorbackattacks: 14,
+  Ankleattacks: 15,
+  Footattacks: 16,
+  Crushes: 17,
+  Hipandthighattacks: 18,
+  ConditioningFlexibility: 19
+};
 
 // "Gi only";1
 // "No-gi only";2
 // "Either Gi or No-gi";3
 // "MMA";4
 var sports = {
+  Undefined: 0,
   Either: 3
-}
+};
+
+var levels = {
+  Undefined: 0
+};
+
 // Recommended by pg-promise guy:
 // https://stackoverflow.com/questions/36120435/verify-database-connection-with-pg-promise-when-starting-an-app
 const initOptions = {
@@ -98,12 +139,40 @@ module.exports = {
   getTech: getTech,
   getTechRelated: getTechRelated,
   createTech: createTech,
+  updateTech: updateTech,
   getTechsFromTag: getTechsFromTag
 
-    // updateTech: updateTech,
     // removeTech: removeTech
 
 };
+
+// This should be used to generate new secrets for registering users, eventually.
+// It would take a user email address.
+function generate2FASecret( user_email){
+  // Generate a secret, if needed
+  var secret = speakeasy.generateSecret();
+
+  // Use otpauthURL() to get a custom authentication URL for SHA512
+  var url = speakeasy.otpauthURL(
+          {
+            secret: secret.ascii,
+            label: user_email,
+            issuer: 'bjjtech.com'
+          });
+  qrcode.toDataURL(url, function(err, data_url) {
+  console.log(data_url); // get QR code data URL
+  });
+  qrcode.toFile("qr5.png",url, function (err) {
+      if (err) throw err;
+      console.log('done');
+  });
+  var ret =
+        {
+          secret: secret.ascii,
+          url: url
+        };
+  return ret;
+}
 
 function getAllTech( req, res, next ) {
   // server.logger.debug('getalltech')
@@ -427,21 +496,163 @@ function getTechsFromTag( req, res, next ) {
 
 
 function updateTech( req, res, next ) {
-  db.none(
-      'update technique set type=$1, topic=$2, name=$3, setup=$4, details=$5, credit=$6, sport=$7 , startingpos=$8 , endingpos=$9 , opponentstartingpos=$10, skilllevel=$11, lastteachdate=$12 where index=$5', [
-        req.body.name, req.body.breed, parseInt( req.body.age ),
-        req.body.sex, parseInt( req.params.index )
-      ] )
-    .then( function() {
-      res.status( 200 )
-        .json( {
-          status: 'success',
-          message: 'Updated technique'
+  server.logger.debug("updateTech "+ JSON.stringify(req.body));
+  var input_err = false;
+  var error_detail = "";
+
+  // twofactor is required
+  var twofactor = parseInt( req.body.twofactor );
+  if ( !bjjt_utils.isNumeric( twofactor) || ( isNaN( twofactor ) ) || (twofactor < 1)) {
+    input_err = true;
+    error_detail = "twofactor";
+  }
+
+  // Type is required
+  var index = parseInt( req.body.index );
+  if ( !bjjt_utils.isNumeric( index) || ( isNaN( index ) ) || (index < 1)) {
+    input_err = true;
+    error_detail = "index";
+  }
+
+  // Name is required
+  var name = req.body.name ;
+  if ((typeof name !== 'string' ) || (name.length < 1)){
+    input_err = true;
+    error_detail = "name";
+  }
+
+  // Type is required
+  var type = parseInt( req.body.type );
+  if ( !bjjt_utils.isNumeric( type) || ( isNaN( type ) ) || (type < 1)) {
+    input_err = true;
+    error_detail = "type";
+  }
+
+  // Required
+  var topic = parseInt( req.body.topic );
+  if ( !bjjt_utils.isNumeric( topic) || ( isNaN( topic ) ) || (topic < 1) ) {
+    input_err = true;
+    error_detail = "topic";
+  }
+
+  // Not required
+  var setup = req.body.setup ;
+  if (typeof setup !== 'string' ){
+    setup = "";
+  }
+  // Required
+  var details = req.body.details;
+  if ((typeof details !== 'string')|| (details.length < 1)){
+    input_err = true;
+    error_detail = "details";
+  }
+
+  // Not required
+  var credit = req.body.credit;
+  if (typeof credit !== 'string' ){
+    credit = "";
+  }
+
+  // Default if not set
+  var sport =parseInt( req.body.sport );
+  if ( !bjjt_utils.isNumeric( sport) || ( isNaN( sport ) ) || (sport < 1)) {
+    sport = sports.Either;
+
+  }
+
+  var startingpos =parseInt( req.body.startingpos );
+  if ( !bjjt_utils.isNumeric( startingpos) || ( isNaN( startingpos ) )|| (startingpos < 1) ) {
+    startingpos = positions.NotAssigned;
+  }
+
+  // We don't require this
+  var endingpos =parseInt( req.body.endingpos );
+  if ( !bjjt_utils.isNumeric( endingpos) || ( isNaN( endingpos ) ) || (endingpos < 1)) {
+    endingpos = positions.NotAssigned;
+  }
+
+  // We don't require this
+  var imageurl = "";
+  var numimages =parseInt( req.body.numimages );
+  if ( !bjjt_utils.isNumeric( numimages) || ( isNaN( numimages ) ) || (numimages < 0)) {
+    numimages = 0;
+  } else {
+    if (numimages > 0){
+      // Don't even attempt imageurl if numimages not set
+      imageurl = req.body.imageurl
+      if ((typeof imageurl !== 'string') || (imageurl.length < 1)){
+        input_err = true;
+        error_detail = "imageurl";
+     }
+   }
+  }
+  // We don't require this
+  var videoid = req.body.videoid;
+  if (typeof videoid !== 'string' ){
+    credit = "";
+  }
+  // We don't require this
+  var opponentstartingpos =parseInt( req.body.opponentstartingpos );
+  if ( !bjjt_utils.isNumeric( opponentstartingpos) || ( isNaN( opponentstartingpos ) ) || (opponentstartingpos < 0) ) {
+    opponentstartingpos = positions.NotAssigned;
+  }
+
+  // 1: beginner, 2: intermed, 3: adv
+  var skilllevel = parseInt( req.body.skilllevel );
+  if ( !bjjt_utils.isNumeric( skilllevel) || ( isNaN( skilllevel ) ) || (skilllevel < 0) ) {
+    skilllevel = 1;
+  }
+
+  // Not implemented
+  var rating = 0;
+  var ratings = 0;
+
+  if (input_err === true){
+    server.logger.debug( "error_detail:"+error_detail);
+
+    res.status( 400 )
+      .json( {
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      } );
+  } else {
+
+    // Check 2FA code before we Save
+    // See private doc for URL of verify
+    // Verify a given token
+    if (speakeasy.totp.verify({
+          secret: 'IYVDQXKGM5RFWXLTPFBXQMD2JF5XUJKWK42GMKC3KBNES2KQFQ7Q',
+          encoding: 'ascii',
+          token: twofactor})) {
+      var strSQL = `update technique
+                    set type=$1, topic=$2, name=$3, setup=$4, details=$5, credit=$6, sport=$7 ,
+                    startingpos=$8 , endingpos=$9 , opponentstartingpos=$10, skilllevel=$11, imageurl=$12, numimages=$13 , videoid=$14  where index=$15`;
+      db.none(
+          strSQL,
+          [type, topic, name, setup, details, credit, sport, startingpos, endingpos, opponentstartingpos, skilllevel, imageurl, numimages, videoid, index])
+        .then( function( data) {
+          res.status( 200 )
+            .json( {
+              status: 'success',
+              message: 'Updated tech: ' + name,
+              twofactor: twofactor
+            } );
+        } )
+        .catch( function( err ) {
+          server.logger.debug( "catch:"+err);
+          return next( err );
         } );
-    } )
-    .catch( function( err ) {
-      return next( err );
-    } );
+      } else {
+//        var tfa = generate2FASecret( "davidcthomas@gmail.com");
+        res.status( 400 )
+          .json( {
+            status: 'fail',
+//            data: tfa,
+            message: 'auth'
+          } );
+      }
+    }
 }
 
 function createTech( req, res, next ) {
@@ -460,10 +671,7 @@ function createTech( req, res, next ) {
         message: 'Bad input'
       } );
   } else {
-    server.logger.debug("dbone=" + name);
-
-
-  db.oneOrNone(
+    db.oneOrNone(
       // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
       "SELECT index from technique WHERE name ilike $1",
       name )
@@ -478,115 +686,55 @@ function createTech( req, res, next ) {
             data: error_detail,
             message: 'Duplicate'
           } );
-      // } else if (( parseInt( data.index ) != NaN ) && (bjjt_utils.isNumeric( data.index))){
-      //     server.logger.debug("helper: 2");
-      //     input_err = true;
-      //     error_detail = data.index;
-      //     res.status( 400 )
-      //       .json( {
-      //         status: 'fail',
-      //         data: error_detail,
-      //         message: 'Bad input'
-      //       } );
+
       } else {
 
           // Tech does not exist, create it
           server.logger.debug("Doesn't exist, time to create " + name);
 
-          // "Defenses";1
-          // "Escapes";2
-          // "Submissions";3
-          // "Drills";4
-          // "Positions";5
-          // "Unbalancing";6
           var type = parseInt( req.body.type );
-          server.logger.debug( "type:"+type);
-          if ( !bjjt_utils.isNumeric( type) || ( isNaN( type ) ) || (skilllevel < 1)) {
+          if ( !bjjt_utils.isNumeric( type) || ( isNaN( type ) ) || (type < 1)) {
             input_err = true;
             error_detail = "type";
           }
 
-          // "Chokes";1
-          // "Arm attacks";2
-          // "Shoulder attacks";3
-          // "Knee attacks";4
-          // "Guard";5
-          // "Takedowns and Throws";7
-          // "Sweeps";8
-          // "Side Controls";9
-          // "Mounts";10
-          // "Rear Mounts";11
-          // "Drill with Partner";12
-          // "Drill without Partner";13
-          // "Neck or back attacks";14
-          // "Ankle attacks";15
-          // "Foot attacks";16
-          // "Crushes";17
-          // "Hip and thigh attacks";18
-          // "Conditioning or Flexibility";19
           var topic = parseInt( req.body.topic );
-          server.logger.debug( "topic:"+topic);
           if ( !bjjt_utils.isNumeric( topic) || ( isNaN( topic ) ) || (topic < 1) ) {
             input_err = true;
             error_detail = "topic";
           }
 
           var setup = req.body.setup ;
-          server.logger.debug( "setup:"+setup);
           if (typeof setup !== 'string' ){
             setup = "";
           }
           var details = req.body.details;
-          server.logger.debug( "details:"+details);
           if ((typeof details !== 'string')|| (details.length < 1)){
             input_err = true;
             error_detail = "details";
           }
           var credit = req.body.credit;
-          server.logger.debug( "credit:"+credit);
           if (typeof credit !== 'string' ){
             credit = "";
           }
 
-          // "Gi only";1
-          // "No-gi only";2
-          // "Either Gi or No-gi";3
-          // "MMA";4
           var sport =parseInt( req.body.sport );
-          server.logger.debug( "sport:"+sport);
           if ( !bjjt_utils.isNumeric( sport) || ( isNaN( sport ) ) || (sport < 1)) {
             sport = sports.Either;
 
           }
-          // "Guard";1
-          // "Half Guard";2
-          // "Side Control";3
-          // "Mount";4
-          // "Standing or standing inside guard";5
-          // "Lying on back";6
-          // "On all fours or Sprawling";7
-          // "Kneeling or kneeling inside guard";8
-          // "Turtle";9
-          // "North-South";10
-          // "Seated";11
-          // "Rear Mount";12
-          // "Kesa Gatame Side";13
-          // "Reverse Kesa Side";14
-          // "Executing Submission";15
-          // "Lying on Stomach";16
-          // "N/A";17
+
+          // Default if not set
           var startingpos =parseInt( req.body.startingpos );
           if ( !bjjt_utils.isNumeric( startingpos) || ( isNaN( startingpos ) )|| (startingpos < 1) ) {
             startingpos = positions.NotAssigned;
           }
-          server.logger.debug( "startingpos:"+startingpos);
 
-          // We don't require this
+          // Default if not set
           var endingpos =parseInt( req.body.endingpos );
           if ( !bjjt_utils.isNumeric( endingpos) || ( isNaN( endingpos ) ) || (endingpos < 1)) {
             endingpos = positions.NotAssigned;
           }
-          server.logger.debug( "endingpos:"+endingpos);
 
           // We don't require this
           var imageurl = "";
@@ -605,13 +753,14 @@ function createTech( req, res, next ) {
           }
           // We don't require this
           var videoid = req.body.videoid;
-
+          if (typeof videoid !== 'string' ){
+            credit = "";
+          }
           // We don't require this
           var opponentstartingpos =parseInt( req.body.opponentstartingpos );
           if ( !bjjt_utils.isNumeric( opponentstartingpos) || ( isNaN( opponentstartingpos ) ) || (opponentstartingpos < 0) ) {
             opponentstartingpos = positions.NotAssigned;
           }
-          server.logger.debug( "opponentstartingpos:"+opponentstartingpos);
 
           // 1: beginner, 2: intermed, 3: adv
           var skilllevel = parseInt( req.body.skilllevel );
@@ -632,17 +781,9 @@ function createTech( req, res, next ) {
                 message: 'Bad input'
               } );
           } else {
-            // A mixed example for a dynamic column list:
-            // const columns = ['type', 'topic', 'name', 'setup', 'details', 'credit', 'sport', 'startingpos', 'endingpos',
-            // 'imageurl', 'numimages', 'videoid', 'opponentstartingpos', 'skilllevel', 'lastteachdate', 'rating', 'ratings'];
-            // db.query('INSERT INTO ${table~}(${columns^}) VALUES(${type}, ${topic}, ${name}, ${setup}, ${details}, ${credit}, NEXTVAL('technique_id_seq'), ${sport}, ${startingpos}, ${endingpos}, ${imageurl}, ${numimages}, ${videoid}, ${opponentstartingpos}, ${skilllevel}, CURRENT_TIMESTAMP, ${rating}, ${ratings) RETURNING id', {
-            //     table: 'technique',
-            //     columns: columns.map(pgp.as.name).join(),
-            // });
             var strSQL = "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings) " +
                     "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, $15, $16) " +
                     "RETURNING index";
-            server.logger.debug( "strSQL:"+strSQL);
             db.one(
                 strSQL,
                 [type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, rating, ratings])
@@ -659,11 +800,7 @@ function createTech( req, res, next ) {
                 return next( err );
               } );
             }
-
-
-
         }
-
     })
     .catch( function( err ) {
       return next( err );

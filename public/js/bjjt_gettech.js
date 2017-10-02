@@ -18,7 +18,7 @@ $( document ).ready( function() {
       var relatedlist = "";
       if (numrelateds > 0){
         for(i = 0; i < numrelateds; i++){
-          relatedlist += `<a href="#" class="list-group-item select-group-item related-group-item" id="`+relateds[i].related+`" data-listindex="`+i+`" data-id="`+relateds[i].related+`" data-tag="relatedtechnique">`+relateds[i].name+`</a>`;
+          relatedlist += '<a href="#" class="list-group-item select-group-item related-group-item" id="'+relateds[i].related+'" data-listindex="'+i+'" data-id="'+relateds[i].related+'" data-tag="relatedtechnique">'+relateds[i].name+'</a>';
         }
         $("#related-expand-section").html(relatedlist);
       }

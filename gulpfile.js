@@ -4,6 +4,7 @@ var gulp  = require('gulp');
 var gutil = require('gulp-util');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var gutil = require('gulp-util');
 var del = require('del');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
@@ -20,7 +21,7 @@ var paths = {
 
 gulp.task('scripts', function () {
     return gulp.src(paths.scripts)
-    .pipe(uglify())
+    .pipe(uglify().on('error', gutil.log))
     .pipe(gulp.dest(paths.dist_js));
 });
 
