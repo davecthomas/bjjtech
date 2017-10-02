@@ -124,7 +124,8 @@ $( document ).ready( function() {
       topic: topic,
       sport: sport,
       skilllevel: level,
-      startingpos: position
+      startingpos: position,
+      twofactor: $('#twofactor').val()
     };
 
     $.ajax( {

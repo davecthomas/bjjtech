@@ -9,6 +9,11 @@ var options = {
   promiseLib: bluebird
 };
 
+var twoFactor = {
+  secret: 'IYVDQXKGM5RFWXLTPFBXQMD2JF5XUJKWK42GMKC3KBNES2KQFQ7Q',
+  issuer: 'bjjtech.com'
+};
+
 var types =  {
   Undefined: 0,
   Defenses: 1,
@@ -157,15 +162,16 @@ function generate2FASecret( user_email){
           {
             secret: secret.ascii,
             label: user_email,
-            issuer: 'bjjtech.com'
+            issuer: twoFactor.issuer
           });
   qrcode.toDataURL(url, function(err, data_url) {
   console.log(data_url); // get QR code data URL
   });
-  qrcode.toFile("qr5.png",url, function (err) {
-      if (err) throw err;
-      console.log('done');
-  });
+  // TO DO: put this in a login page once they give you a user email address
+  // qrcode.toFile("qr5.png",url, function (err) {
+  //     if (err) throw err;
+  //     console.log('done');
+  // });
   var ret =
         {
           secret: secret.ascii,
@@ -621,10 +627,13 @@ function updateTech( req, res, next ) {
     // Check 2FA code before we Save
     // See private doc for URL of verify
     // Verify a given token
-    if (speakeasy.totp.verify({
-          secret: 'IYVDQXKGM5RFWXLTPFBXQMD2JF5XUJKWK42GMKC3KBNES2KQFQ7Q',
-          encoding: 'ascii',
-          token: twofactor})) {
+    if (speakeasy.totp.verify(
+          {
+            secret: twoFactor.secret,
+            encoding: 'base32',
+            token: twofactor,
+            window: 2
+          })) {
       var strSQL = `update technique
                     set type=$1, topic=$2, name=$3, setup=$4, details=$5, credit=$6, sport=$7 ,
                     startingpos=$8 , endingpos=$9 , opponentstartingpos=$10, skilllevel=$11, imageurl=$12, numimages=$13 , videoid=$14  where index=$15`;
@@ -688,6 +697,12 @@ function createTech( req, res, next ) {
           } );
 
       } else {
+          // twofactor is required
+          var twofactor = parseInt( req.body.twofactor );
+          if ( !bjjt_utils.isNumeric( twofactor) || ( isNaN( twofactor ) ) || (twofactor < 1)) {
+            input_err = true;
+            error_detail = "twofactor";
+          }
 
           // Tech does not exist, create it
           server.logger.debug("Doesn't exist, time to create " + name);
@@ -781,24 +796,42 @@ function createTech( req, res, next ) {
                 message: 'Bad input'
               } );
           } else {
-            var strSQL = "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings) " +
-                    "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, $15, $16) " +
-                    "RETURNING index";
-            db.one(
-                strSQL,
-                [type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, rating, ratings])
-              .then( function( data) {
-                res.status( 200 )
-                  .json( {
-                    status: 'success',
-                    data: data.index,
-                    message: 'Inserted one tech: ' + name
+            // Check 2FA code before we Save
+            // See private doc for URL of verify
+            // Verify a given token
+            if (speakeasy.totp.verify({
+                    secret: twoFactor.secret,
+                    encoding: 'base32',
+                    token: twofactor,
+                    window: 2
+              })) {
+                // server.logger.debug( "2fa good");
+                var strSQL = "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings) " +
+                        "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, $15, $16) " +
+                        "RETURNING index";
+                db.one(
+                    strSQL,
+                    [type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, rating, ratings])
+                  .then( function( data) {
+                    res.status( 200 )
+                      .json( {
+                        status: 'success',
+                        data: data.index,
+                        message: 'Inserted one tech: ' + name
+                      } );
+                  } )
+                  .catch( function( err ) {
+                    server.logger.debug( "catch:"+err);
+                    return next( err );
                   } );
-              } )
-              .catch( function( err ) {
-                server.logger.debug( "catch:"+err);
-                return next( err );
-              } );
+                } else {
+                  res.status( 400 )
+                    .json( {
+                      status: 'fail',
+                      data: twofactor,
+                      message: 'auth'
+                    } );
+                }
             }
         }
     })
