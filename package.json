@@ -20,6 +20,7 @@
     "del": "^3.0.0",
     "ejs": "^2.5.1",
     "express": "^4.14.0",
+    "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^2.0.0",
@@ -51,7 +52,6 @@
   "main": "server.js",
   "devDependencies": {
     "foreman": "1.4.1",
-    "gulp": "^3.9.1",
     "nf": "0.0.3",
     "request-debug": "^0.2.0"
   },
