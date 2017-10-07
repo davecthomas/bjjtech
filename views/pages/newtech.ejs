@@ -1,4 +1,10 @@
 <%
+// Inputs from render for update mode (not new tech)
+//  id - id, for update mode only
+//  update - true or false
+//  name - technique name, cleaned up
+//  title - doc title, cleaned up
+//
   var types = JSON.parse(types);
   var numtypes = 0;
   if (types.status === 'success'){
@@ -29,7 +35,29 @@
 
 <div class="container-fluid">
 <%
+ document_title = "New Technique";
+
+  var updateMode = false;
+  var updateID = parseInt(id);
+  var tech_detail;
   var document_title = "New Technique";
+  var tech_detail_name = "";
+
+  if ((updateID > 0) && (update)){
+   var tech = JSON.parse(response);
+   if (tech.status === 'success'){
+     updateMode = true;
+     tech_detail = tech.data; %>
+<script>
+  var update=<%-updateMode%>;
+</script>
+<div id="updateData" data-id="<%-updateID%>" data-tech='<%-response%>'></div>
+<%   if (tech_detail.name){
+        document_title = "Update: " + title;    // This escapes quotes (for document.title)
+     }
+   }
+  }
+
 %>
    <script>
    var api_url = '<%-api_url %>';
@@ -38,8 +66,8 @@
    </script>
    <script src="/public/js/bjjt_newtech.js"></script>
    <row>
-     <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title"><%- document_title%></span>
-         <button id="newtech" name="doit" class="btn btn-outline-primary bjjt_button bjjt_right_edge" data-toggle="tooltip" title="New technique" data-placement="bottom" data-id="">Save</button>
+     <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title"><%- document_title %></span>
+         <button id="newtech" name="doit" update="<%-updateMode%>" class="btn btn-outline-primary bjjt_button bjjt_right_edge" data-toggle="tooltip" title="New technique" data-placement="bottom" data-id="<%-updateID%>">Save</button>
      </div>
    </row>
 

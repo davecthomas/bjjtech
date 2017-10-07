@@ -82,6 +82,7 @@ router.get( '/tech/:id', root.getTech ); // support /tech/86
 router.get( '/tech', root.getTech ); // support query parameter for old version (/tech?id=86)
 // Important! If you try to make this tech/new, it interprets the "new" as a techniqueID and calls the wrong url
 router.get( '/technew', root.newTech );
+router.get( '/tech/update/:id', root.updateTech );
 // http://bjjtech.com/tech/tech-detail.asp?id=387
 router.get( '/tech/tech-detail.asp', root.getTech ); // Attempt compatibility with old url format
 router.get( '/tech/text/:str', root.getTechFromStr );

@@ -27,6 +27,7 @@ module.exports = {
   getIndex: getIndex,
   getHeader: getHeader,
   newTech: newTech,
+  updateTech: updateTech,
   getAllTech: getAllTech,
   getTechFromStr: getTechFromStr,
   getTech: getTech
@@ -103,7 +104,9 @@ function newTech( req, res ) {
                         levels: levels,
                         sports: sports,
                         positions: positions,
-                        types: types
+                        types: types,
+                        response: null,
+                        id: 0
                       } );
                     }
                   } )
@@ -116,6 +119,78 @@ function newTech( req, res ) {
     }
   } )
 
+};
+
+function updateTech( req, res ) {
+  req.app.locals.bjjtech.server.logger.info( 'updateTech ****************************');
+  var api_url = getAPI(req);
+  var root_url = getRoot(req);
+  var searchStr = "";
+  var techniqueID = 0; // See if this is coming from old ASP-style link ...asp?id=100
+  if ( !bjjt_utils.isNumeric( req.query.id ) || ( isNaN( req.query.id ) ) ) {
+    if ( bjjt_utils.isNumeric( req.params.id ) ) {
+      techniqueID = parseInt( req.params.id ); // Coming from new-style format
+    }
+  }
+  req.app.locals.bjjtech.server.logger.info( 'updateTech' + techniqueID);
+  request( api_url + 'tech/topics', function( error, response, topics ) {
+    if ( !error && response.statusCode == 200 ) {
+      req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+      request( api_url + 'tech/levels', function( error, response, levels ) {
+        if ( !error && response.statusCode == 200 ) {
+          req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+
+
+          request( api_url + 'tech/sports', function( error, response, sports ) {
+            if ( !error && response.statusCode == 200 ) {
+              req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+
+
+              request( api_url + 'tech/positions', function( error, response, positions ) {
+                if ( !error && response.statusCode == 200 ) {
+                  req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+
+                  request( api_url + 'tech/types', function( error, response, types ) {
+                    if ( !error && response.statusCode == 200 ) {
+                      req.app.locals.bjjtech.server.logger.info( 'Response' + response.statusCode);
+
+                      request( api_url + 'tech/' + techniqueID, function( error, response, body ) {
+                        if ( !error && response.statusCode == 200 ) {
+                          // Once we render a page, we don't have access to server-side functionality,
+                          // So we clean up specific data prior to hand-off.
+                          var tech = JSON.parse(body);
+                          if ((tech.status === 'success') && (techniqueID > 0)) {
+                            res.render( 'pages/newtech', {
+                              api_url: api_url,
+                              root_url: root_url,
+                              topics: topics,
+                              levels: levels,
+                              sports: sports,
+                              positions: positions,
+                              types: types,
+                              response: body,
+                              update: true,
+                              id: techniqueID,
+                              title: bjjt_utils.escapeQuotes(tech.data.name),
+                              name: bjjt_utils.fixQuotes(tech.data.name)
+                            } );
+                          }
+                        }
+                      } )
+                    }
+                  } )
+                }
+              } )
+            }
+          } )
+        }
+      } )
+    }
+  });
 };
 
 
