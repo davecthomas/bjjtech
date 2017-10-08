@@ -145,9 +145,11 @@ module.exports = {
   getTechRelated: getTechRelated,
   createTech: createTech,
   updateTech: updateTech,
-  getTechsFromTag: getTechsFromTag
+  getTechsFromTag: getTechsFromTag,
 
-  // removeTech: removeTech
+  getSchool: getSchool,
+  createSchool: cuSchool,
+  updateSchool: cuSchool
 
 };
 
@@ -511,7 +513,7 @@ function updateTech(req, res, next) {
     error_detail = "twofactor";
   }
 
-  // Type is required
+  // Index is required
   var index = parseInt(req.body.index);
   if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
     input_err = true;
@@ -852,4 +854,169 @@ function removeTech(req, res, next) {
     .catch(function(err) {
       return next(err);
     });
+}
+
+function getSchool(req, res, next) {
+  var id = parseInt(req.params.id);
+  db.one('select * from school where index = $1',
+      id)
+    .then(function(data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          id,
+          message: 'Retrieved ' + id
+        });
+    })
+    .catch(function(err) {
+      return next(err);
+    });
+}
+
+function cuSchool(req, res, next) {
+  server.logger.debug("Create or update " + JSON.stringify(req.body));
+  var input_err = false;
+  var error_detail = "";
+  // Make sure it doesn't already exist
+  var name = req.body.name;
+  if ((typeof name !== 'string') || (name.length < 1)) {
+    input_err = true;
+    error_detail = "name";
+  }
+  // twofactor is required
+  var twofactor = parseInt(req.body.twofactor);
+  if (!bjjt_utils.isNumeric(twofactor) || (isNaN(twofactor)) || (twofactor < 1)) {
+    input_err = true;
+    error_detail = "twofactor";
+  }
+
+  // Good inputs, update or create?
+  var update = parseInt(req.body.update);
+  if (!bjjt_utils.isNumeric(update) || (isNaN(update)) || (update < 0)) {
+    update = 0;
+  }
+
+  // Check for index (update only)
+  if (update) {
+    // Index is required
+    var index = parseInt(req.body.index);
+    if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
+      input_err = true;
+      error_detail = "index";
+    }
+  }
+  // Fail on input error
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    // Support update
+    if (update) {
+
+      var strSQL = `update school
+                    set name=$1 where index=$2`;
+      db.none(
+          strSQL, [name, index])
+        .then(function(data) {
+          res.status(200)
+            .json({
+              status: 'success',
+              message: 'Updated tech: ' + name,
+              index: index
+            });
+        })
+        .catch(function(err) {
+          server.logger.debug("catch:" + err);
+          return next(err);
+        });
+    } else {
+
+      // Support Create
+      db.oneOrNone(
+          // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
+          "SELECT index from school WHERE name ilike $1",
+          name)
+        .then(function(data) {
+          if (data != null) {
+            server.logger.debug("Exists: 1");
+            input_err = true;
+            error_detail = "Exists: " + JSON.stringify(data.index);
+            res.status(400)
+              .json({
+                status: 'fail',
+                data: error_detail,
+                message: 'Duplicate'
+              });
+
+          } else {
+            // twofactor is required
+            var twofactor = parseInt(req.body.twofactor);
+            if (!bjjt_utils.isNumeric(twofactor) || (isNaN(twofactor)) || (twofactor < 1)) {
+              input_err = true;
+              error_detail = "twofactor";
+            }
+
+            // does not exist, create it
+            server.logger.debug("School doesn't exist, time to create " + name);
+
+            if (input_err === true) {
+              server.logger.debug("error_detail:" + error_detail);
+
+              res.status(400)
+                .json({
+                  status: 'fail',
+                  data: error_detail,
+                  message: 'Bad input'
+                });
+            } else {
+              // Check 2FA code before we Save
+              // See private doc for URL of verify
+              // Verify a given token
+              if (speakeasy.totp.verify({
+                  secret: twoFactor.secret,
+                  encoding: 'base32',
+                  token: twofactor,
+                  window: 2
+                })) {
+                // server.logger.debug( "2fa good");
+                var strSQL = "insert into school(createdate, name) " +
+                  "values(CURRENT_TIMESTAMP, $1) " +
+                  "RETURNING index";
+                db.one(
+                    strSQL, [name])
+                  .then(function(data) {
+                    res.status(200)
+                      .json({
+                        status: 'success',
+                        data: data.index,
+                        message: 'Inserted one tech: ' + name
+                      });
+                  })
+                  .catch(function(err) {
+                    server.logger.debug("catch:" + err);
+                    return next(err);
+                  });
+              } else {
+                res.status(400)
+                  .json({
+                    status: 'fail',
+                    data: twofactor,
+                    message: 'auth'
+                  });
+              }
+            }
+          }
+        })
+        .catch(function(err) {
+          return next(err);
+        });
+    }
+  }
 }

@@ -106,9 +106,16 @@ router.post('/api/tech/update', db.updateTech);
 router.get('/api/tech/brief/:id', db.getTechBrief);
 router.get('/api/tech/text/:str', db.getTechFromStr);
 router.get('/api/tech/tag/:tag/:id', db.getTechsFromTag);
-// router.post( '/api/tech', db.createTech );
-// router.put('/api/tech/:id', db.updateTech);
-// router.delete('/api/tech/:id', db.removeTech);
+
+router.get('/api/school/:id', db.getSchool);
+router.post('/api/school/new', db.createSchool);
+router.post('/api/school/update', db.updateSchool);
+
+
+
+
+
+
 
 // Next line provides support for root url. Without this, you get a "Cannot get /" error at site root.
 app.use('/', router);
