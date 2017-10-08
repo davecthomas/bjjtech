@@ -2,7 +2,6 @@
 // Inputs from render for update mode (not new tech)
 //  id - id, for update mode only
 //  update - true or false
-//  name - technique name, cleaned up
 //  title - doc title, cleaned up
 //
   var types = JSON.parse(types);
@@ -31,10 +30,10 @@
     numpositions = positions.data.length;
   }
 %>
-<% include ../partials/top %>
+  <% include ../partials/top %>
 
-<div class="container-fluid">
-<%
+    <div class="container-fluid">
+      <%
  document_title = "New Technique";
 
   var updateMode = false;
@@ -48,115 +47,128 @@
    if (tech.status === 'success'){
      updateMode = true;
      tech_detail = tech.data; %>
-<script>
-  var update=<%-updateMode%>;
-</script>
-<div id="updateData" data-id="<%-updateID%>" data-tech='<%-response%>'></div>
-<%   if (tech_detail.name){
+        <div id="updateData" data-id="<%-updateID%>" data-tech='<%-response%>'></div>
+        <%   if (tech_detail.name){
         document_title = "Update: " + title;    // This escapes quotes (for document.title)
      }
    }
   }
 
 %>
-   <script>
-   var api_url = '<%-api_url %>';
-   var root_url = '<%-root_url %>';
-   document.title = '<%- bjjtech.general.title + ": " + document_title %>';
-   </script>
-   <script src="/public/js/bjjt_newtech.js"></script>
-   <row>
-     <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title"><%- document_title %></span>
-         <button id="newtech" name="doit" update="<%-updateMode%>" class="btn btn-outline-primary bjjt_button bjjt_right_edge" data-toggle="tooltip" title="New technique" data-placement="bottom" data-id="<%-updateID%>">Save</button>
-     </div>
-   </row>
+          <script>
+            var update = <%-updateMode%>;
+            var api_url = '<%-api_url %>';
+            var root_url = '<%-root_url %>';
+            document.title = '<%- bjjtech.general.title + ": " + document_title %>';
+          </script>
+          <script src="/public/js/bjjt_newtech.js"></script>
+          <row>
+            <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title"><%- document_title %></span>
+              <button id="newtech" name="doit" update="<%-updateMode%>" class="btn btn-outline-primary bjjt_button bjjt_right_edge" data-toggle="tooltip" title="New technique" data-placement="bottom" data-id="<%-updateID%>">Save</button>
+            </div>
+          </row>
 
-   <form class="form-horizontal col-sm-12 panel panel-default content-panel" id="tech_detail_right_pane">
-   <row>
-      <div class="form-group col-sm-12 ">
-        <label for="name" class="col-sm-2 bjjt_input_prompt ">Name</label>
-        <input type="text" id="name" class="bjjt_input col-sm-10 " placeholder="Tech name">
-      </div>
+          <form class="form-horizontal col-sm-12 panel panel-default content-panel" id="tech_detail_right_pane">
+            <row>
+              <div class="form-group col-sm-12 ">
+                <label for="name" class="col-sm-2 bjjt_input_prompt ">Name</label>
+                <input type="text" id="name" class="bjjt_input col-sm-10 " placeholder="Tech name">
+              </div>
 
-      <div class="form-group col-sm-12 ">
-        <label for="setup" class="col-sm-2 bjjt_input_prompt ">Setup</label>
-        <textarea id="setup" class="col-sm-10 bjjt_input" rows="2" placeholder="Describe the initial situation..."></textarea>
-      </div>
+              <div class="form-group col-sm-12 ">
+                <label for="setup" class="col-sm-2 bjjt_input_prompt ">Setup</label>
+                <textarea id="setup" class="col-sm-10 bjjt_input" rows="2" placeholder="Describe the initial situation..."></textarea>
+              </div>
 
-      <div class="form-group col-sm-12 ">
-        <label for="details" class="col-sm-2 bjjt_input_prompt ">Details</label>
-        <textarea id="details" class="col-sm-10 bjjt_input" rows="3" placeholder="Details..."></textarea>
-      </div>
-      <div class="form-group col-sm-12 ">
-        <label for="credit" class="col-sm-2 bjjt_input_prompt ">Credit</label>
-        <input type="text" id="credit" class="col-sm-10 bjjt_input" placeholder="Who taught you this move?">
-      </div>
-      <div class="form-group col-sm-12">
-        <label for="type" class="col-sm-2 bjjt_input_prompt ">Type</label>
-        <div class="list-group col-sm-10" id="type">
-          <span class="bjjt_expand_chevron" id="type-chevron"><i id="type-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="type-selected"></span></span>
-          <div class=" bjjt_expand_section" id="type-expand-section"><%
+              <div class="form-group col-sm-12 ">
+                <label for="details" class="col-sm-2 bjjt_input_prompt ">Details</label>
+                <textarea id="details" class="col-sm-10 bjjt_input" rows="3" placeholder="Details..."></textarea>
+              </div>
+              <div class="form-group col-sm-12 ">
+                <label for="credit" class="col-sm-2 bjjt_input_prompt ">Credit</label>
+                <input type="text" id="credit" class="col-sm-10 bjjt_input" placeholder="Who taught you this move?">
+              </div>
+              <div class="form-group col-sm-12">
+                <label for="type" class="col-sm-2 bjjt_input_prompt ">Type</label>
+                <div class="list-group col-sm-10" id="type">
+                  <span class="bjjt_expand_chevron" id="type-chevron"><i id="type-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="type-selected"></span></span>
+                  <div class=" bjjt_expand_section" id="type-expand-section">
+                    <%
             for(i = 0; i < numtypes; i++){ %>
-              <a href="#" class="list-group-item select-group-item new_tech_type" id="type<%= types.data[i].index%>" data-listindex="<%=i%>" data-id="<%= types.data[i].index%>" data-tag="<%=types.data[i].tag%>"><%= types.data[i].name%></a>
-              <%
+                      <a href="#" class="list-group-item select-group-item new_tech_type" id="type<%= types.data[i].index%>" data-listindex="<%=i%>" data-id="<%= types.data[i].index%>" data-tag="<%=types.data[i].tag%>">
+                        <%= types.data[i].name%>
+                      </a>
+                      <%
             } %>
-          </div>
-        </div>
-      </div>
-      <div class="form-group col-sm-12">
-        <label for="topic" class="col-sm-2 bjjt_input_prompt ">Topic</label>
-        <div class="list-group col-sm-10 " id="topic">
-          <span class="bjjt_expand_chevron" id="topic-chevron"><i id="topic-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="topic-selected"></span></span>
-          <div class=" bjjt_expand_section" id="topic-expand-section"><%
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-12">
+                <label for="topic" class="col-sm-2 bjjt_input_prompt ">Topic</label>
+                <div class="list-group col-sm-10 " id="topic">
+                  <span class="bjjt_expand_chevron" id="topic-chevron"><i id="topic-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="topic-selected"></span></span>
+                  <div class=" bjjt_expand_section" id="topic-expand-section">
+                    <%
             for(i = 0; i < numtopics; i++){ %>
-              <a href="#" class="list-group-item select-group-item new_tech_topic" id="topic<%= topics.data[i].index%>" data-listindex="<%=i%>" data-id="<%= topics.data[i].index%>" data-tag="<%=topics.data[i].tag%>"><%= topics.data[i].name%></a>
-              <%
+                      <a href="#" class="list-group-item select-group-item new_tech_topic" id="topic<%= topics.data[i].index%>" data-listindex="<%=i%>" data-id="<%= topics.data[i].index%>" data-tag="<%=topics.data[i].tag%>">
+                        <%= topics.data[i].name%>
+                      </a>
+                      <%
             } %>
-          </div>
-        </div>
-      </div>
-      <div class="form-group col-sm-12">
-        <label for="level" class="col-sm-2 bjjt_input_prompt ">Level</label>
-        <div class="list-group col-sm-10 ">
-          <span class="bjjt_expand_chevron" id="level-chevron"><i id="level-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="level-selected"></span></span>
-          <div class=" bjjt_expand_section" id="level-expand-section"><%
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-12">
+                <label for="level" class="col-sm-2 bjjt_input_prompt ">Level</label>
+                <div class="list-group col-sm-10 ">
+                  <span class="bjjt_expand_chevron" id="level-chevron"><i id="level-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="level-selected"></span></span>
+                  <div class=" bjjt_expand_section" id="level-expand-section">
+                    <%
           for(i = 0; i < numlevels; i++){ %>
-            <a href="#" class="list-group-item select-group-item new_tech_level" id="level<%= levels.data[i].index%>" data-listindex="<%=i%>" data-id="<%= levels.data[i].index%>" data-tag="<%=levels.data[i].tag%>"><%= levels.data[i].name%></a>
-            <%
+                      <a href="#" class="list-group-item select-group-item new_tech_level" id="level<%= levels.data[i].index%>" data-listindex="<%=i%>" data-id="<%= levels.data[i].index%>" data-tag="<%=levels.data[i].tag%>">
+                        <%= levels.data[i].name%>
+                      </a>
+                      <%
           } %>
-          </div>
-        </div>
-      </div>
-      <div class="form-group col-sm-12">
-        <label for="sport" class="col-sm-2 bjjt_input_prompt ">Sport</label>
-        <div class="list-group col-sm-10 ">
-          <span class="bjjt_expand_chevron" id="sport-chevron"><i id="sport-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="sport-selected"></span></span>
-          <div class=" bjjt_expand_section" id="sport-expand-section"><%
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-12">
+                <label for="sport" class="col-sm-2 bjjt_input_prompt ">Sport</label>
+                <div class="list-group col-sm-10 ">
+                  <span class="bjjt_expand_chevron" id="sport-chevron"><i id="sport-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="sport-selected"></span></span>
+                  <div class=" bjjt_expand_section" id="sport-expand-section">
+                    <%
             for(i = 0; i < numsports; i++){ %>
-              <a href="#" class="list-group-item select-group-item new_tech_sport" id="sport<%= sports.data[i].index%>" data-listindex="<%=i%>" data-id="<%= sports.data[i].index%>" data-tag="<%=sports.data[i].tag%>"><%= sports.data[i].name%></a>
-              <%
+                      <a href="#" class="list-group-item select-group-item new_tech_sport" id="sport<%= sports.data[i].index%>" data-listindex="<%=i%>" data-id="<%= sports.data[i].index%>" data-tag="<%=sports.data[i].tag%>">
+                        <%= sports.data[i].name%>
+                      </a>
+                      <%
             } %>
-            </div>
-          </div>
-      </div>
-      <div class="form-group col-sm-12">
-        <label for="position" class="col-sm-2 bjjt_input_prompt ">Starting Position</label>
-        <div class="list-group col-sm-10 ">
-          <span class="bjjt_expand_chevron" id="position-chevron"><i id="position-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="position-selected"></span></span>
-          <div class=" bjjt_expand_section" id="position-expand-section"><%
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-12">
+                <label for="position" class="col-sm-2 bjjt_input_prompt ">Starting Position</label>
+                <div class="list-group col-sm-10 ">
+                  <span class="bjjt_expand_chevron" id="position-chevron"><i id="position-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="position-selected"></span></span>
+                  <div class=" bjjt_expand_section" id="position-expand-section">
+                    <%
             for(i = 0; i < numpositions; i++){ %>
-              <a href="#" class="list-group-item select-group-item new_tech_position" id="position<%= positions.data[i].index%>" data-listindex="<%=i%>" data-id="<%= positions.data[i].index%>" data-tag="<%=positions.data[i].tag%>"><%= positions.data[i].name%></a>
-              <%
+                      <a href="#" class="list-group-item select-group-item new_tech_position" id="position<%= positions.data[i].index%>" data-listindex="<%=i%>" data-id="<%= positions.data[i].index%>" data-tag="<%=positions.data[i].tag%>">
+                        <%= positions.data[i].name%>
+                      </a>
+                      <%
             } %>
-            </div>
-          </div>
-      </div>
-      <div class="form-group col-sm-12">
-        <label for="2fa" class="col-sm-2 bjjt_input_prompt ">2FA code</label>
-        <input type="text" id="twofactor" class="col-sm-2  bjjt_input" placeholder="">
-      </div>
-    </row>
-    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-12">
+                <label for="2fa" class="col-sm-2 bjjt_input_prompt ">2FA code</label>
+                <input type="text" id="twofactor" class="col-sm-2  bjjt_input" placeholder="">
+              </div>
+            </row>
+          </form>
 
-</div>
-<% include ../partials/bottom %>
+    </div>
+    <% include ../partials/bottom %>

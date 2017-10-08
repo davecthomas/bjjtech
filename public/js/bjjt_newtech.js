@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
   var type = 0,
     topic = 0,
     level = 0,
@@ -9,12 +8,15 @@ $(document).ready(function() {
     name = "",
     details = "",
     setup = "",
-    credit = "";
+    credit = "",
+    techniqueID = 0;
 
   if (update) {
     // getData("updateData");
     let data = $('#updateData').data('tech').data;
     // Override selections
+    techniqueID = $('#updateData').data('id');
+
     type = data.type;
     $('#type' + type).addClass('active');
     $('#type' + '-selected').text($('#type' + type).text());
@@ -158,7 +160,9 @@ $(document).ready(function() {
 
   // Save the technique
   $(document).on('click', '#newtech', function() {
+
     var newdata = {
+      index: techniqueID, // This is 0 on new
       name: $('#name').val(),
       setup: $('#setup').val(),
       details: $('#details').val(),
@@ -173,15 +177,22 @@ $(document).ready(function() {
 
     $.ajax({
       type: "POST",
-      url: api_url + "tech/new/",
+      url: api_url + "tech/" + (update ? "update/" : "new/"),
       data: newdata,
       success: function(result) {
         if (result.status === 'success') {
-          //  $( '#newtech' ).attr( 'data-id', result.data );
-          window.location = root_url + "tech/" + result.data;
+
+          if (update) {
+            window.location = root_url + "tech/" + techniqueID;
+          } else {
+            window.location = root_url + "tech/" + result.data;
+          }
         } else {
-          alert(result.message)
+          alert("Save failed. " + result.message)
         }
+      },
+      error: function() {
+        alert("error occurred ");
       }
     });
 

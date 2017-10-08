@@ -1,11 +1,15 @@
 <%
-var title = ": Technique";
+//  id - id, for update mode only
+//  update - true or false
+//  title - doc title, cleaned up
+
+var document_title = "";
 %>
-<% include ../partials/top %>
-<script src="/public/js/bjjt_gettech.js"></script>
-<div class="container-fluid">
-    <row>
-<%
+  <% include ../partials/top %>
+    <script src="/public/js/bjjt_gettech.js"></script>
+    <div class="container-fluid">
+      <row>
+        <%
 function replaceAll( str, search, replacement ) {
   return str.replace( new RegExp( search, 'g' ), replacement );
 };
@@ -29,22 +33,12 @@ function cleanDetailText( detailIn ) {
   return details;
 }
 
-function fixQuotes( str ) {
-  return str.replace( /'/g, '&rsquo;' );
-}
-
-function escapeQuotes( str ) {
-  return str.replace( /(['"])/g, "\\$1" );
-}
-
-      var document_title = "";
-      var tech_detail_name = "";
       var tech = JSON.parse(response);
       if (tech.status === 'success'){
          var tech_detail = tech.data;
          if (tech_detail.name){
-            document_title = escapeQuotes(tech_detail.name);    // This escapes quotes (for document.title)
-            tech_detail_name = fixQuotes(tech_detail.name);     // This replaces quotes with HTML entities (for HTML use)
+            document_title = title;    
+            tech_detail_name = tech_detail.name;     // This replaces quotes with HTML entities (for HTML use)
          }
 
          var title_cols = '12';
@@ -52,179 +46,186 @@ function escapeQuotes( str ) {
             title_cols = '9';
          }
 %>
-         <script>
-         var api_url = '<%-api_url %>';
-         var root_url = '<%-root_url %>';
-         var searchStr = '<%= searchparam %>';
-         document.title = '<%- bjjtech.general.title + ": " + document_title %>';
-         </script>
-         <script src="/public/js/bjjt_gettech_load.js"></script>
+          <script>
+            var api_url = '<%-api_url %>';
+            var root_url = '<%-root_url %>';
+            var searchStr = '<%= searchparam %>';
+            document.title = '<%- bjjtech.general.title + ": " + document_title %>';
+          </script>
+          <script src="/public/js/bjjt_gettech_load.js"></script>
 
-         <div class="col-xs-3 panel panel-default content-panel-noscroll bjjt_hide" id="return_to_search_parent">
-             <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="Return to search results" data-placement="bottom"></button>
-         </div>
-         <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll" id="gettech_name">
-<%
+          <div class="col-xs-3 panel panel-default content-panel-noscroll bjjt_hide" id="return_to_search_parent">
+            <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="Return to search results" data-placement="bottom"></button>
+          </div>
+          <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll" id="gettech_name">
+            <%
          if (tech_detail_name) {
 %>
-            <h3><%- tech_detail_name %></h3>
-<%
+              <h3><%- tech_detail_name %></h3>
+              <%
          }
 %>
-         </div>
-         </row>
-         <row>
-<%
+          </div>
+      </row>
+      <row>
+        <%
 
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
 
-        <div class="col-xs-12 col-sm-6 panel panel-default content-panel-left" id="tech_detail_left_pane">
-<%
+          <div class="col-xs-12 col-sm-6 panel panel-default content-panel-left" id="tech_detail_left_pane">
+            <%
           if (tech_detail.imageurl) {
              if (tech_detail.numimages){
                 var numimages = parseInt(tech_detail.numimages); %>
-                <div class="container-fluid bjjt_image">
-<%                 if (numimages > 1) {
+              <div class="container-fluid bjjt_image">
+                <%                 if (numimages > 1) {
 %>
-                   <span class="bjjt_image_chevron bjjt_image_chevron_left bjjt_vertical_top bjjt_image_chevron_disabled" id="bjjt_image_class_swapper_left"><i class="fa fa-chevron-left"></i></span>
-                   <span id="img_text_fa_imgnum"></span>
+                  <span class="bjjt_image_chevron bjjt_image_chevron_left bjjt_vertical_top bjjt_image_chevron_disabled" id="bjjt_image_class_swapper_left"><i class="fa fa-chevron-left"></i></span>
+                  <span id="img_text_fa_imgnum"></span>
                   <span class="bjjt_image_chevron bjjt_image_chevron_right bjjt_vertical_top" id="bjjt_image_class_swapper_right"><i class="fa fa-chevron-right"></i></span>
-                  <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src=""></img></div>
+                  <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src=""></img>
+                  </div>
                   <script>
-                  var img_array = [];
-                  current_image = 0;
-                  numimages = <%= numimages %>;
-<%                for (i = 0; i < numimages; i++){         // Unforgunate limit of this: must be jpg
+                    var img_array = [];
+                    current_image = 0;
+                    numimages = <%= numimages %>;
+                    <%                for (i = 0; i < numimages; i++){         // Unforgunate limit of this: must be jpg
 %>
-                  img_array[<%= i %>] = '<%- tech_detail.imageurl + '-' + (parseInt(i+1)) +'.jpg' %>';
-<%                } %>
-
+                    img_array[<%= i %>] = '<%- tech_detail.imageurl + ' - ' + (parseInt(i+1)) +'.jpg ' %>';
+                    <%                } %>
                   </script>
                   <script src="/public/js/bjjt_images.js"></script>
-<%                }  else {
+                  <%                }  else {
 %>
-                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>"</img></div>
-<%
+                    <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>" </img></div>
+                    <%
                   }
 %>
-               </div>
-<%           }
+              </div>
+              <%           }
           }
           if (tech_detail.videoid) {
 %>
-            <script>
-            const videoid = '<%- tech_detail.videoid %>';
-            </script>
-            <script src="/public/js/bjjt_ytplayer.js"></script>
-            <div id="ytplayer"></div>
+                <script>
+                  const videoid = '<%- tech_detail.videoid %>';
+                </script>
+                <script src="/public/js/bjjt_ytplayer.js"></script>
+                <div id="ytplayer"></div>
 
-          <%
+                <%
           }
         }
         // If there is video or pix, split screen in half
         if ((tech_detail.imageurl) || (tech_detail.videoid)){ %>
-         </div>
+          </div>
           <div class="col-xs-12 col-sm-6 panel panel-default content-panel content-panel-tech" id="tech_detail_right_pane">
 
-<%
+            <%
         } else { %>
-          <div class="col-sm-12 panel panel-default content-panel content-panel-tech" id="tech_detail_right_pane">
-<%
+              <div class="col-sm-12 panel panel-default content-panel content-panel-tech" id="tech_detail_right_pane">
+                <%
         }
 %>
-       <p>
-<%
+                  <p>
+                    <%
           if (tech_detail.sport_sport) { %>
-            This technique works with&nbsp;<%- tech_detail.sport_sport.toLowerCase() %>, and is suitable for&nbsp;<%- tech_detail.level_name.toLowerCase() %>&nbsp;level practitioners.&nbsp;
-          <%
+                      This technique works with&nbsp;
+                      <%- tech_detail.sport_sport.toLowerCase() %>, and is suitable for&nbsp;
+                        <%- tech_detail.level_name.toLowerCase() %>&nbsp;level practitioners.&nbsp;
+                          <%
           }
           if (tech_detail.techniquetype_techniquetype) { %>
-            Broadly, this technique is in the&nbsp;<%- tech_detail.techniquetype_techniquetype.toLowerCase() %>&nbsp;category of moves.&nbsp;
-          <%
+                            Broadly, this technique is in the&nbsp;
+                            <%- tech_detail.techniquetype_techniquetype.toLowerCase() %>&nbsp;category of moves.&nbsp;
+                              <%
           }
           if (tech_detail.topic_topic) { %>
-            Specifically, it is a <%- tech_detail.topic_topic.toLowerCase() %>&nbsp;move.&nbsp;
-          <%
+                                Specifically, it is a
+                                <%- tech_detail.topic_topic.toLowerCase() %>&nbsp;move.&nbsp;
+                                  <%
           }
           if (tech_detail.position_name) { %>
-            You will start in in the&nbsp;<%- tech_detail.position_name.toLowerCase() %>&nbsp;position.&nbsp;
-          <%
+                                    You will start in in the&nbsp;
+                                    <%- tech_detail.position_name.toLowerCase() %>&nbsp;position.&nbsp;
+                                      <%
           }
           if (tech_detail.credit){%>
-          <%
+                                        <%
           }
           // "numimages": null,
           if (tech_detail.setup) { %>
-            <h4>Setup: The Initial Situation</h4><p><%- tech_detail.setup %></p>
-          <%
+                                          <h4>Setup: The Initial Situation</h4>
+                                          <p>
+                                            <%- tech_detail.setup %>
+                                          </p>
+                                          <%
           }
           if (tech.data.details){
             var details = cleanDetailText(tech.data.details);
-            details = fixQuotes(details);
           } else {
             var details = "Sorry, homie, I haven't written this yet.";
           }
           if (details) {
 %>
-            <div class="content-panel-detail">
-               <h4>Steps</h4><p><%- details %></p>
-            </div>
-<%
+                                            <div class="content-panel-detail">
+                                              <h4>Steps</h4>
+                                              <p>
+                                                <%- details %>
+                                              </p>
+                                            </div>
+                                            <%
           }
           if (tech.data.numrelated > 0) {
 %>
-            <div class="content-panel-detail">
-               <span class="bjjt_section_header">Related Techniques</span>&nbsp;<span id="getTechRelated" data-id="<%- tech_detail.index%>" class="bjjt_chiclet bjjt_chiclet-primary"><%- tech.data.numrelated%></span>
-               <div class=" bjjt_expand_section" id="related-expand-section">
-               </div>
-            </div>
-<%
+                                              <div class="content-panel-detail">
+                                                <span class="bjjt_section_header">Related Techniques</span>&nbsp;<span id="getTechRelated" data-id="<%- tech_detail.index%>" class="bjjt_chiclet bjjt_chiclet-primary"><%- tech.data.numrelated%></span>
+                                                <div class=" bjjt_expand_section" id="related-expand-section">
+                                                </div>
+                                              </div>
+                                              <%
           }
         } else {
 %>
-         <p>Sorry, homie, I got nothin for you on this one.</p>
-<%
+                                                <p>Sorry, homie, I got nothin for you on this one.</p>
+                                                <%
         }
        var this_url = root_url;
        if (tech_detail.index) {
           this_url += "tech/"+parseInt(tech_detail.index);
        }
 %>
-    </div>
-    </row>
-    <row>
-      <div class="col-xs-12 col-sm-12 panel panel-default content-panel">
-         <p>Posted by <span class="ajjfont ajj-attribution"><a href="http://www.seattlejiujitsu.com">SEAttlE JIu-JItsu</a></span> coach <span class="author-attribution"><a href="http://www.seattlejiujitsu.com/coaches/dave-thomas/">Dave Thomas</a></span></p>
-      </div>
-    </row>
-    <row>
-      <div class="col-xs-12 col-sm-12 panel panel-default content-panel content-panel-share">
-         <nav class="navbar navbar-default bjjt_navbar_share">
+              </div>
+      </row>
+      <row>
+        <div class="col-xs-12 col-sm-12 panel panel-default content-panel">
+          <p>Posted by <span class="ajjfont ajj-attribution"><a href="http://www.seattlejiujitsu.com">SEAttlE JIu-JItsu</a></span> coach <span class="author-attribution"><a href="http://www.seattlejiujitsu.com/coaches/dave-thomas/">Dave Thomas</a></span></p>
+        </div>
+      </row>
+      <row>
+        <div class="col-xs-12 col-sm-12 panel panel-default content-panel content-panel-share">
+          <nav class="navbar navbar-default bjjt_navbar_share">
             <ul class="nav navbar-nav horizontal">
-               <li class="bjjt_share_cta">Please Share</li>
+              <li class="bjjt_share_cta">Please Share</li>
 
               <li class="bjjt_share">
-              <a class="btn btn-outline-primary bjjt_button_share fa fa-twitter fa-2x sharea " href="https://twitter.com/share?text=<%- encodeURIComponent(bjjtech.general.title + ": " + tech_detail.name) %>&amp;url=<%-this_url%>"
-                  onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <a class="btn btn-outline-primary bjjt_button_share fa fa-twitter fa-2x sharea " href="https://twitter.com/share?text=<%- encodeURIComponent(bjjtech.general.title + " : " + tech_detail.name) %>&amp;url=<%-this_url%>" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
                   <span class="bjjt_share_logo">Tweet</span>
               </a>
-            </li>
+              </li>
               <li class="bjjt_share">
-              <a class="btn btn-outline-primary bjjt_button_share fa fa-facebook fa-2x sharea" href="https://www.facebook.com/sharer/sharer.php?u=<%-this_url%>"
-                  onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <a class="btn btn-outline-primary bjjt_button_share fa fa-facebook fa-2x sharea" href="https://www.facebook.com/sharer/sharer.php?u=<%-this_url%>" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
                   <span class="bjjt_share_logo">Facebook</span>
               </a>
-            </li>
+              </li>
               <li class="bjjt_share">
-                <a class="btn btn-outline-primary bjjt_button_share fa fa-google-plus fa-2x sharea" href="https://plus.google.com/share?url=<%-this_url%>"
-                 onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                <a class="btn btn-outline-primary bjjt_button_share fa fa-google-plus fa-2x sharea" href="https://plus.google.com/share?url=<%-this_url%>" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
                   <span class="bjjt_share_logo">Plus</span>
                 </a>
-            </li>
-         </ul>
-      </nav>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </row>
       </div>
-    </row>
-</div>
-<% include ../partials/bottom %>
+      <% include ../partials/bottom %>
