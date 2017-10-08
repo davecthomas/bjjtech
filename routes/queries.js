@@ -180,7 +180,7 @@ function generate2FASecret(user_email) {
 
 function getAllTech(req, res, next) {
   // server.logger.debug('getalltech')
-  db.any('select * from technique')
+  db.any('select * from technique order by name')
     .then(function(data) {
       res.status(200)
         .json({
@@ -219,7 +219,7 @@ function getAllTopicsExtended(req, res, next) {
 function getAllTypes(req, res, next) {
 
   db.any("select techniquetype.techniquetype as name, index, 'type' " +
-      "as tag from techniquetype")
+      "as tag from techniquetype order by name")
     .then(function(data) {
       res.status(200)
         .json({
@@ -236,7 +236,7 @@ function getAllTypes(req, res, next) {
 function getAllTopics(req, res, next) {
 
   db.any("select topic.topic as name, index, 'topic' " +
-      "as tag from topic")
+      "as tag from topic order by name")
     .then(function(data) {
       res.status(200)
         .json({
@@ -287,7 +287,7 @@ function getAllLevels(req, res, next) {
 
 function getAllPositions(req, res, next) {
   db.any("select positionnames.positionname as name, index, 'position' " +
-      "as tag from positionnames")
+      "as tag from positionnames order by name")
     .then(function(data) {
       res.status(200)
         .json({
@@ -593,7 +593,7 @@ function updateTech(req, res, next) {
   // We don't require this
   var videoid = req.body.videoid;
   if (typeof videoid !== 'string') {
-    credit = "";
+    videoid = "";
   }
   // We don't require this
   var opponentstartingpos = parseInt(req.body.opponentstartingpos);
@@ -631,6 +631,7 @@ function updateTech(req, res, next) {
         token: twofactor,
         window: 2
       })) {
+
       var strSQL = `update technique
                     set type=$1, topic=$2, name=$3, setup=$4, details=$5, credit=$6, sport=$7 ,
                     startingpos=$8 , endingpos=$9 , opponentstartingpos=$10, skilllevel=$11, imageurl=$12, numimages=$13 , videoid=$14  where index=$15`;
@@ -765,7 +766,7 @@ function createTech(req, res, next) {
           // We don't require this
           var videoid = req.body.videoid;
           if (typeof videoid !== 'string') {
-            credit = "";
+            videoid = "";
           }
           // We don't require this
           var opponentstartingpos = parseInt(req.body.opponentstartingpos);

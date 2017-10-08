@@ -63,8 +63,10 @@
           </script>
           <script src="/public/js/bjjt_newtech.js"></script>
           <row>
-            <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title"><%- document_title %></span>
-              <button id="newtech" name="doit" update="<%-updateMode%>" class="btn btn-outline-primary bjjt_button bjjt_right_edge" data-toggle="tooltip" title="New technique" data-placement="bottom" data-id="<%-updateID%>">Save</button>
+            <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title col-sm-6"><%- document_title %></span>
+              <label for="2fa" class="col-sm-1 bjjt_input_prompt">Auth</label>
+              <input type="text" id="twofactor" class="col-sm-2  bjjt_input" placeholder=""><span class="col-sm-1">&nbsp;</span>
+              <button id="newtech" name="doit" update="<%-updateMode%>" class="btn btn-outline-primary bjjt_button bjjt_button-white col-sm-2" data-toggle="tooltip" title="New technique" data-placement="bottom" data-id="<%-updateID%>">Save</button>
             </div>
           </row>
 
@@ -162,10 +164,6 @@
             } %>
                   </div>
                 </div>
-              </div>
-              <div class="form-group col-sm-12">
-                <label for="2fa" class="col-sm-2 bjjt_input_prompt ">2FA code</label>
-                <input type="text" id="twofactor" class="col-sm-2  bjjt_input" placeholder="">
               </div>
             </row>
           </form>
