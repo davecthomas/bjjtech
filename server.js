@@ -110,6 +110,11 @@ router.get('/api/tech/tag/:tag/:id', db.getTechsFromTag);
 router.get('/api/school/:id', db.getSchool);
 router.post('/api/school/new', db.createSchool);
 router.post('/api/school/update', db.updateSchool);
+router.delete('/api/school/:id/:twofactor', db.removeSchool);
+
+router.get('/api/course/:id', db.getCourse);
+router.post('/api/course/new', db.createCourse);
+router.post('/api/course/update', db.updateCourse);
 
 
 
