@@ -146,16 +146,33 @@ module.exports = {
   createTech: createTech,
   updateTech: updateTech,
   getTechsFromTag: getTechsFromTag,
+  removeTech: removeTech,
 
   getSchool: getSchool,
+  getAllSchools: getAllSchools,
   createSchool: cuSchool,
   updateSchool: cuSchool,
   removeSchool: removeSchool,
 
   getCourse: getCourse,
+  getAllCourses: getAllCourses,
   createCourse: cuCourse,
-  updateCourse: cuCourse
+  updateCourse: cuCourse,
+  removeCourse: removeCourse,
 
+  getClass: getClass,
+  getAllClasses: getAllClasses,
+  getAllClassesInSchool: getAllClassesInSchool,
+  createClass: cuClass,
+  updateClass: cuClass,
+  removeClass: removeClass,
+
+  getTechsInClass: getTechsInClass,
+  getAllClassesWithTech: getAllClassesWithTech,
+  addTechsToClass: addTechsToClass,
+  updateTechsInClass: updateTechsInClass,
+  removeTechsFromClass: removeTechsFromClass,
+  removeTechFromClass: removeTechFromClass
 };
 
 // This should be used to generate new secrets for registering users, eventually.
@@ -332,10 +349,10 @@ function getTechFromStr(req, res, next) {
 
   db.any(
       // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
-      "SELECT technique.name, technique.index, technique.videoid, technique.numimages, topic.topic AS topic_name FROM topic INNER JOIN " +
-      "technique ON topic.index = technique.topic WHERE " +
-      "name ~* $1 OR setup ~* $1 OR details ~* $1 " +
-      "ORDER BY topic_name, technique.name",
+      `SELECT technique.name, technique.index, technique.videoid, technique.numimages, topic.topic AS topic_name
+      FROM topic
+      INNER JOIN technique ON topic.index = technique.topic
+      WHERE name~ * $1 OR setup~ * $1 OR details~ * $1 ORDER BY topic_name, technique.name`,
       strSearch)
     .then(function(data) {
       res.status(200)
@@ -857,20 +874,67 @@ function createTech(req, res, next) {
 }
 
 function removeTech(req, res, next) {
-  var techniqueID = parseInt(req.params.id);
-  db.result('delete from technique where index = $1', techniqueID)
-    .then(function(result) {
-      /* jshint ignore:start */
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Removed ${result.rowCount} tech'
+  var input_err = false;
+  var error_detail = "";
+  var index = parseInt(req.params.id);
+  if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
+    input_err = true;
+    error_detail = "index";
+  }
+  // twofactor is required
+  var twofactor = req.params.twofactor;
+  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
+    input_err = true;
+    error_detail = "twofactor";
+  }
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    // Check 2FA code before we Save
+    // See private doc for URL of verify
+    // Verify a given token
+    if (speakeasy.totp.verify({
+        secret: twoFactor.secret,
+        encoding: 'base32',
+        token: twofactor,
+        window: 2
+      })) {
+      db.result('delete from technique where index = $1', index)
+        .then(function(result) {
+          if (result.rowCount > 0) {
+            res.status(200)
+              .json({
+                status: 'success',
+                result: result,
+                message: 'Removed ' + result.rowCount + ' tech'
+              });
+          } else {
+            res.status(404)
+              .json({
+                status: 'object not found',
+                result: result,
+                id: index
+              });
+          }
+        })
+        .catch(function(err) {
+          return next(err);
         });
-      /* jshint ignore:end */
-    })
-    .catch(function(err) {
-      return next(err);
-    });
+    } else {
+      res.status(400)
+        .json({
+          status: 'fail',
+          data: twofactor,
+          message: 'auth'
+        });
+    }
+  }
 }
 
 function getSchool(req, res, next) {
@@ -894,6 +958,31 @@ function getSchool(req, res, next) {
           id: id,
           message: err.message
         });
+    });
+}
+
+function getAllSchools(req, res, next) {
+  // server.logger.debug('getAllSchools')
+  db.any('select * from school order by name')
+    .then(function(data) {
+      if (data.length > 0) {
+        res.status(200)
+          .json({
+            status: 'success',
+            data: data,
+            message: 'Retrieved ALL schools'
+          });
+      } else {
+        res.status(404)
+          .json({
+            status: 'object not found',
+            schoolid: schoolid
+          });
+      }
+    })
+    .catch(function(err) {
+      server.logger.debug("catch:" + err);
+      return next(err);
     });
 }
 
@@ -1076,7 +1165,7 @@ function removeSchool(req, res, next) {
     error_detail = "index";
   }
   // twofactor is required
-  var twofactor = req.body.twofactor;
+  var twofactor = req.params.twofactor;
   if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
     input_err = true;
     error_detail = "twofactor";
@@ -1102,11 +1191,21 @@ function removeSchool(req, res, next) {
       })) {
       db.result('delete from school where index = $1', index)
         .then(function(result) {
-          res.status(200)
-            .json({
-              status: 'success',
-              message: 'Removed ' + index
-            });
+          if (result.rowCount > 0) {
+            res.status(200)
+              .json({
+                status: 'success',
+                result: result,
+                message: 'Removed ' + index
+              });
+          } else {
+            res.status(404)
+              .json({
+                status: 'object not found',
+                result: result,
+                id: index
+              });
+          }
         })
         .catch(function(err) {
           return next(err);
@@ -1125,7 +1224,7 @@ function removeSchool(req, res, next) {
 
 function getCourse(req, res, next) {
   var id = parseInt(req.params.id);
-  db.one('select * from course where index = $1',
+  db.one('select course.*, school.name as schoolname from course INNER JOIN school ON course.schoolid = school.index WHERE course.index = $1',
       id)
     .then(function(data) {
       res.status(200)
@@ -1145,6 +1244,51 @@ function getCourse(req, res, next) {
           message: err.message
         });
     });
+}
+
+
+function getAllCourses(req, res, next) {
+  var input_err = false;
+  var error_detail = "";
+  // Index is required
+  var schoolid = parseInt(req.params.schoolid);
+  if (!bjjt_utils.isNumeric(schoolid) || (isNaN(schoolid)) || (schoolid < 1)) {
+    input_err = true;
+    error_detail = "index";
+  }
+  // Fail on input error
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    db.any('select course.*, school.name as schoolname from course INNER JOIN school ON course.schoolid = school.index WHERE course.schoolid = $1 order by course.sequencenum', [schoolid])
+      .then(function(data) {
+        if (data.length > 0) {
+          res.status(200)
+            .json({
+              status: 'success',
+              data: data,
+              message: 'Retrieved ALL courses'
+            });
+        } else {
+          res.status(404)
+            .json({
+              status: 'object not found',
+              schoolid: schoolid
+            });
+        }
+      })
+      .catch(function(err) {
+        server.logger.debug("catch:" + err);
+        return next(err);
+      });
+  }
 }
 
 function cuCourse(req, res, next) {
@@ -1317,17 +1461,79 @@ function cuCourse(req, res, next) {
 }
 
 function removeCourse(req, res, next) {
+  var input_err = false;
+  var error_detail = "";
   var index = parseInt(req.params.id);
   if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
     input_err = true;
     error_detail = "index";
   }
   // twofactor is required
-  var twofactor = req.body.twofactor;
+  var twofactor = req.params.twofactor;
   if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
     input_err = true;
     error_detail = "twofactor";
   }
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    // Check 2FA code before we Save
+    // See private doc for URL of verify
+    // Verify a given token
+    if (speakeasy.totp.verify({
+        secret: twoFactor.secret,
+        encoding: 'base32',
+        token: twofactor,
+        window: 2
+      })) {
+      db.result('delete from course where index = $1', index)
+        .then(function(result) {
+          if (result.rowCount > 0) {
+            res.status(200)
+              .json({
+                status: 'success',
+                result: result,
+                message: 'Removed ' + result.rowCount + ' course'
+              });
+          } else {
+            res.status(404)
+              .json({
+                status: 'object not found',
+                result: result,
+                id: index
+              });
+          }
+        })
+        .catch(function(err) {
+          return next(err);
+        });
+    } else {
+      res.status(400)
+        .json({
+          status: 'fail',
+          data: twofactor,
+          message: 'auth'
+        });
+    }
+  }
+}
+
+
+function getClass(req, res, next) {
+  var id = parseInt(req.params.id);
+  var input_err = false;
+  var error_detail = "";
+  if (!bjjt_utils.isNumeric(id) || (isNaN(id)) || (id < 1)) {
+    input_err = true;
+    error_detail = "id";
+  }
+  // Fail on input error
   if (input_err === true) {
     server.logger.debug("error_detail:" + error_detail);
 
@@ -1338,16 +1544,465 @@ function removeCourse(req, res, next) {
         message: 'Bad input'
       });
   } else {
-    db.result('delete from course where index = $1', id)
-      .then(function(result) {
+    db.one(`select class.*, course.name as coursename, school.index as schoolid, school.name as schoolname
+          from
+          school INNER JOIN (
+          class INNER JOIN
+          course ON class.courseid = course.index)
+          ON school.index = course.schoolid
+          WHERE class.index = $1
+          order by class.sequencenum`, [id])
+      .then(function(data) {
         res.status(200)
           .json({
             status: 'success',
-            message: 'Removed ${result.rowCount} course'
+            data: data,
+            id,
+            message: 'Retrieved ' + id
           });
       })
       .catch(function(err) {
+        res.status(404)
+          .json({
+            status: 'object not found',
+            code: err.code,
+            id: id,
+            message: err.message
+          });
+      });
+  }
+}
+
+
+function getAllClasses(req, res, next) {
+  var input_err = false;
+  var error_detail = "";
+  // Index is required
+  var courseid = parseInt(req.params.courseid);
+  if (!bjjt_utils.isNumeric(courseid) || (isNaN(courseid)) || (courseid < 1)) {
+    input_err = true;
+    error_detail = "courseid";
+  }
+  // Fail on input error
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    db.any(`
+      select class.*, course.name as coursename, school.name as schoolname, school.index as schoolid
+      from
+      school INNER JOIN (
+      class INNER JOIN
+      course ON class.courseid = course.index)
+      ON school.index = course.schoolid
+      WHERE class.courseid = $1
+      order by class.sequencenum`,
+        courseid)
+      .then(function(data) {
+        if (data.length > 0) {
+          res.status(200)
+            .json({
+              status: 'success',
+              data: data,
+              message: 'Retrieved ALL classes'
+            });
+        } else {
+          res.status(404)
+            .json({
+              status: 'object not found',
+              courseid: courseid
+            });
+        }
+      })
+      .catch(function(err) {
+        server.logger.debug("catch:" + err);
         return next(err);
       });
   }
 }
+
+
+function getAllClassesInSchool(req, res, next) {
+  var input_err = false;
+  var error_detail = "";
+  // Index is required
+  var schoolid = parseInt(req.params.schoolid);
+  if (!bjjt_utils.isNumeric(schoolid) || (isNaN(schoolid)) || (schoolid < 1)) {
+    input_err = true;
+    error_detail = "schoolid";
+  }
+  // Fail on input error
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    db.any(`
+      select class.*, course.name as coursename, school.name as schoolname, school.index as schoolid
+      from
+      school INNER JOIN (
+      class INNER JOIN
+      course ON class.courseid = course.index)
+      ON school.index = course.schoolid
+      WHERE school.index = $1
+      order by class.name`,
+        schoolid)
+      .then(function(data) {
+        if (data.length > 0) {
+          res.status(200)
+            .json({
+              status: 'success',
+              data: data,
+              message: 'Retrieved ALL classes'
+            });
+        } else {
+          res.status(404)
+            .json({
+              status: 'object not found',
+              schoolid: schoolid
+            });
+        }
+      })
+      .catch(function(err) {
+        server.logger.debug("catch:" + err);
+        return next(err);
+      });
+  }
+}
+
+function cuClass(req, res, next) {
+  server.logger.debug("Create or update class " + JSON.stringify(req.body));
+  var input_err = false;
+  var error_detail = "";
+  // Make sure it doesn't already exist
+  var name = req.body.name;
+  if ((typeof name !== 'string') || (name.length < 1)) {
+    input_err = true;
+    error_detail = "name";
+  }
+  // twofactor is required
+  var twofactor = req.body.twofactor;
+  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
+    input_err = true;
+    error_detail = "twofactor";
+  }
+
+  // Good inputs, update or create?
+  var update = parseInt(req.body.update);
+  if (!bjjt_utils.isNumeric(update) || (isNaN(update)) || (update < 0)) {
+    update = 0;
+  }
+
+  // Check for index (update only)
+  if (update) {
+    // Index is required
+    var index = parseInt(req.body.index);
+    if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
+      input_err = true;
+      error_detail = "index";
+    }
+  }
+
+  // courseid is required
+  var courseid = parseInt(req.body.courseid);
+  if (!bjjt_utils.isNumeric(courseid) || (isNaN(courseid)) || (courseid < 1)) {
+    input_err = true;
+    error_detail = "courseid";
+  }
+
+  // sequencenum is not required
+  var sequencenum = parseInt(req.body.sequencenum);
+  if (!bjjt_utils.isNumeric(sequencenum) || (isNaN(sequencenum)) || (sequencenum < 1)) {
+    sequencenum = 0;
+  }
+  // Fail on input error
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    // Support update
+    if (update) {
+      // Check 2FA code before we Save
+      // See private doc for URL of verify
+      // Verify a given token
+      if (speakeasy.totp.verify({
+          secret: twoFactor.secret,
+          encoding: 'base32',
+          token: twofactor,
+          window: 2
+        })) {
+        var strSQL = `update class
+                    set name=$1, courseid=$2, sequencenum=$3 where index=$4`;
+        db.none(
+            strSQL, [name, courseid, sequencenum, index])
+          .then(function(data) {
+            res.status(200)
+              .json({
+                status: 'success',
+                message: 'Updated class: ' + name,
+                index: index
+              });
+          })
+          .catch(function(err) {
+            server.logger.debug("catch:" + err);
+            return next(err);
+          });
+      } else {
+        res.status(400)
+          .json({
+            status: 'fail',
+            data: twofactor,
+            message: 'auth'
+          });
+      }
+    } else {
+
+      // Support Create
+      db.oneOrNone(
+          // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
+          "SELECT index from class WHERE name ilike $1 and courseid = $2", [name, courseid])
+        .then(function(data) {
+          if (data != null) {
+            server.logger.debug("Exists: 1");
+            input_err = true;
+            error_detail = "Exists: " + JSON.stringify(data.index);
+            res.status(400)
+              .json({
+                status: 'fail',
+                data: error_detail,
+                message: 'Duplicate'
+              });
+
+          } else {
+            // does not exist, create it
+            server.logger.debug("class doesn't exist, time to create " + name);
+
+            if (input_err === true) {
+              server.logger.debug("error_detail:" + error_detail);
+
+              res.status(400)
+                .json({
+                  status: 'fail',
+                  data: error_detail,
+                  message: 'Bad input'
+                });
+            } else {
+              // Check 2FA code before we Save
+              // See private doc for URL of verify
+              // Verify a given token
+              if (speakeasy.totp.verify({
+                  secret: twoFactor.secret,
+                  encoding: 'base32',
+                  token: twofactor,
+                  window: 2
+                })) {
+                // server.logger.debug( "2fa good");
+                var strSQL = "insert into class(name, courseid, sequencenum, createdate) " +
+                  "values($1, $2, $3, CURRENT_TIMESTAMP) " +
+                  "RETURNING index";
+                db.one(
+                    strSQL, [name, courseid, sequencenum])
+                  .then(function(data) {
+                    res.status(200)
+                      .json({
+                        status: 'success',
+                        data: data.index,
+                        message: 'Inserted one class: ' + name
+                      });
+                  })
+                  .catch(function(err) {
+                    server.logger.debug("catch:" + err);
+                    return next(err);
+                  });
+              } else {
+                res.status(400)
+                  .json({
+                    status: 'fail',
+                    data: twofactor,
+                    message: 'auth'
+                  });
+              }
+            }
+          }
+        })
+        .catch(function(err) {
+          return next(err);
+        });
+    }
+  }
+}
+
+function removeClass(req, res, next) {
+  var input_err = false;
+  var error_detail = "";
+  var index = parseInt(req.params.id);
+  if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
+    input_err = true;
+    error_detail = "index";
+  }
+  // twofactor is required
+  var twofactor = req.params.twofactor;
+  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
+    input_err = true;
+    error_detail = "twofactor";
+  }
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    // Check 2FA code before we Save
+    // See private doc for URL of verify
+    // Verify a given token
+    if (speakeasy.totp.verify({
+        secret: twoFactor.secret,
+        encoding: 'base32',
+        token: twofactor,
+        window: 2
+      })) {
+      db.result('delete from class where index = $1', index)
+        .then(function(result) {
+          if (result.rowCount > 0) {
+            res.status(200)
+              .json({
+                status: 'success',
+                result: result,
+                message: 'Removed ' + result.rowCount + ' class'
+              });
+          } else {
+            res.status(404)
+              .json({
+                status: 'object not found',
+                result: result,
+                id: index
+              });
+          }
+        })
+        .catch(function(err) {
+          return next(err);
+        });
+    } else {
+      res.status(400)
+        .json({
+          status: 'fail',
+          data: twofactor,
+          message: 'auth'
+        });
+    }
+  }
+}
+
+function getTechsInClass(req, res, next) {
+
+}
+
+function getAllClassesWithTech(req, res, next) {}
+
+function addTechsToClass(req, res, next) {
+  server.logger.debug("Add techs to class " + JSON.stringify(req.body));
+  var input_err = false;
+  var error_detail = "";
+  // Index is required
+  var classid = parseInt(req.body.classid);
+  if (!bjjt_utils.isNumeric(classid) || (isNaN(classid)) || (classid < 1)) {
+    input_err = true;
+    error_detail = "classid";
+  }
+  // twofactor is required
+  var twofactor = req.body.twofactor;
+  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
+    input_err = true;
+    error_detail = "twofactor";
+  }
+
+  // techs array is required
+  // It is an array of [{techid, sequencenum}]
+  var techs = req.body.techs;
+  if (techs.length < 1) {
+    input_err = true;
+    error_detail = "techs";
+  }
+
+
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    // Check 2FA code before we Save
+    // See private doc for URL of verify
+    // Verify a given token
+    if (speakeasy.totp.verify({
+        secret: twoFactor.secret,
+        encoding: 'base32',
+        token: twofactor,
+        window: 2
+      })) {
+      var loopInsert, techid, sequencenum;
+
+      for (loopInsert = 0; loopInsert < techs.length; loopInsert++) {
+        techid = techs[loopInsert].techid;
+        sequencenum = techs[loopInsert].sequencenum;
+        // server.logger.debug( "2fa good");
+        var strSQL = `insert into classtech(classid, techid, sequencenum, createdate)
+          values($1, $2, $3, CURRENT_TIMESTAMP)`;
+        db.one(
+            strSQL, [classid, techid, sequencenum])
+          .then(function(data) {
+            res.status(200)
+              .json({
+                status: 'success',
+                message: 'Inserted one classtech: ' + classid + ':' + techid + '(' + sequencenum + ')'
+              });
+          })
+          .catch(function(err) {
+            res.status(400)
+              .json({
+                status: 'fail',
+                detail: err.detail,
+                message: err.message
+              });
+          });
+      }
+    } else {
+      res.status(400)
+        .json({
+          status: 'fail',
+          data: twofactor,
+          message: 'auth'
+        });
+    }
+  }
+}
+
+function updateTechsInClass(req, res, next) {}
+
+function removeTechsFromClass(req, res, next) {}
+
+function removeTechFromClass(req, res, next) {}

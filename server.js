@@ -106,20 +106,33 @@ router.post('/api/tech/update', db.updateTech);
 router.get('/api/tech/brief/:id', db.getTechBrief);
 router.get('/api/tech/text/:str', db.getTechFromStr);
 router.get('/api/tech/tag/:tag/:id', db.getTechsFromTag);
+router.delete('/api/tech/:id/:twofactor', db.removeTech);
 
 router.get('/api/school/:id', db.getSchool);
+router.get('/api/schools', db.getAllSchools);
 router.post('/api/school/new', db.createSchool);
 router.post('/api/school/update', db.updateSchool);
 router.delete('/api/school/:id/:twofactor', db.removeSchool);
 
 router.get('/api/course/:id', db.getCourse);
+router.get('/api/courses/:schoolid', db.getAllCourses);
 router.post('/api/course/new', db.createCourse);
 router.post('/api/course/update', db.updateCourse);
+router.delete('/api/course/:id/:twofactor', db.removeCourse);
 
+router.get('/api/class/:id', db.getClass);
+router.get('/api/classes/:courseid', db.getAllClasses);
+router.get('/api/classes/school/:schoolid', db.getAllClassesInSchool);
+router.post('/api/class/new', db.createClass);
+router.post('/api/class/update', db.updateClass);
+router.delete('/api/class/:id/:twofactor', db.removeClass);
 
-
-
-
+router.get('/api/classtech/:classid', db.getTechsInClass);
+router.get('/api/classestech/:techid', db.getAllClassesWithTech);
+router.post('/api/classtech/news', db.addTechsToClass);
+router.post('/api/classtech/update', db.updateTechsInClass);
+router.delete('/api/classtech/:classid/:twofactor', db.removeTechsFromClass);
+router.delete('/api/classtech/:classid/:techid/:twofactor', db.removeTechFromClass);
 
 
 // Next line provides support for root url. Without this, you get a "Cannot get /" error at site root.
