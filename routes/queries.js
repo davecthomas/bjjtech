@@ -1824,7 +1824,16 @@ function getTechsInClass(req, res, next) {
     input_err = true;
     error_detail = "classid";
   }
-  db.any(`
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    db.any(`
     select classtech.*, class.name as classname, technique.name as techname
     from
     technique INNER JOIN (
@@ -1832,34 +1841,90 @@ function getTechsInClass(req, res, next) {
     classtech ON classtech.classid = class.index)
     ON technique.index = classtech.techid
     WHERE classtech.classid = class.index AND technique.index = classtech.techid
-    AND class.index = 1
+    AND class.index = $1
     order by classtech.sequencenum`,
-      classid)
-    .then(function(data) {
-      if (data.length > 0) {
-        res.status(200)
-          .json({
-            status: 'success',
-            data: data,
-            message: 'Retrieved ALL classtechs'
-          });
-      } else {
-        res.status(404)
-          .json({
-            status: 'object not found',
-            id: classid
-          });
-      }
-    })
-    .catch(function(err) {
-      server.logger.debug("catch:" + err);
-      return next(err);
-    });
-
+        classid)
+      .then(function(data) {
+        if (data.length > 0) {
+          res.status(200)
+            .json({
+              status: 'success',
+              data: data,
+              message: 'Retrieved ALL classtechs'
+            });
+        } else {
+          res.status(404)
+            .json({
+              status: 'object not found',
+              id: classid
+            });
+        }
+      })
+      .catch(function(err) {
+        server.logger.debug("catch:" + err);
+        return next(err);
+      });
+  }
 }
 
 function getAllClassesWithTech(req, res, next) {
-
+  server.logger.debug("Get all classes with tech " + JSON.stringify(req.params));
+  var input_err = false;
+  var error_detail = "";
+  // Index is required
+  var techid = parseInt(req.params.techid);
+  if (!bjjt_utils.isNumeric(techid) || (isNaN(techid)) || (techid < 1)) {
+    input_err = true;
+    error_detail = "techid";
+  }
+  var schoolid = parseInt(req.params.schoolid);
+  if (!bjjt_utils.isNumeric(schoolid) || (isNaN(schoolid)) || (schoolid < 1)) {
+    input_err = true;
+    error_detail = "schoolid";
+  }
+  if (input_err === true) {
+    server.logger.debug("error_detail:" + error_detail);
+    res.status(400)
+      .json({
+        status: 'fail',
+        data: error_detail,
+        message: 'Bad input'
+      });
+  } else {
+    db.any(`
+      select classtech.*, class.index as classid, school.name as schoolname, course.name as coursename, course.index as courseid, class.name as classname, technique.name as techname
+      from school,
+      technique INNER JOIN (
+      course INNER JOIN (
+      class INNER JOIN
+      classtech ON classtech.classid = class.index)
+      ON course.index = class.courseid)
+      ON technique.index = classtech.techid
+      WHERE classtech.classid = class.index AND technique.index = classtech.techid
+      AND technique.index = $1
+      AND school.index = $2
+      order by class.name`, [techid, schoolid])
+      .then(function(data) {
+        if (data.length > 0) {
+          res.status(200)
+            .json({
+              status: 'success',
+              data: data,
+              message: 'Retrieved ALL classes with tech ' + techid
+            });
+        } else {
+          res.status(404)
+            .json({
+              status: 'object not found',
+              id: techid
+            });
+        }
+      })
+      .catch(function(err) {
+        server.logger.debug("catch:" + err);
+        return next(err);
+      });
+  }
 }
 
 function addTechsToClass(req, res, next) {

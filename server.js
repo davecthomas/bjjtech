@@ -129,7 +129,7 @@ router.post('/api/class/update', db.updateClass);
 router.delete('/api/class/:id/:twofactor', db.removeClass);
 
 router.get('/api/classtech/:classid', db.getTechsInClass);
-router.get('/api/classestech/:techid', db.getAllClassesWithTech);
+router.get('/api/classestech/:techid/:schoolid', db.getAllClassesWithTech);
 router.post('/api/classtech/news', db.addTechsToClass);
 router.post('/api/classtech/update', db.updateTechsInClass);
 router.delete('/api/classtech/:classid/:twofactor', db.removeTechsFromClass);
