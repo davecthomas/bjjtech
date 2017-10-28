@@ -175,6 +175,44 @@ module.exports = {
   removeTechFromClass: removeTechFromClass
 };
 
+function check2FA(req, callback) {
+  var input_err = false;
+  var error_detail = "";
+  // Double negative, so our default is to fail safe, meaning require 2FA if we can't find the setting
+  if (process.env.BJJT_NO_2FA == 'false') {
+    // Validate inputs: Check req.params and req.body
+    var twofactor = req.params.twofactor;
+    if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
+      twofactor = req.body.twofactor;
+      if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
+        input_err = true;
+        error_detail = "twofactor";
+      }
+    }
+    if (speakeasy.totp.verify({
+        secret: twoFactor.secret,
+        encoding: 'base32',
+        token: twofactor,
+        window: 2
+      })) {
+      callback({
+        status: true
+      });
+    } else {
+      server.logger.debug('2fa bad');
+      callback({
+        status: false,
+        detail: error_detail
+      });
+    }
+  } else {
+    server.logger.debug('2fa bypass');
+    callback({
+      status: true
+    });
+  }
+}
+
 // This should be used to generate new secrets for registering users, eventually.
 // It would take a user email address.
 function generate2FASecret(user_email) {
@@ -540,13 +578,6 @@ function updateTech(req, res, next) {
   var input_err = false;
   var error_detail = "";
 
-  // twofactor is required
-  var twofactor = req.body.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
-
   // Index is required
   var index = parseInt(req.body.index);
   if (!bjjt_utils.isNumeric(index) || (isNaN(index)) || (index < 1)) {
@@ -657,43 +688,35 @@ function updateTech(req, res, next) {
         message: 'Bad input'
       });
   } else {
-
-    // Check 2FA code before we Save
-    // See private doc for URL of verify
-    // Verify a given token
-    if (speakeasy.totp.verify({
-        secret: twoFactor.secret,
-        encoding: 'base32',
-        token: twofactor,
-        window: 2
-      })) {
-
-      var strSQL = `update technique
-                    set type=$1, topic=$2, name=$3, setup=$4, details=$5, credit=$6, sport=$7 ,
-                    startingpos=$8 , endingpos=$9 , opponentstartingpos=$10, skilllevel=$11, imageurl=$12, numimages=$13 , videoid=$14  where index=$15`;
-      db.none(
-          strSQL, [type, topic, name, setup, details, credit, sport, startingpos, endingpos, opponentstartingpos, skilllevel, imageurl, numimages, videoid, index])
-        .then(function(data) {
-          res.status(200)
-            .json({
-              status: 'success',
-              message: 'Updated tech: ' + name,
-              index: index
-            });
-        })
-        .catch(function(err) {
-          server.logger.debug("catch:" + err);
-          return next(err);
-        });
-    } else {
-      //        var tfa = generate2FASecret( "davidcthomas@gmail.com");
-      res.status(400)
-        .json({
-          status: 'fail',
-          //            data: tfa,
-          message: 'auth'
-        });
-    }
+    check2FA(req, function(authresult) {
+      if (authresult.status) {
+        var strSQL = `update technique
+                      set type=$1, topic=$2, name=$3, setup=$4, details=$5, credit=$6, sport=$7 ,
+                      startingpos=$8 , endingpos=$9 , opponentstartingpos=$10, skilllevel=$11, imageurl=$12, numimages=$13 , videoid=$14  where index=$15`;
+        db.none(
+            strSQL, [type, topic, name, setup, details, credit, sport, startingpos, endingpos, opponentstartingpos, skilllevel, imageurl, numimages, videoid, index])
+          .then(function(data) {
+            res.status(200)
+              .json({
+                status: 'success',
+                message: 'Updated tech: ' + name,
+                index: index
+              });
+          })
+          .catch(function(err) {
+            server.logger.debug("catch:" + err);
+            return next(err);
+          });
+      } else {
+        //        var tfa = generate2FASecret( "davidcthomas@gmail.com");
+        res.status(400)
+          .json({
+            status: 'fail',
+            //            data: tfa,
+            message: 'auth'
+          });
+      }
+    });
   }
 }
 
@@ -730,12 +753,6 @@ function createTech(req, res, next) {
             });
 
         } else {
-          // twofactor is required
-          var twofactor = req.body.twofactor;
-          if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-            input_err = true;
-            error_detail = "twofactor";
-          }
 
           // Tech does not exist, create it
           server.logger.debug("Doesn't exist, time to create " + name);
@@ -829,41 +846,34 @@ function createTech(req, res, next) {
                 message: 'Bad input'
               });
           } else {
-            // Check 2FA code before we Save
-            // See private doc for URL of verify
-            // Verify a given token
-            if (speakeasy.totp.verify({
-                secret: twoFactor.secret,
-                encoding: 'base32',
-                token: twofactor,
-                window: 2
-              })) {
-              // server.logger.debug( "2fa good");
-              var strSQL = "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings) " +
-                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, $15, $16) " +
-                "RETURNING index";
-              db.one(
-                  strSQL, [type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, rating, ratings])
-                .then(function(data) {
-                  res.status(200)
-                    .json({
-                      status: 'success',
-                      data: data.index,
-                      message: 'Inserted one tech: ' + name
-                    });
-                })
-                .catch(function(err) {
-                  server.logger.debug("catch:" + err);
-                  return next(err);
-                });
-            } else {
-              res.status(400)
-                .json({
-                  status: 'fail',
-                  data: twofactor,
-                  message: 'auth'
-                });
-            }
+            check2FA(req, function(authresult) {
+              if (authresult.status) {
+                var strSQL = "insert into technique(type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, lastteachdate, rating, ratings) " +
+                  "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, $15, $16) " +
+                  "RETURNING index";
+                db.one(
+                    strSQL, [type, topic, name, setup, details, credit, sport, startingpos, endingpos, imageurl, numimages, videoid, opponentstartingpos, skilllevel, rating, ratings])
+                  .then(function(data) {
+                    res.status(200)
+                      .json({
+                        status: 'success',
+                        data: data.index,
+                        message: 'Inserted one tech: ' + name
+                      });
+                  })
+                  .catch(function(err) {
+                    server.logger.debug("catch:" + err);
+                    return next(err);
+                  });
+
+              } else {
+                res.status(400)
+                  .json({
+                    status: 'fail',
+                    message: 'auth'
+                  });
+              }
+            });
           }
         }
       })
@@ -881,12 +891,7 @@ function removeTech(req, res, next) {
     input_err = true;
     error_detail = "index";
   }
-  // twofactor is required
-  var twofactor = req.params.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
+
   if (input_err === true) {
     server.logger.debug("error_detail:" + error_detail);
     res.status(400)
@@ -896,44 +901,37 @@ function removeTech(req, res, next) {
         message: 'Bad input'
       });
   } else {
-    // Check 2FA code before we Save
-    // See private doc for URL of verify
-    // Verify a given token
-    if (speakeasy.totp.verify({
-        secret: twoFactor.secret,
-        encoding: 'base32',
-        token: twofactor,
-        window: 2
-      })) {
-      db.result('delete from technique where index = $1', index)
-        .then(function(result) {
-          if (result.rowCount > 0) {
-            res.status(200)
-              .json({
-                status: 'success',
-                result: result,
-                message: 'Removed ' + result.rowCount + ' tech'
-              });
-          } else {
-            res.status(404)
-              .json({
-                status: 'object not found',
-                result: result,
-                id: index
-              });
-          }
-        })
-        .catch(function(err) {
-          return next(err);
-        });
-    } else {
-      res.status(400)
-        .json({
-          status: 'fail',
-          data: twofactor,
-          message: 'auth'
-        });
-    }
+    check2FA(req, function(authresult) {
+      if (authresult.status) {
+        db.result('delete from technique where index = $1', index)
+          .then(function(result) {
+            if (result.rowCount > 0) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  result: result,
+                  message: 'Removed ' + result.rowCount + ' tech'
+                });
+            } else {
+              res.status(404)
+                .json({
+                  status: 'object not found',
+                  result: result,
+                  id: index
+                });
+            }
+          })
+          .catch(function(err) {
+            return next(err);
+          });
+      } else {
+        res.status(400)
+          .json({
+            status: 'fail',
+            message: 'auth'
+          });
+      }
+    });
   }
 }
 
@@ -996,12 +994,6 @@ function cuSchool(req, res, next) {
     input_err = true;
     error_detail = "name";
   }
-  // twofactor is required
-  var twofactor = req.body.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
 
   // Good inputs, update or create?
   var update = parseInt(req.body.update);
@@ -1031,39 +1023,33 @@ function cuSchool(req, res, next) {
   } else {
     // Support update
     if (update) {
-      // Check 2FA code before we Save
-      // See private doc for URL of verify
-      // Verify a given token
-      if (speakeasy.totp.verify({
-          secret: twoFactor.secret,
-          encoding: 'base32',
-          token: twofactor,
-          window: 2
-        })) {
-        var strSQL = `update school
-                    set name=$1 where index=$2`;
-        db.none(
-            strSQL, [name, index])
-          .then(function(data) {
-            res.status(200)
-              .json({
-                status: 'success',
-                message: 'Updated school: ' + name,
-                index: index
-              });
-          })
-          .catch(function(err) {
-            server.logger.debug("catch:" + err);
-            return next(err);
-          });
-      } else {
-        res.status(400)
-          .json({
-            status: 'fail',
-            data: twofactor,
-            message: 'auth'
-          });
-      }
+      check2FA(req, function(authresult) {
+        if (authresult.status) {
+          var strSQL = `update school
+                      set name=$1 where index=$2`;
+          db.none(
+              strSQL, [name, index])
+            .then(function(data) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  message: 'Updated school: ' + name,
+                  index: index
+                });
+            })
+            .catch(function(err) {
+              server.logger.debug("catch:" + err);
+              return next(err);
+            });
+
+        } else {
+          res.status(400)
+            .json({
+              status: 'fail',
+              message: 'auth'
+            });
+        }
+      });
     } else {
 
       // Support Create
@@ -1084,12 +1070,6 @@ function cuSchool(req, res, next) {
               });
 
           } else {
-            // twofactor is required
-            var twofactor = req.body.twofactor;
-            if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-              input_err = true;
-              error_detail = "twofactor";
-            }
 
             // does not exist, create it
             server.logger.debug("School doesn't exist, time to create " + name);
@@ -1104,41 +1084,35 @@ function cuSchool(req, res, next) {
                   message: 'Bad input'
                 });
             } else {
-              // Check 2FA code before we Save
-              // See private doc for URL of verify
-              // Verify a given token
-              if (speakeasy.totp.verify({
-                  secret: twoFactor.secret,
-                  encoding: 'base32',
-                  token: twofactor,
-                  window: 2
-                })) {
-                // server.logger.debug( "2fa good");
-                var strSQL = "insert into school(createdate, name) " +
-                  "values(CURRENT_TIMESTAMP, $1) " +
-                  "RETURNING index";
-                db.one(
-                    strSQL, [name])
-                  .then(function(data) {
-                    res.status(200)
-                      .json({
-                        status: 'success',
-                        data: data.index,
-                        message: 'Inserted one school: ' + name
-                      });
-                  })
-                  .catch(function(err) {
-                    server.logger.debug("catch:" + err);
-                    return next(err);
-                  });
-              } else {
-                res.status(400)
-                  .json({
-                    status: 'fail',
-                    data: twofactor,
-                    message: 'auth'
-                  });
-              }
+              check2FA(req, function(authresult) {
+                if (authresult.status) {
+                  var strSQL = "insert into school(createdate, name) " +
+                    "values(CURRENT_TIMESTAMP, $1) " +
+                    "RETURNING index";
+                  db.one(
+                      strSQL, [name])
+                    .then(function(data) {
+                      res.status(200)
+                        .json({
+                          status: 'success',
+                          data: data.index,
+                          message: 'Inserted one school: ' + name
+                        });
+                    })
+                    .catch(function(err) {
+                      server.logger.debug("catch:" + err);
+                      return next(err);
+                    });
+
+                } else {
+                  res.status(400)
+                    .json({
+                      status: 'fail',
+                      message: 'auth'
+                    });
+
+                }
+              });
             }
           }
         })
@@ -1164,12 +1138,7 @@ function removeSchool(req, res, next) {
     input_err = true;
     error_detail = "index";
   }
-  // twofactor is required
-  var twofactor = req.params.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
+
   if (input_err === true) {
     server.logger.debug("error_detail:" + error_detail);
 
@@ -1180,44 +1149,38 @@ function removeSchool(req, res, next) {
         message: 'Bad input'
       });
   } else {
-    // Check 2FA code before we Save
-    // See private doc for URL of verify
-    // Verify a given token
-    if (speakeasy.totp.verify({
-        secret: twoFactor.secret,
-        encoding: 'base32',
-        token: twofactor,
-        window: 2
-      })) {
-      db.result('delete from school where index = $1', index)
-        .then(function(result) {
-          if (result.rowCount > 0) {
-            res.status(200)
-              .json({
-                status: 'success',
-                result: result,
-                message: 'Removed ' + index
-              });
-          } else {
-            res.status(404)
-              .json({
-                status: 'object not found',
-                result: result,
-                id: index
-              });
-          }
-        })
-        .catch(function(err) {
-          return next(err);
-        });
-    } else {
-      res.status(400)
-        .json({
-          status: 'fail',
-          data: twofactor,
-          message: 'auth'
-        });
-    }
+    check2FA(req, function(authresult) {
+      if (authresult.status) {
+        db.result('delete from school where index = $1', index)
+          .then(function(result) {
+            if (result.rowCount > 0) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  result: result,
+                  message: 'Removed ' + index
+                });
+            } else {
+              res.status(404)
+                .json({
+                  status: 'object not found',
+                  result: result,
+                  id: index
+                });
+            }
+          })
+          .catch(function(err) {
+            return next(err);
+          });
+
+      } else {
+        res.status(400)
+          .json({
+            status: 'fail',
+            message: 'auth'
+          });
+      }
+    });
   }
 }
 
@@ -1301,12 +1264,6 @@ function cuCourse(req, res, next) {
     input_err = true;
     error_detail = "name";
   }
-  // twofactor is required
-  var twofactor = req.body.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
 
   // Good inputs, update or create?
   var update = parseInt(req.body.update);
@@ -1349,39 +1306,33 @@ function cuCourse(req, res, next) {
   } else {
     // Support update
     if (update) {
-      // Check 2FA code before we Save
-      // See private doc for URL of verify
-      // Verify a given token
-      if (speakeasy.totp.verify({
-          secret: twoFactor.secret,
-          encoding: 'base32',
-          token: twofactor,
-          window: 2
-        })) {
-        var strSQL = `update course
-                    set name=$1, schoolid=$2, sequencenum=$3 where index=$4`;
-        db.none(
-            strSQL, [name, schoolid, sequencenum, index])
-          .then(function(data) {
-            res.status(200)
-              .json({
-                status: 'success',
-                message: 'Updated course: ' + name,
-                index: index
-              });
-          })
-          .catch(function(err) {
-            server.logger.debug("catch:" + err);
-            return next(err);
-          });
-      } else {
-        res.status(400)
-          .json({
-            status: 'fail',
-            data: twofactor,
-            message: 'auth'
-          });
-      }
+      check2FA(req, function(authresult) {
+        if (authresult.status) {
+
+          var strSQL = `update course
+                      set name=$1, schoolid=$2, sequencenum=$3 where index=$4`;
+          db.none(
+              strSQL, [name, schoolid, sequencenum, index])
+            .then(function(data) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  message: 'Updated course: ' + name,
+                  index: index
+                });
+            })
+            .catch(function(err) {
+              server.logger.debug("catch:" + err);
+              return next(err);
+            });
+        } else {
+          res.status(400)
+            .json({
+              status: 'fail',
+              message: 'auth'
+            });
+        }
+      });
     } else {
 
       // Support Create
@@ -1415,41 +1366,33 @@ function cuCourse(req, res, next) {
                   message: 'Bad input'
                 });
             } else {
-              // Check 2FA code before we Save
-              // See private doc for URL of verify
-              // Verify a given token
-              if (speakeasy.totp.verify({
-                  secret: twoFactor.secret,
-                  encoding: 'base32',
-                  token: twofactor,
-                  window: 2
-                })) {
-                // server.logger.debug( "2fa good");
-                var strSQL = "insert into course(name, schoolid, sequencenum, createdate) " +
-                  "values($1, $2, $3, CURRENT_TIMESTAMP) " +
-                  "RETURNING index";
-                db.one(
-                    strSQL, [name, schoolid, sequencenum])
-                  .then(function(data) {
-                    res.status(200)
-                      .json({
-                        status: 'success',
-                        data: data.index,
-                        message: 'Inserted one course: ' + name
-                      });
-                  })
-                  .catch(function(err) {
-                    server.logger.debug("catch:" + err);
-                    return next(err);
-                  });
-              } else {
-                res.status(400)
-                  .json({
-                    status: 'fail',
-                    data: twofactor,
-                    message: 'auth'
-                  });
-              }
+              check2FA(req, function(authresult) {
+                if (authresult.status) {
+                  var strSQL = "insert into course(name, schoolid, sequencenum, createdate) " +
+                    "values($1, $2, $3, CURRENT_TIMESTAMP) " +
+                    "RETURNING index";
+                  db.one(
+                      strSQL, [name, schoolid, sequencenum])
+                    .then(function(data) {
+                      res.status(200)
+                        .json({
+                          status: 'success',
+                          data: data.index,
+                          message: 'Inserted one course: ' + name
+                        });
+                    })
+                    .catch(function(err) {
+                      server.logger.debug("catch:" + err);
+                      return next(err);
+                    });
+                } else {
+                  res.status(400)
+                    .json({
+                      status: 'fail',
+                      message: 'auth'
+                    });
+                }
+              });
             }
           }
         })
@@ -1468,12 +1411,7 @@ function removeCourse(req, res, next) {
     input_err = true;
     error_detail = "index";
   }
-  // twofactor is required
-  var twofactor = req.params.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
+
   if (input_err === true) {
     server.logger.debug("error_detail:" + error_detail);
     res.status(400)
@@ -1483,44 +1421,38 @@ function removeCourse(req, res, next) {
         message: 'Bad input'
       });
   } else {
-    // Check 2FA code before we Save
-    // See private doc for URL of verify
-    // Verify a given token
-    if (speakeasy.totp.verify({
-        secret: twoFactor.secret,
-        encoding: 'base32',
-        token: twofactor,
-        window: 2
-      })) {
-      db.result('delete from course where index = $1', index)
-        .then(function(result) {
-          if (result.rowCount > 0) {
-            res.status(200)
-              .json({
-                status: 'success',
-                result: result,
-                message: 'Removed ' + result.rowCount + ' course'
-              });
-          } else {
-            res.status(404)
-              .json({
-                status: 'object not found',
-                result: result,
-                id: index
-              });
-          }
-        })
-        .catch(function(err) {
-          return next(err);
-        });
-    } else {
-      res.status(400)
-        .json({
-          status: 'fail',
-          data: twofactor,
-          message: 'auth'
-        });
-    }
+    check2FA(req, function(authresult) {
+      if (authresult.status) {
+
+        db.result('delete from course where index = $1', index)
+          .then(function(result) {
+            if (result.rowCount > 0) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  result: result,
+                  message: 'Removed ' + result.rowCount + ' course'
+                });
+            } else {
+              res.status(404)
+                .json({
+                  status: 'object not found',
+                  result: result,
+                  id: index
+                });
+            }
+          })
+          .catch(function(err) {
+            return next(err);
+          });
+      } else {
+        res.status(400)
+          .json({
+            status: 'fail',
+            message: 'auth'
+          });
+      }
+    });
   }
 }
 
@@ -1691,12 +1623,6 @@ function cuClass(req, res, next) {
     input_err = true;
     error_detail = "name";
   }
-  // twofactor is required
-  var twofactor = req.body.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
 
   // Good inputs, update or create?
   var update = parseInt(req.body.update);
@@ -1739,39 +1665,33 @@ function cuClass(req, res, next) {
   } else {
     // Support update
     if (update) {
-      // Check 2FA code before we Save
-      // See private doc for URL of verify
-      // Verify a given token
-      if (speakeasy.totp.verify({
-          secret: twoFactor.secret,
-          encoding: 'base32',
-          token: twofactor,
-          window: 2
-        })) {
-        var strSQL = `update class
-                    set name=$1, courseid=$2, sequencenum=$3 where index=$4`;
-        db.none(
-            strSQL, [name, courseid, sequencenum, index])
-          .then(function(data) {
-            res.status(200)
-              .json({
-                status: 'success',
-                message: 'Updated class: ' + name,
-                index: index
-              });
-          })
-          .catch(function(err) {
-            server.logger.debug("catch:" + err);
-            return next(err);
-          });
-      } else {
-        res.status(400)
-          .json({
-            status: 'fail',
-            data: twofactor,
-            message: 'auth'
-          });
-      }
+      check2FA(req, function(authresult) {
+        if (authresult.status == true) {
+          var strSQL = `update class
+                      set name=$1, courseid=$2, sequencenum=$3 where index=$4`;
+          db.none(
+              strSQL, [name, courseid, sequencenum, index])
+            .then(function(data) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  message: 'Updated class: ' + name,
+                  index: index
+                });
+            })
+            .catch(function(err) {
+              server.logger.debug("catch:" + err);
+              return next(err);
+            });
+        } else {
+          res.status(400)
+            .json({
+              status: 'fail',
+              message: 'auth'
+            });
+        }
+      });
+
     } else {
 
       // Support Create
@@ -1804,41 +1724,33 @@ function cuClass(req, res, next) {
                   message: 'Bad input'
                 });
             } else {
-              // Check 2FA code before we Save
-              // See private doc for URL of verify
-              // Verify a given token
-              if (speakeasy.totp.verify({
-                  secret: twoFactor.secret,
-                  encoding: 'base32',
-                  token: twofactor,
-                  window: 2
-                })) {
-                // server.logger.debug( "2fa good");
-                var strSQL = "insert into class(name, courseid, sequencenum, createdate) " +
-                  "values($1, $2, $3, CURRENT_TIMESTAMP) " +
-                  "RETURNING index";
-                db.one(
-                    strSQL, [name, courseid, sequencenum])
-                  .then(function(data) {
-                    res.status(200)
-                      .json({
-                        status: 'success',
-                        data: data.index,
-                        message: 'Inserted one class: ' + name
-                      });
-                  })
-                  .catch(function(err) {
-                    server.logger.debug("catch:" + err);
-                    return next(err);
-                  });
-              } else {
-                res.status(400)
-                  .json({
-                    status: 'fail',
-                    data: twofactor,
-                    message: 'auth'
-                  });
-              }
+              check2FA(req, function(authresult) {
+                if (authresult.status) {
+                  var strSQL = "insert into class(name, courseid, sequencenum, createdate) " +
+                    "values($1, $2, $3, CURRENT_TIMESTAMP) " +
+                    "RETURNING index";
+                  db.one(
+                      strSQL, [name, courseid, sequencenum])
+                    .then(function(data) {
+                      res.status(200)
+                        .json({
+                          status: 'success',
+                          data: data.index,
+                          message: 'Inserted one class: ' + name
+                        });
+                    })
+                    .catch(function(err) {
+                      server.logger.debug("catch:" + err);
+                      return next(err);
+                    });
+                } else {
+                  res.status(400)
+                    .json({
+                      status: 'fail',
+                      message: 'auth'
+                    });
+                }
+              });
             }
           }
         })
@@ -1857,12 +1769,7 @@ function removeClass(req, res, next) {
     input_err = true;
     error_detail = "index";
   }
-  // twofactor is required
-  var twofactor = req.params.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
-  }
+
   if (input_err === true) {
     server.logger.debug("error_detail:" + error_detail);
     res.status(400)
@@ -1872,52 +1779,88 @@ function removeClass(req, res, next) {
         message: 'Bad input'
       });
   } else {
-    // Check 2FA code before we Save
-    // See private doc for URL of verify
-    // Verify a given token
-    if (speakeasy.totp.verify({
-        secret: twoFactor.secret,
-        encoding: 'base32',
-        token: twofactor,
-        window: 2
-      })) {
-      db.result('delete from class where index = $1', index)
-        .then(function(result) {
-          if (result.rowCount > 0) {
-            res.status(200)
-              .json({
-                status: 'success',
-                result: result,
-                message: 'Removed ' + result.rowCount + ' class'
-              });
-          } else {
-            res.status(404)
-              .json({
-                status: 'object not found',
-                result: result,
-                id: index
-              });
-          }
-        })
-        .catch(function(err) {
-          return next(err);
-        });
-    } else {
-      res.status(400)
-        .json({
-          status: 'fail',
-          data: twofactor,
-          message: 'auth'
-        });
-    }
+    check2FA(req, function(authresult) {
+      if (authresult.status) {
+
+        db.result('delete from class where index = $1', index)
+          .then(function(result) {
+            if (result.rowCount > 0) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  result: result,
+                  message: 'Removed ' + result.rowCount + ' class'
+                });
+            } else {
+              res.status(404)
+                .json({
+                  status: 'object not found',
+                  result: result,
+                  id: index
+                });
+            }
+          })
+          .catch(function(err) {
+            return next(err);
+          });
+      } else {
+        res.status(400)
+          .json({
+            status: 'fail',
+            message: 'auth'
+          });
+      }
+    });
   }
 }
 
 function getTechsInClass(req, res, next) {
+  server.logger.debug("Get techs in class " + JSON.stringify(req.params));
+  var input_err = false;
+  var error_detail = "";
+  // Index is required
+  var classid = parseInt(req.params.classid);
+  if (!bjjt_utils.isNumeric(classid) || (isNaN(classid)) || (classid < 1)) {
+    input_err = true;
+    error_detail = "classid";
+  }
+  db.any(`
+    select classtech.*, class.name as classname, technique.name as techname
+    from
+    technique INNER JOIN (
+    class INNER JOIN
+    classtech ON classtech.classid = class.index)
+    ON technique.index = classtech.techid
+    WHERE classtech.classid = class.index AND technique.index = classtech.techid
+    AND class.index = 1
+    order by classtech.sequencenum`,
+      classid)
+    .then(function(data) {
+      if (data.length > 0) {
+        res.status(200)
+          .json({
+            status: 'success',
+            data: data,
+            message: 'Retrieved ALL classtechs'
+          });
+      } else {
+        res.status(404)
+          .json({
+            status: 'object not found',
+            id: classid
+          });
+      }
+    })
+    .catch(function(err) {
+      server.logger.debug("catch:" + err);
+      return next(err);
+    });
 
 }
 
-function getAllClassesWithTech(req, res, next) {}
+function getAllClassesWithTech(req, res, next) {
+
+}
 
 function addTechsToClass(req, res, next) {
   server.logger.debug("Add techs to class " + JSON.stringify(req.body));
@@ -1928,12 +1871,6 @@ function addTechsToClass(req, res, next) {
   if (!bjjt_utils.isNumeric(classid) || (isNaN(classid)) || (classid < 1)) {
     input_err = true;
     error_detail = "classid";
-  }
-  // twofactor is required
-  var twofactor = req.body.twofactor;
-  if ((typeof twofactor !== 'string') || (twofactor.length < 1)) {
-    input_err = true;
-    error_detail = "twofactor";
   }
 
   // techs array is required
@@ -1955,49 +1892,43 @@ function addTechsToClass(req, res, next) {
         message: 'Bad input'
       });
   } else {
-    // Check 2FA code before we Save
-    // See private doc for URL of verify
-    // Verify a given token
-    if (speakeasy.totp.verify({
-        secret: twoFactor.secret,
-        encoding: 'base32',
-        token: twofactor,
-        window: 2
-      })) {
-      var loopInsert, techid, sequencenum;
+    check2FA(req, function(authresult) {
+      if (authresult.status) {
 
-      for (loopInsert = 0; loopInsert < techs.length; loopInsert++) {
-        techid = techs[loopInsert].techid;
-        sequencenum = techs[loopInsert].sequencenum;
-        // server.logger.debug( "2fa good");
-        var strSQL = `insert into classtech(classid, techid, sequencenum, createdate)
-          values($1, $2, $3, CURRENT_TIMESTAMP)`;
-        db.one(
-            strSQL, [classid, techid, sequencenum])
-          .then(function(data) {
-            res.status(200)
-              .json({
-                status: 'success',
-                message: 'Inserted one classtech: ' + classid + ':' + techid + '(' + sequencenum + ')'
-              });
-          })
-          .catch(function(err) {
-            res.status(400)
-              .json({
-                status: 'fail',
-                detail: err.detail,
-                message: err.message
-              });
+        var loopInsert, techid, sequencenum;
+
+        for (loopInsert = 0; loopInsert < techs.length; loopInsert++) {
+          techid = techs[loopInsert].techid;
+          sequencenum = techs[loopInsert].sequencenum;
+
+          var strSQL = `insert into classtech(classid, techid, sequencenum, createdate)
+            values($1, $2, $3, CURRENT_TIMESTAMP)`;
+          db.one(
+              strSQL, [classid, techid, sequencenum])
+            .then(function(data) {
+              res.status(200)
+                .json({
+                  status: 'success',
+                  message: 'Inserted one classtech: ' + classid + ':' + techid + '(' + sequencenum + ')'
+                });
+            })
+            .catch(function(err) {
+              res.status(400)
+                .json({
+                  status: 'fail',
+                  detail: err.detail,
+                  message: err.message
+                });
+            });
+        }
+      } else {
+        res.status(400)
+          .json({
+            status: 'fail',
+            message: 'auth'
           });
       }
-    } else {
-      res.status(400)
-        .json({
-          status: 'fail',
-          data: twofactor,
-          message: 'auth'
-        });
-    }
+    });
   }
 }
 

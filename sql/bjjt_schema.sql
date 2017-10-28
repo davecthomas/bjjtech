@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.5
--- Dumped by pg_dump version 9.6.5
+-- Dumped from database version 10.0
+-- Dumped by pg_dump version 10.0
 
--- Started on 2017-10-08 15:22:30 PDT
+-- Started on 2017-10-28 10:57:13 PDT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 1 (class 3079 OID 12655)
+-- TOC entry 1 (class 3079 OID 12544)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -25,7 +25,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2489 (class 0 OID 0)
+-- TOC entry 2514 (class 0 OID 0)
 -- Dependencies: 1
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
@@ -36,7 +36,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 198 (class 1259 OID 24580)
+-- TOC entry 207 (class 1259 OID 16496)
 -- Name: class_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -53,7 +53,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 201 (class 1259 OID 24601)
+-- TOC entry 208 (class 1259 OID 16498)
 -- Name: class; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -67,18 +67,20 @@ CREATE TABLE class (
 
 
 --
--- TOC entry 202 (class 1259 OID 24611)
+-- TOC entry 209 (class 1259 OID 16502)
 -- Name: classtech; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE classtech (
     classid integer NOT NULL,
-    techid integer NOT NULL
+    techid integer NOT NULL,
+    sequencenum integer,
+    createdate timestamp with time zone NOT NULL
 );
 
 
 --
--- TOC entry 197 (class 1259 OID 24578)
+-- TOC entry 210 (class 1259 OID 16505)
 -- Name: course_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -91,7 +93,7 @@ CREATE SEQUENCE course_id_seq
 
 
 --
--- TOC entry 200 (class 1259 OID 24590)
+-- TOC entry 211 (class 1259 OID 16507)
 -- Name: course; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -105,7 +107,7 @@ CREATE TABLE course (
 
 
 --
--- TOC entry 185 (class 1259 OID 16386)
+-- TOC entry 196 (class 1259 OID 16395)
 -- Name: positionnames; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -116,7 +118,7 @@ CREATE TABLE positionnames (
 
 
 --
--- TOC entry 186 (class 1259 OID 16389)
+-- TOC entry 197 (class 1259 OID 16398)
 -- Name: relatedtechnique_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -129,7 +131,7 @@ CREATE SEQUENCE relatedtechnique_id_seq
 
 
 --
--- TOC entry 187 (class 1259 OID 16391)
+-- TOC entry 198 (class 1259 OID 16400)
 -- Name: relatedtechnique; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -141,7 +143,7 @@ CREATE TABLE relatedtechnique (
 
 
 --
--- TOC entry 196 (class 1259 OID 24576)
+-- TOC entry 212 (class 1259 OID 16511)
 -- Name: school_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -154,7 +156,7 @@ CREATE SEQUENCE school_id_seq
 
 
 --
--- TOC entry 199 (class 1259 OID 24582)
+-- TOC entry 213 (class 1259 OID 16513)
 -- Name: school; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -166,7 +168,7 @@ CREATE TABLE school (
 
 
 --
--- TOC entry 188 (class 1259 OID 16395)
+-- TOC entry 199 (class 1259 OID 16404)
 -- Name: skilllevel; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -177,7 +179,7 @@ CREATE TABLE skilllevel (
 
 
 --
--- TOC entry 189 (class 1259 OID 16398)
+-- TOC entry 200 (class 1259 OID 16407)
 -- Name: sport; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -188,7 +190,7 @@ CREATE TABLE sport (
 
 
 --
--- TOC entry 190 (class 1259 OID 16401)
+-- TOC entry 201 (class 1259 OID 16410)
 -- Name: technique_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -201,7 +203,7 @@ CREATE SEQUENCE technique_id_seq
 
 
 --
--- TOC entry 191 (class 1259 OID 16403)
+-- TOC entry 202 (class 1259 OID 16412)
 -- Name: technique; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -228,7 +230,7 @@ CREATE TABLE technique (
 
 
 --
--- TOC entry 192 (class 1259 OID 16410)
+-- TOC entry 203 (class 1259 OID 16419)
 -- Name: techniquetype; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -239,7 +241,7 @@ CREATE TABLE techniquetype (
 
 
 --
--- TOC entry 193 (class 1259 OID 16413)
+-- TOC entry 204 (class 1259 OID 16422)
 -- Name: topic; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -250,7 +252,7 @@ CREATE TABLE topic (
 
 
 --
--- TOC entry 194 (class 1259 OID 16416)
+-- TOC entry 205 (class 1259 OID 16425)
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -266,7 +268,7 @@ CREATE TABLE users (
 
 
 --
--- TOC entry 195 (class 1259 OID 16419)
+-- TOC entry 206 (class 1259 OID 16428)
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -279,7 +281,7 @@ CREATE SEQUENCE users_id_seq
 
 
 --
--- TOC entry 2329 (class 2606 OID 16423)
+-- TOC entry 2350 (class 2606 OID 16432)
 -- Name: positionnames PositionNames_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -288,7 +290,7 @@ ALTER TABLE ONLY positionnames
 
 
 --
--- TOC entry 2333 (class 2606 OID 16425)
+-- TOC entry 2354 (class 2606 OID 16434)
 -- Name: skilllevel SkillLevel_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -297,7 +299,7 @@ ALTER TABLE ONLY skilllevel
 
 
 --
--- TOC entry 2335 (class 2606 OID 16427)
+-- TOC entry 2356 (class 2606 OID 16436)
 -- Name: sport Sport_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -306,7 +308,7 @@ ALTER TABLE ONLY sport
 
 
 --
--- TOC entry 2339 (class 2606 OID 16429)
+-- TOC entry 2360 (class 2606 OID 16438)
 -- Name: techniquetype TechniqueType_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -315,7 +317,7 @@ ALTER TABLE ONLY techniquetype
 
 
 --
--- TOC entry 2337 (class 2606 OID 16431)
+-- TOC entry 2358 (class 2606 OID 16440)
 -- Name: technique Technique_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -324,7 +326,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2341 (class 2606 OID 16433)
+-- TOC entry 2362 (class 2606 OID 16442)
 -- Name: topic Topic_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -333,7 +335,7 @@ ALTER TABLE ONLY topic
 
 
 --
--- TOC entry 2350 (class 2606 OID 24605)
+-- TOC entry 2366 (class 2606 OID 16518)
 -- Name: class class_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -342,7 +344,7 @@ ALTER TABLE ONLY class
 
 
 --
--- TOC entry 2352 (class 2606 OID 24625)
+-- TOC entry 2368 (class 2606 OID 16520)
 -- Name: classtech classtech_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -351,7 +353,7 @@ ALTER TABLE ONLY classtech
 
 
 --
--- TOC entry 2347 (class 2606 OID 24594)
+-- TOC entry 2370 (class 2606 OID 16522)
 -- Name: course course_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -360,7 +362,7 @@ ALTER TABLE ONLY course
 
 
 --
--- TOC entry 2331 (class 2606 OID 16435)
+-- TOC entry 2352 (class 2606 OID 16444)
 -- Name: relatedtechnique relatedtechnique_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -369,7 +371,7 @@ ALTER TABLE ONLY relatedtechnique
 
 
 --
--- TOC entry 2345 (class 2606 OID 24586)
+-- TOC entry 2373 (class 2606 OID 16524)
 -- Name: school school_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -378,7 +380,7 @@ ALTER TABLE ONLY school
 
 
 --
--- TOC entry 2343 (class 2606 OID 16437)
+-- TOC entry 2364 (class 2606 OID 16446)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -387,7 +389,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2348 (class 1259 OID 24600)
+-- TOC entry 2371 (class 1259 OID 16525)
 -- Name: fki_school_fkey; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -395,7 +397,7 @@ CREATE INDEX fki_school_fkey ON course USING btree (schoolid);
 
 
 --
--- TOC entry 2355 (class 2606 OID 16438)
+-- TOC entry 2376 (class 2606 OID 16447)
 -- Name: technique Technique_EndingPos_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -404,7 +406,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2356 (class 2606 OID 16443)
+-- TOC entry 2377 (class 2606 OID 16452)
 -- Name: technique Technique_OpponentStartingPos_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -413,7 +415,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2357 (class 2606 OID 16448)
+-- TOC entry 2378 (class 2606 OID 16457)
 -- Name: technique Technique_SkillLevel_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -422,7 +424,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2358 (class 2606 OID 16453)
+-- TOC entry 2379 (class 2606 OID 16462)
 -- Name: technique Technique_Sport_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -431,7 +433,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2359 (class 2606 OID 16458)
+-- TOC entry 2380 (class 2606 OID 16467)
 -- Name: technique Technique_StartingPos_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -440,7 +442,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2360 (class 2606 OID 16463)
+-- TOC entry 2381 (class 2606 OID 16472)
 -- Name: technique Technique_Topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -449,7 +451,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2361 (class 2606 OID 16468)
+-- TOC entry 2382 (class 2606 OID 16477)
 -- Name: technique Technique_Type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -458,7 +460,7 @@ ALTER TABLE ONLY technique
 
 
 --
--- TOC entry 2364 (class 2606 OID 24614)
+-- TOC entry 2384 (class 2606 OID 16526)
 -- Name: classtech class_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -467,7 +469,7 @@ ALTER TABLE ONLY classtech
 
 
 --
--- TOC entry 2363 (class 2606 OID 24606)
+-- TOC entry 2383 (class 2606 OID 16531)
 -- Name: class course_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -476,7 +478,7 @@ ALTER TABLE ONLY class
 
 
 --
--- TOC entry 2353 (class 2606 OID 16473)
+-- TOC entry 2374 (class 2606 OID 16482)
 -- Name: relatedtechnique relatedtechnique_technique_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -485,7 +487,7 @@ ALTER TABLE ONLY relatedtechnique
 
 
 --
--- TOC entry 2354 (class 2606 OID 16478)
+-- TOC entry 2375 (class 2606 OID 16487)
 -- Name: relatedtechnique relatedtechnique_techniquerelated_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -494,7 +496,7 @@ ALTER TABLE ONLY relatedtechnique
 
 
 --
--- TOC entry 2362 (class 2606 OID 24595)
+-- TOC entry 2386 (class 2606 OID 16536)
 -- Name: course school_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -503,7 +505,7 @@ ALTER TABLE ONLY course
 
 
 --
--- TOC entry 2365 (class 2606 OID 24619)
+-- TOC entry 2385 (class 2606 OID 16541)
 -- Name: classtech tech_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -511,7 +513,7 @@ ALTER TABLE ONLY classtech
     ADD CONSTRAINT tech_fkey FOREIGN KEY (techid) REFERENCES technique(index);
 
 
--- Completed on 2017-10-08 15:22:30 PDT
+-- Completed on 2017-10-28 10:57:13 PDT
 
 --
 -- PostgreSQL database dump complete

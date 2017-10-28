@@ -59,6 +59,7 @@ app.use(favicon(__dirname + '/public/img/favicon.ico'));
 
 if ('development' == app.get('env')) {
   logger.info('Development environment');
+  logger.info('2FA Auth not required ' + process.env.BJJT_NO_2FA);
   app.locals.pretty = true;
 } else {
 
