@@ -72,12 +72,17 @@ app.set('port', (process.env.PORT || 5006));
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 
-// Configure Passport to use Auth0
+var callbackURL = process.env.BJJT_WEB_ROOT_URL + '/callback';
+// Override - need port on localhost
+if (app.get('env') === 'development') {
+  callbackURL = process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback';
+}
+// Configure Passport to use Auth0{
 const strategy = new Auth0Strategy({
     domain: 'app54706413.auth0.com',
     clientID: 'lDBeX4UppsBW025nKYCLdfrfVoofIz9j',
     clientSecret: 'MIRUQ8c3w4ozNM_p03uCr1DbuxEciiw-je7-VOZrsxRxmsoKIsm7Zt91jSzvdQ3c',
-    callbackURL: process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback'
+    callbackURL: callbackURL
   },
   (accessToken, refreshToken, extraParams, profile, done) => {
     return done(null, profile);
@@ -199,7 +204,8 @@ app.locals.bjjtech = {
   },
   server: {
     logger: logger,
-    router: router
+    router: router,
+    env: app.get('env')
   }
 };
 
