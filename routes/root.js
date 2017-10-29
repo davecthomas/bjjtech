@@ -24,6 +24,7 @@ var bjjt_utils = require('../bjjt_utils');
 // add query functions
 
 module.exports = {
+  getPrivacy: getPrivacy,
   getIndex: getIndex,
   getHeader: getHeader,
   newTech: newTech,
@@ -34,6 +35,16 @@ module.exports = {
 
   getClass: getClass
 
+};
+
+
+function getPrivacy(req, res) {
+  var api_url = getAPI(req);
+  var root_url = getRoot(req);
+  res.render('pages/privacy', {
+    api_url: api_url,
+    root_url: root_url
+  });
 };
 
 // define the home page route

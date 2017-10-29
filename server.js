@@ -54,7 +54,7 @@ app.locals.moment = require('moment');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use('/public', express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/root'));
+app.use(express.static(__dirname + '/root')); // Used to identify this to Norton as nice site
 app.use(favicon(__dirname + '/public/img/favicon.ico'));
 
 if ('development' == app.get('env')) {
@@ -69,12 +69,11 @@ if ('development' == app.get('env')) {
 var router = express.Router(); // get an instance of the express Router
 
 var root = require('./routes/root'); // root.js has our web logic
-// app.all( '/', function( req, res, next ) {
-//   res.header( "Access-Control-Allow-Origin", "*" );
-//   res.header( "Access-Control-Allow-Headers", "X-Requested-With" );
-//   next();
-// } );
+var index = require('./routes/index');
+
+require('./routes/index')(router);
 router.get('/', root.getIndex);
+router.get('/privacy', root.getPrivacy);
 router.get('/index', root.getIndex);
 router.get('/hdr', root.getHeader);
 router.get('/tech/:id', root.getTech); // support /tech/86
@@ -143,6 +142,44 @@ router.delete('/api/classtech/:classid/:techid/:twofactor', db.removeTechFromCla
 // Next line provides support for root url. Without this, you get a "Cannot get /" error at site root.
 app.use('/', router);
 
+// Kick off the server
+app.set('port', (process.env.PORT || 5006));
+
+
+// AUTH0
+
+const passport = require('passport');
+const Auth0Strategy = require('passport-auth0');
+
+// Configure Passport to use Auth0
+const strategy = new Auth0Strategy({
+    domain: 'app54706413.auth0.com',
+    clientID: 'lDBeX4UppsBW025nKYCLdfrfVoofIz9j',
+    clientSecret: 'JITS_HAPPENS_2114',
+    callbackURL: process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback'
+  },
+  (accessToken, refreshToken, extraParams, profile, done) => {
+    return done(null, profile);
+  }
+);
+
+passport.use(strategy);
+
+// This can be used to keep a smaller payload
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+
 // Our app local object
 app.locals.bjjtech = {
   general: {
@@ -169,9 +206,6 @@ app.locals.bjjtech = {
     router: router
   }
 };
-
-// Kick off the server
-app.set('port', (process.env.PORT || 5006));
 
 var server = app.listen(app.get('port'), function() {
   console.log(app.locals.bjjtech.general.title + " is running at :" +
