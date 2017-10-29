@@ -189,6 +189,16 @@ function cleanDetailText( detailIn ) {
                                               </div>
                                               <%
           }
+          if (tech.data.numclasses > 0) {
+%>
+                                              <div class="content-panel-detail">
+                                                <span class="bjjt_section_header">Classes Including</span>&nbsp;<span id="getAllClassesWithTech" data-id="<%- tech_detail.index%>" class="bjjt_chiclet bjjt_chiclet-primary"><%- tech.data.numclasses%></span>
+                                                <div class=" bjjt_expand_section" id="classes-expand-section">
+                                                </div>
+                                              </div>
+                                              <%
+          }
+
         } else {
 %>
                                                 <p>Sorry, homie, I got nothin for you on this one.</p>

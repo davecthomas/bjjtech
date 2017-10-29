@@ -87,6 +87,10 @@ router.get('/tech/:id/edit', root.updateTech);
 router.get('/tech/tech-detail.asp', root.getTech); // Attempt compatibility with old url format
 router.get('/tech/text/:str', root.getTechFromStr);
 
+// class support
+router.get('/class/:id', root.getClass);
+
+
 // Register DB routes: Our API to the DB
 var db = require('./routes/queries'); // queries.js has our DB logic
 

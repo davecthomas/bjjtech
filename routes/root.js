@@ -30,7 +30,9 @@ module.exports = {
   updateTech: updateTech,
   getAllTech: getAllTech,
   getTechFromStr: getTechFromStr,
-  getTech: getTech
+  getTech: getTech,
+
+  getClass: getClass
 
 };
 
@@ -123,7 +125,7 @@ function newTech(req, res) {
 };
 
 function updateTech(req, res) {
-  req.app.locals.bjjtech.server.logger.info('updateTech ****************************');
+  req.app.locals.bjjtech.server.logger.info('updateTech');
   var api_url = getAPI(req);
   var root_url = getRoot(req);
   var searchStr = "";
@@ -267,6 +269,35 @@ function getTechFromStr(req, res) {
   })
 
 };
+
+function getClass(req, res) {
+  var api_url = getAPI(req);
+  var root_url = getRoot(req);
+  var searchStr = "";
+  var classid = 0;
+  if (!bjjt_utils.isNumeric(req.query.id) || (isNaN(req.query.id))) {
+    if (bjjt_utils.isNumeric(req.params.id)) {
+      classid = parseInt(req.params.id);
+    }
+  }
+  if ((req.query.search) && (req.query.search.length > 0)) {
+    searchStr = req.query.search;
+  }
+  request(api_url + 'class/' + classid, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var classresponse = JSON.parse(body);
+      res.render('pages/getclass', {
+        api_url: api_url,
+        root_url: root_url,
+        response: body,
+        searchparam: searchStr,
+        response: bjjt_utils.fixQuotes(body), // We need to convert ' to &rsquo;
+        id: classid,
+        title: bjjt_utils.escapeQuotes(classresponse.data.name)
+      });
+    }
+  })
+}
 
 // This is never called but useful in debugging logic in the footer, if needed
 /*

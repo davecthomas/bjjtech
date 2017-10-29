@@ -471,7 +471,8 @@ function getTech(req, res, next) {
     ON skilllevel.index = technique.skilllevel)
     ON positionnames.index = technique.startingpos)
     ON topic.index = technique.topic WHERE technique.index = $1) t
-    CROSS JOIN (SELECT COUNT(relatedtechnique.techniquerelated) as numrelated from relatedtechnique where relatedtechnique.technique = $1) c`;
+    CROSS JOIN (SELECT COUNT(relatedtechnique.techniquerelated) as numrelated from relatedtechnique where relatedtechnique.technique = $1) r
+    CROSS JOIN (SELECT COUNT(classtech.techid) as numclasses from classtech where classtech.techid = $1) c`;
 
   // strSQL = "select * from technique where index = $1";
   db.one(strSQL, techniqueID)
@@ -499,7 +500,7 @@ function getTechRelated(req, res, next) {
 
   db.any(
       // Note, ~* is a case insensitive LIKE in postgresql, which is NOT standard SQL!
-      `SELECT technique.index AS related, technique.name, relatedtechnique.techniquerelated as technique_id
+      `SELECT technique.index AS related, technique.name as techname, relatedtechnique.techniquerelated as techid
         FROM relatedtechnique, technique
         WHERE relatedtechnique.technique = $1 and technique.index = relatedtechnique.techniquerelated`,
       id)
