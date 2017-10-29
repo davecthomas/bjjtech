@@ -65,6 +65,41 @@ if ('development' == app.get('env')) {
 
 }
 
+app.set('port', (process.env.PORT || 5006));
+
+// AUTH0
+
+const passport = require('passport');
+const Auth0Strategy = require('passport-auth0');
+
+// Configure Passport to use Auth0
+const strategy = new Auth0Strategy({
+    domain: 'app54706413.auth0.com',
+    clientID: 'lDBeX4UppsBW025nKYCLdfrfVoofIz9j',
+    clientSecret: 'MIRUQ8c3w4ozNM_p03uCr1DbuxEciiw-je7-VOZrsxRxmsoKIsm7Zt91jSzvdQ3c',
+    callbackURL: process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback'
+  },
+  (accessToken, refreshToken, extraParams, profile, done) => {
+    return done(null, profile);
+  }
+);
+
+passport.use(strategy);
+
+// This can be used to keep a smaller payload
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
 // Defile routes for web app
 var router = express.Router(); // get an instance of the express Router
 
@@ -138,47 +173,8 @@ router.post('/api/classtech/update', db.updateTechsInClass);
 router.delete('/api/classtech/:classid/:twofactor', db.removeTechsFromClass);
 router.delete('/api/classtech/:classid/:techid/:twofactor', db.removeTechFromClass);
 
-
 // Next line provides support for root url. Without this, you get a "Cannot get /" error at site root.
 app.use('/', router);
-
-// Kick off the server
-app.set('port', (process.env.PORT || 5006));
-
-
-// AUTH0
-
-const passport = require('passport');
-const Auth0Strategy = require('passport-auth0');
-
-// Configure Passport to use Auth0
-const strategy = new Auth0Strategy({
-    domain: 'app54706413.auth0.com',
-    clientID: 'lDBeX4UppsBW025nKYCLdfrfVoofIz9j',
-    clientSecret: 'JITS_HAPPENS_2114',
-    callbackURL: process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback'
-  },
-  (accessToken, refreshToken, extraParams, profile, done) => {
-    return done(null, profile);
-  }
-);
-
-passport.use(strategy);
-
-// This can be used to keep a smaller payload
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-
-
 
 // Our app local object
 app.locals.bjjtech = {

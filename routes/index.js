@@ -17,6 +17,7 @@ module.exports = function(router) {
       scope: 'openid'
     }),
     function(req, res) {
+      req.app.locals.bjjtech.server.logger.info('Login ' + process.env.AUTH0_CALLBACK_URL);
       res.redirect('/');
     }
   );
@@ -34,6 +35,7 @@ module.exports = function(router) {
       failureRedirect: '/'
     }),
     function(req, res) {
+      req.app.locals.bjjtech.server.logger.info('callback ' + req.session.returnTo);
       res.redirect(req.session.returnTo || '/');
     }
   );
