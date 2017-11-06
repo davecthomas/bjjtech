@@ -788,7 +788,12 @@ ul.no-list-float li {
   font-size: x-large;
   font-weight:500;
 }
-
+.bjjt_userprofile_label {
+  font-size: x-large;
+}
+.bjjt_userprofile_text {
+  font-size: large;
+}
 /*This is for the clickable tags embedded in text.*/
 .tag_chip{
 

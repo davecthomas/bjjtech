@@ -1,25 +1,9 @@
 var request = require('request');
 
-function getAPI(req) {
-  var api_url = process.env.BJJT_API_ROOT_URL + '/api/';
-  if (req.app.get('env') === 'development') {
-    api_url = process.env.BJJT_API_ROOT_URL + ":" + req.app.get('port') + '/api/';
-    // req.app.locals.bjjtech.server.logger.info( 'Dev environment API url set to ' +  api_url );
-  }
-  return api_url;
-}
-
-function getRoot(req) {
-  var root_url = process.env.BJJT_API_ROOT_URL + "/";
-  if (req.app.get('env') === 'development') {
-    root_url = process.env.BJJT_API_ROOT_URL + ":" + req.app.get('port') + "/";
-    req.app.locals.bjjtech.server.logger.info('Dev environment root url set to ' + root_url);
-  }
-  return root_url;
-}
 
 var queries = require('./queries');
 var bjjt_utils = require('../bjjt_utils');
+
 
 // add query functions
 
@@ -33,24 +17,28 @@ module.exports = {
   getTechFromStr: getTechFromStr,
   getTech: getTech,
 
+  getSchool: getSchool,
+  getCourse: getCourse,
   getClass: getClass
 
 };
 
 
 function getPrivacy(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
+
   res.render('pages/privacy', {
     api_url: api_url,
     root_url: root_url
   });
 };
 
+
 // define the home page route
 function getIndex(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   request(api_url + 'tech/topicsextended', function(error, response, body) {
     if (!error && response.statusCode == 200) {
       req.app.locals.bjjtech.server.logger.info('Response' + response.statusCode);
@@ -64,8 +52,8 @@ function getIndex(req, res) {
 };
 
 function getHeader(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   res.render('pages/gettechfromstr', {
     api_url: api_url,
     root_url: root_url
@@ -73,8 +61,8 @@ function getHeader(req, res) {
 };
 
 function getAllTech(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   res.render('pages/getalltech', {
     api_url: api_url,
     root_url: root_url
@@ -82,8 +70,8 @@ function getAllTech(req, res) {
 };
 
 function newTech(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
 
   request(api_url + 'tech/topics', function(error, response, topics) {
     if (!error && response.statusCode == 200) {
@@ -137,8 +125,8 @@ function newTech(req, res) {
 
 function updateTech(req, res) {
   req.app.locals.bjjtech.server.logger.info('updateTech');
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   var searchStr = "";
   var techniqueID = 0; // See if this is coming from old ASP-style link ...asp?id=100
   if (!bjjt_utils.isNumeric(req.query.id) || (isNaN(req.query.id))) {
@@ -208,8 +196,8 @@ function updateTech(req, res) {
 
 
 function getTech(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   var searchStr = "";
   var techniqueID = 0; // See if this is coming from old ASP-style link ...asp?id=100
   if (!bjjt_utils.isNumeric(req.query.id) || (isNaN(req.query.id))) {
@@ -263,8 +251,8 @@ function getTech(req, res) {
 };
 
 function getTechFromStr(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   var search = "";
   if (req.params.str.length > 0) {
     search = req.params.str;
@@ -281,9 +269,92 @@ function getTechFromStr(req, res) {
 
 };
 
+function getSchool(req, res) {
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
+  var searchStr = "";
+  var id = 0;
+  if (!bjjt_utils.isNumeric(req.query.id) || (isNaN(req.query.id))) {
+    if (bjjt_utils.isNumeric(req.params.id)) {
+      id = parseInt(req.params.id);
+    }
+  }
+  if ((req.query.search) && (req.query.search.length > 0)) {
+    searchStr = req.query.search;
+  }
+  request(api_url + 'courses/' + id, function(error, response, courses) {
+    if (!error) {
+      if (response.statusCode == 404) {
+        courses = null; // No classes in in class is ok
+      }
+      if (response.statusCode == 200) {
+        req.app.locals.bjjtech.server.logger.info('Response' + response.statusCode);
+      }
+      request(api_url + 'school/' + id, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var school = JSON.parse(body);
+          res.render('pages/getschool', {
+            api_url: api_url,
+            root_url: root_url,
+            searchparam: searchStr,
+            school: bjjt_utils.fixQuotes(body), // We need to convert ' to &rsquo;
+            id: id,
+            title: bjjt_utils.escapeQuotes(school.data.name),
+            courses: courses,
+            autoExpandSectionLimit: bjjt_utils.autoExpandSectionLimit
+          });
+        }
+      })
+
+    }
+  })
+}
+
+function getCourse(req, res) {
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
+  var searchStr = "";
+  var id = 0;
+  if (!bjjt_utils.isNumeric(req.query.id) || (isNaN(req.query.id))) {
+    if (bjjt_utils.isNumeric(req.params.id)) {
+      id = parseInt(req.params.id);
+    }
+  }
+  if ((req.query.search) && (req.query.search.length > 0)) {
+    searchStr = req.query.search;
+  }
+  request(api_url + 'classes/' + id, function(error, response, classes) {
+    if (!error) {
+      if (response.statusCode == 404) {
+        classes = null; // No classes in in class is ok
+      }
+      if (response.statusCode == 200) {
+        req.app.locals.bjjtech.server.logger.info('Response' + response.statusCode);
+      }
+      request(api_url + 'course/' + id, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var course = JSON.parse(body);
+          res.render('pages/getcourse', {
+            api_url: api_url,
+            root_url: root_url,
+            course: body,
+            searchparam: searchStr,
+            response: bjjt_utils.fixQuotes(body), // We need to convert ' to &rsquo;
+            id: id,
+            title: bjjt_utils.escapeQuotes(course.data.name),
+            classes: classes,
+            autoExpandSectionLimit: bjjt_utils.autoExpandSectionLimit
+          });
+        }
+      })
+
+    }
+  })
+}
+
 function getClass(req, res) {
-  var api_url = getAPI(req);
-  var root_url = getRoot(req);
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
   var searchStr = "";
   var classid = 0;
   if (!bjjt_utils.isNumeric(req.query.id) || (isNaN(req.query.id))) {
@@ -294,18 +365,33 @@ function getClass(req, res) {
   if ((req.query.search) && (req.query.search.length > 0)) {
     searchStr = req.query.search;
   }
-  request(api_url + 'class/' + classid, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      var classresponse = JSON.parse(body);
-      res.render('pages/getclass', {
-        api_url: api_url,
-        root_url: root_url,
-        response: body,
-        searchparam: searchStr,
-        response: bjjt_utils.fixQuotes(body), // We need to convert ' to &rsquo;
-        id: classid,
-        title: bjjt_utils.escapeQuotes(classresponse.data.name)
-      });
+  request(api_url + 'classtech/' + classid, function(error, response, classtech) {
+    if (!error) {
+      var techs;
+      if (response.statusCode == 404) {
+        techs = null; // No techs in class is ok
+      }
+      if (response.statusCode == 200) {
+        techs = classtech;
+      }
+      req.app.locals.bjjtech.server.logger.info('Response' + response.statusCode);
+      request(api_url + 'class/' + classid, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var class_parsed = JSON.parse(body);
+          res.render('pages/getclass', {
+            api_url: api_url,
+            root_url: root_url,
+            classdata: body,
+            searchparam: searchStr,
+            response: bjjt_utils.fixQuotes(body), // We need to convert ' to &rsquo;
+            id: classid,
+            title: bjjt_utils.escapeQuotes(class_parsed.data.name),
+            classtech: techs,
+            autoExpandSectionLimit: bjjt_utils.autoExpandSectionLimit
+          });
+        }
+      })
+
     }
   })
 }

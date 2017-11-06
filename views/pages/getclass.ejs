@@ -12,10 +12,20 @@ var title_cols = 12;
       <row>
 <%
 var class_detail_name = "";
-var classresponse = JSON.parse(response);
-
-if (classresponse.status === 'success'){
-   var class_detail = classresponse.data;
+var classdata = JSON.parse(classdata);
+var classtech = JSON.parse(classtech);
+var numtechs = 0;
+var showOrHideBasedOnListLength = "bjjt_expand_section";
+if (classtech != null){
+  if (classtech.status === 'success'){
+    numtechs = classtech.data.length;
+    if (numtechs <= autoExpandSectionLimit){
+      showOrHideBasedOnListLength = "";
+    }
+  }
+  }
+if (classdata.status === 'success'){
+   var class_detail = classdata.data;
    if (class_detail.name){
       document_title = title;
       class_detail_name = class_detail.name;
@@ -28,6 +38,7 @@ if (classresponse.status === 'success'){
   var searchStr = '<%= searchparam %>';
   document.title = '<%- bjjtech.general.title + ": " + document_title %>';
 </script>
+<script src="/public/js/bjjt_getclass.js"></script>
 <div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll" id="getclass_name">
   <%
 if (class_detail_name) {
@@ -36,6 +47,61 @@ if (class_detail_name) {
 <%
 }
 %>
+<div class="form-group col-sm-12">
+  <row>
+  <label for="program" class="col-sm-3 bjjt_input_prompt ">School</label>
+  <div class="list-group col-sm-9" id="school">
+    <a href="#" class="list-group-item select-group-item get_school" id="school<%= class_detail.schoolid%>" data-listindex="0" data-id="<%= class_detail.schoolid%>" data-tag="school">
+  <%= class_detail.schoolname%></a>
+</div>
+</row>
+
+  <row>
+  <label for="program" class="col-sm-3 bjjt_input_prompt ">Program</label>
+  <div class="list-group col-sm-9" id="program">
+    <a href="#" class="list-group-item select-group-item get_class_program" id="program<%= class_detail.courseid%>" data-listindex="0" data-id="<%= class_detail.courseid%>" data-tag="program">
+  <%= class_detail.coursename%></a>
+  </div>
+  </row>
+  <row>
+  <label for="class" class="col-sm-3 bjjt_input_prompt ">Class</label>
+  <div class="list-group col-sm-8" id="class">
+    <a href="#" class="list-group-item select-group-item get_class_class" id="class<%= class_detail.index%>" data-listindex="0" data-id="<%= class_detail.index%>" data-tag="class">
+  <%= class_detail.name%></a>
+</div>
+<div class="list-group col-sm-1" id="edit">
+<a href="#" class="list-group-item select-group-item edit_class_class" data-id="<%= class_detail.index%>" ><i id="edit-class" class="fa fa-pencil"></i></a>
+</div>
+  </row>
+
+<row>
+
+  <label for="tech" class="col-sm-3 bjjt_input_prompt ">Techniques</label>
+  <div class="list-group col-sm-9" id="tech">
+<%
+if (numtechs > 0){ %>
+    <span class="bjjt_expand_chevron" id="tech-chevron"><i id="tech-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="tech-selected"></span></span>
+    <div class="<%- showOrHideBasedOnListLength %>" id="tech-expand-section">
+      <%
+for(i = 0; i < numtechs; i++){ %>
+        <a href="#" class="list-group-item select-group-item get_class_tech" id="tech<%= classtech.data[i].techid%>" data-listindex="<%=i%>" data-id="<%= classtech.data[i].techid%>" data-tag="<%=classtech.data[i].tag%>">
+          <%= classtech.data[i].techname%>
+        </a>
+        <%
+} %>
+        <a href="#" class="list-group-item select-group-item new_class_tech" data-id="<%= class_detail.index%>" ><i id="new-tech" class="fa fa-plus"></i></a>
+    </div>
+<%
+    } else { %>
+      <div class="">
+      <a href="#" class="list-group-item select-group-item new_class_tech" data-id="<%= class_detail.index%>" ><i id="new-tech" class="fa fa-plus"></i></a>
+      </div>
+<%
+    } %>
+  </div>
+  <row>
+
+</div>
 </div>
 </row>
 <row>

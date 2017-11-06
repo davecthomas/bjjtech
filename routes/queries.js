@@ -1,13 +1,13 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
 var server = require('../server');
-var bluebird = require('bluebird');
+// var bluebird = require('bluebird');
 var bjjt_utils = require('../bjjt_utils');
 var speakeasy = require("speakeasy");
 var qrcode = require("qrcode");
-var options = {
-  // Initialization Options
-  promiseLib: bluebird
-};
+// var options = {
+//   // Initialization Options
+//   promiseLib: bluebird
+// };
 
 var twoFactor = {
   secret: 'IYVDQXKGM5RFWXLTPFBXQMD2JF5XUJKWK42GMKC3KBNES2KQFQ7Q',
@@ -81,45 +81,27 @@ var levels = {
   Undefined: 0
 };
 
-// Recommended by pg-promise guy:
-// https://stackoverflow.com/questions/36120435/verify-database-connection-with-pg-promise-when-starting-an-app
-const initOptions = {
-  promiseLib: bluebird,
-  // global event notification;
-  error: (error, e) => {
-    if (e.cn) {
-      // A connection-related error;
-      //
-      // Connections are reported back with the password hashed,
-      // for safe errors logging, without exposing passwords.
-      console.log('CN:', e.cn);
-      console.log('EVENT:', error.message || error);
-    }
-  }
-};
+// // Recommended by pg-promise guy:
+// // https://stackoverflow.com/questions/36120435/verify-database-connection-with-pg-promise-when-starting-an-app
+// const initOptions = {
+//   promiseLib: bluebird,
+//   // global event notification;
+//   error: (error, e) => {
+//     if (e.cn) {
+//       // A connection-related error;
+//       //
+//       // Connections are reported back with the password hashed,
+//       // for safe errors logging, without exposing passwords.
+//       console.log('CN:', e.cn);
+//       console.log('EVENT:', error.message || error);
+//     }
+//   }
+// };
+//
+//
+// var pgp = require('pg-promise')(initOptions);
 
-
-var pgp = require('pg-promise')(initOptions);
-
-var connectionString;
-
-if (server.app.get('env') === 'development') {
-  server.logger.debug('dev DB connection : user: ' + process.env.DB_user + ', host: ' + process.env.DB_host + ':' + process.env.DB_port + ", ssl: " + process.env.DB_ssl);
-  connectionString = {
-    user: process.env.DB_user,
-    password: process.env.DB_password,
-    database: process.env.DB_database,
-    port: process.env.DB_port,
-    host: process.env.DB_host,
-    ssl: false
-  };
-} else {
-  server.logger.info('Production connection');
-  connectionString =
-    'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
-}
-// var connectionString = 'postgres://localhost:5432/bjjtech';
-var db = pgp(connectionString);
+var db = bjjt_utils.getConnection(server);
 
 // add query functions
 
@@ -1528,7 +1510,7 @@ function getAllClasses(req, res, next) {
       });
   } else {
     db.any(`
-      select class.*, course.name as coursename, school.name as schoolname, school.index as schoolid
+      select class.*, course.name as coursename, school.name as schoolname, school.index as schoolid, 'class' as tag
       from
       school INNER JOIN (
       class INNER JOIN
@@ -1835,15 +1817,17 @@ function getTechsInClass(req, res, next) {
       });
   } else {
     db.any(`
-    select classtech.*, class.name as classname, technique.name as techname
-    from
-    technique INNER JOIN (
-    class INNER JOIN
-    classtech ON classtech.classid = class.index)
-    ON technique.index = classtech.techid
-    WHERE classtech.classid = class.index AND technique.index = classtech.techid
-    AND class.index = $1
-    order by classtech.sequencenum`,
+      select classtech.*, class.name as classname, technique.name as techname, course.name as coursename, course.index as courseid, 'tech' as tag
+      from
+      technique INNER JOIN (
+      course INNER JOIN (
+      class INNER JOIN
+      classtech ON classtech.classid = class.index)
+      ON course.index = classtech.classid)
+      ON technique.index = classtech.techid
+      WHERE classtech.classid = class.index AND technique.index = classtech.techid
+      AND class.index = $1
+      order by classtech.sequencenum`,
         classid)
       .then(function(data) {
         if (data.length > 0) {

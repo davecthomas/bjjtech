@@ -1,0 +1,96 @@
+<%
+//  id - id, for update mode only
+//  update - true or false
+//  title - doc title, cleaned up
+
+var document_title = "";
+var title_cols = 12;
+%>
+  <% include ../partials/top %>
+
+    <div class="container-fluid">
+      <row>
+<%
+var school = JSON.parse(school);
+var courses = JSON.parse(courses);
+var school_detail_name = "";
+var numCourses = 0;
+var showOrHideBasedOnListLength = "bjjt_expand_section";
+if ((courses != null) && (courses.status === 'success')){
+  numCourses = courses.data.length;
+  if (numCourses <= autoExpandSectionLimit){
+    showOrHideBasedOnListLength = "";
+  }
+}
+
+if (school.status === 'success'){
+   var school_detail = school.data;
+   if (school_detail.name){
+      document_title = title;
+      school_detail_name = school_detail.name;
+   }
+}
+%>
+<script>
+  var api_url = '<%-api_url %>';
+  var root_url = '<%-root_url %>';
+  var searchStr = '<%= searchparam %>';
+  document.title = '<%- bjjtech.general.title + ": " + document_title %>';
+</script>
+<script src="/public/js/bjjt_getschool.js"></script>
+<div class="col-xs-<%-title_cols%> col-sm-<%-title_cols%> panel panel-default content-panel-noscroll" id="getschool_name">
+  <%
+if (school_detail_name) {
+%>
+    <h3><%- school_detail_name %></h3>
+<%
+}
+%>
+<div class="form-group col-sm-12">
+  <row>
+    <label for="program" class="col-sm-3 bjjt_input_prompt ">School</label>
+    <div class="list-group col-sm-8" id="school">
+      <a href="#" class="list-group-item select-group-item get_school" id="school<%= school_detail.index%>" data-listindex="0" data-id="<%= school_detail.index%>" data-tag="school">
+    <%= school_detail.name%></a>
+  </div>
+  <div class="list-group col-sm-1" id="edit">
+  <a href="#" class="list-group-item select-group-item edit_school_school" data-id="<%= school_detail.index%>" ><i id="edit-school" class="fa fa-pencil"></i></a>
+  </div>
+  </row>
+<row>
+
+  <label for="courses" class="col-sm-3 bjjt_input_prompt ">Courses</label>
+  <div class="list-group col-sm-9" id="courses">
+    <%
+    if (numCourses > 0){ %>
+    <span class="bjjt_expand_chevron" id="courses-chevron"><i id="courses-chevron-toggle" class="fa fa-chevron-down"></i>&nbsp;<span id="courses-selected"></span></span>
+    <div class="<%- showOrHideBasedOnListLength %>" id="courses-expand-section">
+      <%
+for(i = 0; i < numCourses; i++){ %>
+        <a href="#" class="list-group-item select-group-item get_course" id="courses<%= courses.data[i].index%>" data-listindex="<%=i%>" data-id="<%= courses.data[i].index%>" data-tag="<%=courses.data[i].tag%>">
+          <%= courses.data[i].name%>
+        </a>
+        <%
+} %>
+        <a href="#" class="list-group-item select-group-item new_school_course" data-id="<%= school_detail.index%>" ><i id="new-course" class="fa fa-plus"></i></a>
+    </div>
+    <%
+    } else { %>
+      <div class="">
+      <a href="#" class="list-group-item select-group-item new_school_course" data-id="<%= school_detail.index%>" ><i id="new-course" class="fa fa-plus"></i></a>
+      </div>
+<%
+    } %>
+  </div>
+  <row>
+
+</div>
+</div>
+</row>
+<row>
+
+
+
+</row>
+</div>
+      <% include ../partials/bottom %>

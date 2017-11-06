@@ -69,46 +69,55 @@ app.set('port', (process.env.PORT || 5006));
 
 // AUTH0
 
-const passport = require('passport');
-const Auth0Strategy = require('passport-auth0');
+// const passport = require('passport');
+// const Auth0Strategy = require('passport-auth0');
 
-var callbackURL = process.env.BJJT_WEB_ROOT_URL + '/callback';
-// Override - need port on localhost
-if (app.get('env') === 'development') {
-  callbackURL = process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback';
-}
+// var callbackURL = process.env.BJJT_WEB_ROOT_URL + '/callback';
+// var id_jwtoken;
+// // Override - need port on localhost
+// if (app.get('env') === 'development') {
+//   callbackURL = process.env.BJJT_WEB_ROOT_URL + ":" + app.get('port') + '/callback';
+// }
 // Configure Passport to use Auth0{
-const strategy = new Auth0Strategy({
-    domain: 'app54706413.auth0.com',
-    clientID: 'lDBeX4UppsBW025nKYCLdfrfVoofIz9j',
-    clientSecret: 'MIRUQ8c3w4ozNM_p03uCr1DbuxEciiw-je7-VOZrsxRxmsoKIsm7Zt91jSzvdQ3c',
-    callbackURL: callbackURL
-  },
-  (accessToken, refreshToken, extraParams, profile, done) => {
-    return done(null, profile);
-  }
-);
-
-passport.use(strategy);
-
-// This can be used to keep a smaller payload
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-
+// const strategy = new Auth0Strategy({
+//     domain: 'app54706413.auth0.com',
+//     clientID: 'lDBeX4UppsBW025nKYCLdfrfVoofIz9j',
+//     clientSecret: 'MIRUQ8c3w4ozNM_p03uCr1DbuxEciiw-je7-VOZrsxRxmsoKIsm7Zt91jSzvdQ3c',
+//     callbackURL: callbackURL
+//   },
+//   function(accessToken, refreshToken, extraParams, profile, done) {
+//     // accessToken is the token to call Auth0 API (not needed in the most cases)
+//     // extraParams.id_token has the JSON Web Token
+//     // profile has all the information from the user
+//     id_jwtoken = extraParams.id_token;
+//     return done(null, profile);
+//   }
+// );
+//
+// passport.use(strategy);
+//
+// // This can be used to keep a smaller payload
+// passport.serializeUser(function(user, done) {
+//   done(null, user);
+// });
+//
+// passport.deserializeUser(function(user, done) {
+//   done(null, user);
+// });
+//
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // Defile routes for web app
 var router = express.Router(); // get an instance of the express Router
+// This is part of the auth0 stuff. Helps us quickly determine if user is logged in.
+// var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 var root = require('./routes/root'); // root.js has our web logic
+var user = require('./routes/user');
+router.get('/api/user/is/:nick', user.isUser);
+
+
 var index = require('./routes/index');
 
 require('./routes/index')(router);
@@ -125,6 +134,12 @@ router.get('/tech/:id/edit', root.updateTech);
 // http://bjjtech.com/tech/tech-detail.asp?id=387
 router.get('/tech/tech-detail.asp', root.getTech); // Attempt compatibility with old url format
 router.get('/tech/text/:str', root.getTechFromStr);
+
+// school support
+router.get('/school/:id', root.getSchool);
+
+// course support
+router.get('/course/:id', root.getCourse);
 
 // class support
 router.get('/class/:id', root.getClass);
@@ -206,6 +221,10 @@ app.locals.bjjtech = {
     logger: logger,
     router: router,
     env: app.get('env')
+  },
+  auth: {
+    // ensureLoggedIn: ensureLoggedIn, // I havent figured this out
+    // jwtoken: id_jwtoken // I haven't figured this out
   }
 };
 

@@ -1,0 +1,149 @@
+<% include ../partials/top %>
+<%
+document_title = "User";
+%>
+<!-- Latest minor release -->
+<script src="https://cdn.auth0.com/js/lock/10.23/lock.min.js"></script>
+
+<!-- Latest patch release (recommended for production) -->
+<script src="https://cdn.auth0.com/js/lock/10.23.1/lock.min.js"></script>
+<script>
+var api_url = '<%-api_url %>';
+var root_url = '<%-root_url %>';
+var lock = new Auth0Lock('lDBeX4UppsBW025nKYCLdfrfVoofIz9j', 'app54706413.auth0.com',
+{ container: "login",
+  auth: {
+    redirect: false,
+    // redirectUrl: root_url + 'callback',
+    responseType: 'token',
+    params: {
+      scope: 'openid profile email' // Learn about scopes: https://auth0.com/docs/scopes
+    }
+  }
+});
+
+lock.on("unrecoverable_error", function(error) {
+  alert("unrecoverable_error: " + JSON.stringify(error));
+  // lock.show();
+});
+
+// Listening for the authenticated event
+lock.on("authenticated", function(authResult) {
+  alert("authenticated");
+  // Use the token in authResult to getUserInfo() and save it to localStorage
+  lock.getUserInfo(authResult.accessToken, function(error, profile) {
+    if (error) {
+      // Handle error
+      alert(JSON.stringify(error));
+      return;
+    }
+    // profile.name: "David Thomas"; profile.picture: <path to image>
+    // alert("hello " + JSON.stringify(authResult));
+    // alert("hello " + JSON.stringify(profile));
+    //
+    // document.getElementById('nick').textContent = profile.nickname;
+    // If the user is known, good.
+    $.ajax( {
+      url: api_url + "user/is/" + profile.nickname,
+      success: function( result ) {
+
+        var user = result;
+        if ( user.status === 'success' ) {
+            localStorage.setItem('accessToken', authResult.accessToken);
+            localStorage.setItem('profile', JSON.stringify(profile));
+            // If there is an image, set it
+            if ((typeof profile.picture === "string") && (profile.picture.length > 0)){
+              $('#bjjt_user_image img').attr("src",profile.picture);
+            }
+            if ((typeof profile.name === "string") && (profile.name.length > 0)){
+              $('#user-name').text(profile.name);
+            }
+            if ((typeof profile.email === "string") && (profile.email.length > 0)){
+              $('#user-email').text(profile.email);
+            }
+            toggleShow("all");
+            lock.hide();
+        }
+      }
+    } );
+
+  });
+});
+
+function toggleShow(section) {
+  $('#' + section + '-user-profile').css('display', 'inline');
+}
+
+function toggleHide(section) {
+  $('#' + section + '-user-profile').css('display', 'none');
+}
+
+function toggleSection(section) {
+  if ($('#' + section + '-user-profile').css('display') == 'none') {
+    toggleShow(section);
+  } else {
+    toggleHide(section);
+  }
+}
+
+
+// If we aren;t logged in, show login panel
+if (!localStorage.getItem("accessToken")){
+  // Just in case we are hidden (not sure if this is necessary)
+  toggleShow("all");
+  lock.show();
+} else {
+  // if we are logged in, hide the panel
+  toggleHide("all");
+}
+</script>
+<script src="/public/js/bjjt_user.js"></script>
+<%
+
+%>
+  <script>
+    var bjjtech_pagetitle = '<%- bjjtech.general.title %>' + " User";
+  </script>
+
+  <div class="valign-wrapper" style="height: 100%;">
+    <div class="header-container">
+      <span class="center jitsfontw header-name1">jits<br/><span class="header-name2">techniques<br/>
+    <span class="header-name3 glow-tight">by dave thomas</span></span>
+      </span>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <% include ../partials/belowtop %>
+    <row>
+      <div class="col-sm-12 panel panel-default content-panel content-panel-darker"><span class="bjjt_title col-sm-6"><%- document_title %></span>
+        <label for="2fa" class="col-sm-4 bjjt_input_prompt">Auth</label>
+        <button id="logout" name="logout" class="btn btn-outline-primary bjjt_button bjjt_button-white col-sm-2" data-toggle="tooltip" title="Sign out" data-placement="bottom">Sign out</button>
+      </div>
+    </row>
+      <row>
+        <div class="col-xs-12 panel panel-default content-panel" id="login">
+        </div>
+      </row>
+      <row>
+        <div class="bjjt_hide" id="all-user-profile">
+        <div class="col-xs-6 panel panel-default content-panel" id="user-left">
+          <div class="container-fluid bjjt_image">
+              <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_user_image" src=""></img>
+              </div>
+          </div>
+        </div>
+        <div class="col-xs-6 panel panel-default content-panel" id="user-right">
+
+          <div class="col-sm-2 bjjt_userprofile_label">Name</div>
+          <div class="col-sm-4 bjjt_userprofile_text"><span id="user-name"></span></div>
+          <div class="col-sm-2 bjjt_userprofile_label">Email</div>
+          <div class="col-sm-4 bjjt_userprofile_text"><span id="user-email"></span></div>
+
+        </div>
+        </div>
+        </div>
+      </row>
+  </div>
+  <!-- container !-->
+
+  <% include ../partials/bottom %>
