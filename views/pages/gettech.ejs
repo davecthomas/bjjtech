@@ -6,7 +6,7 @@
 var document_title = "";
 %>
   <% include ../partials/top %>
-    <script src="/public/js/bjjt_gettech.js"></script>
+    <script src="/public/dist/js/bjjt_gettech.min.js"></script>
     <div class="container-fluid">
       <row>
         <%
@@ -52,7 +52,7 @@ function cleanDetailText( detailIn ) {
             var searchStr = '<%= searchparam %>';
             document.title = '<%- bjjtech.general.title + ": " + document_title %>';
           </script>
-          <script src="/public/js/bjjt_gettech_load.js"></script>
+          <script src="/public/dist/js/bjjt_gettech_load.min.js"></script>
 
           <div class="col-xs-3 panel panel-default content-panel-noscroll bjjt_hide" id="return_to_search_parent">
             <button id="return_to_search" name="return_to_search" class="btn btn-outline-primary bjjt_button" data-toggle="tooltip" title="Return to search results" data-placement="bottom"></button>
@@ -95,7 +95,7 @@ function cleanDetailText( detailIn ) {
                     img_array[<%= i %>] = '<%- tech_detail.imageurl + ' - ' + (parseInt(i+1)) +'.jpg ' %>';
                     <%                } %>
                   </script>
-                  <script src="/public/js/bjjt_images.js"></script>
+                  <script src="/public/dist/js/bjjt_images.min.js"></script>
                   <%                }  else {
 %>
                     <div class="bjjt_image_wrapper"><img class="img-responsive" id="bjjt_image_img" src="<%- tech_detail.imageurl %>" </img></div>
@@ -110,7 +110,7 @@ function cleanDetailText( detailIn ) {
                 <script>
                   const videoid = '<%- tech_detail.videoid %>';
                 </script>
-                <script src="/public/js/bjjt_ytplayer.js"></script>
+                <script src="/public/dist/js/bjjt_ytplayer.min.js"></script>
                 <div id="ytplayer"></div>
 
                 <%

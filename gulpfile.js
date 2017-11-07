@@ -3,12 +3,13 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
+// var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 var del = require('del');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var rename = require("gulp-rename");
 
 var paths = {
   scripts: 'public/js/*.js',
@@ -18,6 +19,19 @@ var paths = {
   browserify_this: './bjjt_utils.js',
   browserified_this: 'bjjt_utils.min.js'
 };
+
+const babel = require("gulp-babel");
+
+gulp.task('minify', () => {
+  return gulp.src(paths.scripts)
+    .pipe(babel({
+      presets: ['babili']
+    }))
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest(paths.dist_js))
+})
 
 gulp.task('scripts', function() {
   return gulp.src(paths.scripts)
@@ -40,7 +54,7 @@ gulp.task('browserify', () => {
     .bundle()
     .pipe(source(paths.browserified_this))
     .pipe(buffer())
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest(paths.dist_js));
 });
 
@@ -49,7 +63,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('watching', ['watch', 'browserify', 'scripts']);
-gulp.task('default', ['scripts']);
+gulp.task('default', ['minify']);
 //gulp.task('default', ['browserify', 'scripts']);
 //gulp.task('default', [ 'browserify' ]);
 
