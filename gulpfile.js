@@ -1,6 +1,6 @@
 'use strict';
 
-var gulp  = require('gulp');
+var gulp = require('gulp');
 var gutil = require('gulp-util');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -19,8 +19,8 @@ var paths = {
   browserified_this: 'bjjt_utils.min.js'
 };
 
-gulp.task('scripts', function () {
-    return gulp.src(paths.scripts)
+gulp.task('scripts', function() {
+  return gulp.src(paths.scripts)
     .pipe(uglify().on('error', gutil.log))
     .pipe(gulp.dest(paths.dist_js));
 });
@@ -34,22 +34,22 @@ gulp.task('watch', function() {
 // From http://blog.revathskumar.com/2016/02/browserify-with-gulp.html
 gulp.task('browserify', () => {
   browserify({
-    entries: paths.browserify_this,
-    debug: false
-  })
-  .bundle()
-  .pipe(source(paths.browserified_this))
-  .pipe(buffer())
-  .pipe(uglify())
-  .pipe(gulp.dest(paths.dist_js));
+      entries: paths.browserify_this,
+      debug: false
+    })
+    .bundle()
+    .pipe(source(paths.browserified_this))
+    .pipe(buffer())
+    //  .pipe(uglify())
+    .pipe(gulp.dest(paths.dist_js));
 });
 
 gulp.task('clean', function() {
   return del([paths.dist]);
 });
 
-gulp.task('watching', [ 'watch', 'browserify', 'scripts' ]);
-gulp.task('default', [ 'browserify', 'scripts' ]);
+gulp.task('watching', ['watch', 'browserify', 'scripts']);
+gulp.task('default', ['browserify', 'scripts']);
 //gulp.task('default', [ 'browserify' ]);
 
 
