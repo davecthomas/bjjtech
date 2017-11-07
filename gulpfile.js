@@ -15,6 +15,7 @@ var paths = {
   scripts: 'public/js/*.js',
   images: 'public/img/**/*',
   dist_js: 'public/dist/js',
+  scripts_3rdparty: 'public/js_3rdparty/*.js',
   dist: 'public/dist',
   browserify_this: './bjjt_utils.js',
   browserified_this: 'bjjt_utils.min.js'
@@ -32,6 +33,12 @@ gulp.task('minify', () => {
     }))
     .pipe(gulp.dest(paths.dist_js))
 })
+// 3rd party scripts are already minified. Just move them
+gulp.task('move_js_3rdparty', () => {
+  return gulp.src(paths.scripts_3rdparty)
+    .pipe(gulp.dest(paths.dist_js))
+});
+
 
 gulp.task('scripts', function() {
   return gulp.src(paths.scripts)
@@ -63,7 +70,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('watching', ['watch', 'browserify', 'scripts']);
-gulp.task('default', ['minify']);
+gulp.task('default', ['minify', 'move_js_3rdparty']);
 //gulp.task('default', ['browserify', 'scripts']);
 //gulp.task('default', [ 'browserify' ]);
 
