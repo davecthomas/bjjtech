@@ -21,7 +21,7 @@ var paths = {
 
 gulp.task('scripts', function() {
   return gulp.src(paths.scripts)
-    .pipe(uglify().on('error', gutil.log))
+    //    .pipe(uglify().on('error', gutil.log))
     .pipe(gulp.dest(paths.dist_js));
 });
 
@@ -50,6 +50,7 @@ gulp.task('clean', function() {
 
 gulp.task('watching', ['watch', 'browserify', 'scripts']);
 gulp.task('default', ['browserify', 'scripts']);
+//gulp.task('default', ['browserify', 'scripts']);
 //gulp.task('default', [ 'browserify' ]);
 
 
