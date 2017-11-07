@@ -49,7 +49,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('watching', ['watch', 'browserify', 'scripts']);
-gulp.task('default', ['browserify', 'scripts']);
+gulp.task('default', ['scripts']);
 //gulp.task('default', ['browserify', 'scripts']);
 //gulp.task('default', [ 'browserify' ]);
 
