@@ -13,7 +13,7 @@ $(document).ready(function() {
 
   if (update) {
     // getData("updateData");
-    let data = $('#updateData').data('tech').data;
+    var data = $('#updateData').data('tech').data;
     // Override selections
     techniqueID = $('#updateData').data('id');
 
