@@ -40,7 +40,7 @@ gulp.task('browserify', () => {
     .bundle()
     .pipe(source(paths.browserified_this))
     .pipe(buffer())
-    //  .pipe(uglify())
+    .pipe(uglify())
     .pipe(gulp.dest(paths.dist_js));
 });
 

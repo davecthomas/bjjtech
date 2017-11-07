@@ -27,8 +27,8 @@ $(document).ready(function() {
             tag = "classesincluding";
           }
 
-          html += `<a href="#" class="list-group-item select-group-item ` + section + `-group-item" id="` +
-            id + `" data-listindex="` + i + `" data-id="` + id + `" data-tag="` + tag + `">` + name + `</a>`;
+          html += '<a href="#" class="list-group-item select-group-item ' + section + '-group-item" id="' +
+            id + '" data-listindex="' + i + '" data-id="' + id + '" data-tag="' + tag + '">' + name + '</a>';
         }
         $("#" + section + "-expand-section").html(html);
       }
