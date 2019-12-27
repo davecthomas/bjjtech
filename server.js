@@ -199,8 +199,8 @@ app.use('/', router);
 // Our app local object
 app.locals.bjjtech = {
   general: {
-    dotcom: 'BJJTech.com',
-    url: 'http://BJJTech.com',
+    dotcom: 'BJJTech.herokuapp.com',
+    url: 'http://BJJTech.herokuapp.com',
     title: 'BJJTech',
     pagetitle: 'BJJTech, the Brazilian Jiu-Jitsu Technique Catalog ',
     description: 'Dave Thomas\' Brazilian Jiu-Jitsu technique catalog.',
