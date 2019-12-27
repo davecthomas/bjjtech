@@ -1,6 +1,5 @@
 var server = require('../server');
-var bjjt_utils = require('../bjjt_utils');
-
+var bjjt_utils = require('../public/dist/js/bjjt_utils.min.js');
 
 // add query functions
 

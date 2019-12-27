@@ -2,11 +2,9 @@ var request = require('request');
 
 
 var queries = require('./queries');
-var bjjt_utils = require('../bjjt_utils');
-
+var bjjt_utils = require('../public/dist/js/bjjt_utils.min.js');
 
 // add query functions
-
 module.exports = {
   getPrivacy: getPrivacy,
   getIndex: getIndex,
