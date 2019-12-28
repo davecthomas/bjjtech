@@ -205,7 +205,8 @@ app.locals.bjjtech = {
     pagetitle: 'BJJTech, the Brazilian Jiu-Jitsu Technique Catalog ',
     description: 'Dave Thomas\' Brazilian Jiu-Jitsu technique catalog.',
     tagline: 'Brazilian Jiu-Jitsu techniques',
-    year: app.locals.moment().year()
+    year: app.locals.moment().year(),
+    version: 1.1
   },
   company: {
     name: 'Seattle Jiu-Jitsu, LLC',
