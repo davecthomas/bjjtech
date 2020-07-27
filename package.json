@@ -57,7 +57,7 @@
   "homepage": "https://github.com/davecthomas/bjjtech#readme",
   "main": "server.js",
   "devDependencies": {
-    "foreman": "1.4.1",
+    "foreman": "3.0.1",
     "nf": "0.0.3",
     "request-debug": "^0.2.0"
   },
