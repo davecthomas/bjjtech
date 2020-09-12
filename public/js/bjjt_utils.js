@@ -105,7 +105,7 @@ module.exports = {
     } else {
       server.logger.info('Production DB connection');
       connectionString =
-        'postgres://uhysicyepxoqup:y4k-5ixpJulBVtwciNexZmuAvJ@ec2-54-163-251-104.compute-1.amazonaws.com:5432/d2fa0lq37cnebt';
+        'postgres://tylbxcdryulrau:bc07f9e3e67f350d0ad88c3b86a3f3db6decd0234703944f6b556fb4aa13470e@ec2-52-7-15-198.compute-1.amazonaws.com:5432/d9g1ibk9uehnr5';
     }
     // var connectionString = 'postgres://localhost:5432/bjjtech';
     var db = pgp(connectionString);
