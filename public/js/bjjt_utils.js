@@ -92,7 +92,7 @@ module.exports = {
   getConnection: function(server) {
     var connectionString;
 
-    // if (server.app.get('env') === 'development') {
+    if (server.app.get('env') === 'development') {
       server.logger.debug('Dev DB connection : user: ' + process.env.DB_user + ', host: ' + process.env.DB_host + ':' + process.env.DB_port + ", ssl: " + process.env.DB_ssl);
       connectionString = {
         user: process.env.DB_user,
@@ -101,12 +101,11 @@ module.exports = {
         port: process.env.DB_port,
         host: process.env.DB_host,
         ssl: false
-    //   };
-    // } else {
-    //   server.logger.info('Production DB connection');
-    //   connectionString =
-    //     'postgres://tylbxcdryulrau:bc07f9e3e67f350d0ad88c3b86a3f3db6decd0234703944f6b556fb4aa13470e@ec2-52-7-15-198.compute-1.amazonaws.com:5432/d9g1ibk9uehnr5';
-    // }
+      };
+    } else {
+      server.logger.info('Production DB connection');
+      connectionString = process.env.DATABASE_URL;
+    }
     // var connectionString = 'postgres://localhost:5432/bjjtech';
     var db = pgp(connectionString);
     return db;
