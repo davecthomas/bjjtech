@@ -15,7 +15,7 @@ $( document ).ready( function() {
 
     var topic_id = $( this ).attr( 'data-id' );
     var tag = $( this ).attr( 'data-tag' );
-    alert(api_url + "tech/tag/" + tag + "/" + topic_id);
+
     $.ajax( {
       url: api_url + "tech/tag/" + tag + "/" + topic_id,
       success: function( result ) {
@@ -23,15 +23,18 @@ $( document ).ready( function() {
         $( '#techs' ).empty();
         $( '#num_techs' ).empty();
         var techs = result;
+        alert(api_url + "tech/tag/" + tag + "/" + topic_id + "; " + techs.status);
         if ( techs.status === 'success' ) {
           $( '#techlist-content-panel' ).addClass( 'open' );
           var len = techs.data.length;
           var video = "";
+          alert(len);
           for ( i = 0; i < len; i++ ) {
             if ( i == 0 ) {
               $( '#num_techs' ).append( len + "&nbsp;" + techs.data[ i ].tag_name +
                 "&nbsp;" );
               document.title = bjjtech_pagetitle + ": Topic: " + techs.data[ i ].tag_name;
+              alert(document.title);
             }
             if ( techs.data[ i ].videoid ) {
               video = '<i class="fa fa-video-camera"></i>&nbsp;';
@@ -48,10 +51,10 @@ $( document ).ready( function() {
             $( "#nudge_tech" ).show();
           }
         }
-      },
-      error: function( jqxhr, str_textStatus,  str_errorThrown){
-        alert(str_textStatus+ " ; " + str_errorThrown);
       }
+      // error: function( jqxhr, str_textStatus,  str_errorThrown){
+      //   alert(str_textStatus+ " ; " + str_errorThrown);
+      // }
     } );
     return false;
   } );
