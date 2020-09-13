@@ -33,7 +33,6 @@
     "serve-favicon": "^2.5.0",
     "speakeasy": "^2.0.0",
     "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^1.1.2",
     "winston": "^2.4.5",
     "winston-papertrail": "^1.0.2"
   },
@@ -51,12 +50,14 @@
   "homepage": "https://github.com/davecthomas/bjjtech#readme",
   "main": "server.js",
   "devDependencies": {
+    "browserify": "^16.5.2",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-minify": "^3.1.0",
     "gulp-rename": "^2.0.0",
     "gulp-util": "^3.0.8",
-    "request-debug": "^0.2.0"
+    "request-debug": "^0.2.0",
+    "vinyl-source-stream": "^2.0.0"
   },
   "keywords": [
     "bjj",

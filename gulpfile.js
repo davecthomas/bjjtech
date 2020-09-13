@@ -7,20 +7,25 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var rename = require("gulp-rename");
 const minify = require("gulp-minify");
+// var browserify = require('browserify');
 
 var paths = {
   scripts: 'public/js/*.js',
+  // browserified_dir: 'public/js/browserified',
+  // browserified_scripts: 'public/js/browserified/*.js',
   images: 'public/img/**/*',
   dist_js: 'public/dist/js',
   scripts_3rdparty: 'public/js_3rdparty/*.js',
   dist: 'public/dist'
+  // browserify_this: './public/js/bjjt_utils.js',
+  // browserified_this: 'bjjt_utils_bfy.js'
 };
 
 const { series } = require('gulp');
 const { src, dest }  = require("gulp");
 
 function minifyjs() {
-  return src(paths.scripts, { allowEmpty: true })
+  return src([paths.scripts], { allowEmpty: true })
       .pipe(minify({noSource: true}))
       .pipe(dest(paths.dist_js))
 }
@@ -47,6 +52,17 @@ function watch(){
 function clean() {
   return del([paths.dist]);
 };
+
+// function browser_ify() {
+//     return browserify({
+//       entries: paths.browserify_this,
+//       debug: false
+//     })
+//     .bundle()
+//     .pipe(source(paths.browserified_this))
+//     .pipe(buffer())
+//     .pipe(gulp.dest(paths.dist_js));
+// };
 
 exports.default = series(minifyjs, move_js_3rdparty);
 exports.clean = series(clean);

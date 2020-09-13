@@ -11,13 +11,6 @@ var bjjt_utils = require('../public/dist/js/bjjt_utils-min.js');
 module.exports = function(router) {
   // Perform the login
   router.get(
-    '/login/google',
-    passport.authenticate('auth0', {connection: 'google-oauth2'}),
-    function (req, res) {
-      res.redirect('/');
-    }
-  );
-  router.get(
     '/login',
     passport.authenticate('auth0', {
       // clientID: process.env.AUTH0_CLIENT_ID,

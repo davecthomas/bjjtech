@@ -29,7 +29,6 @@ lock.on("unrecoverable_error", function(error) {
 
 // Listening for the authenticated event
 lock.on("authenticated", function(authResult) {
-  alert("authenticated");
   // Use the token in authResult to getUserInfo() and save it to localStorage
   lock.getUserInfo(authResult.accessToken, function(error, profile) {
     if (error) {
@@ -37,11 +36,9 @@ lock.on("authenticated", function(authResult) {
       alert(JSON.stringify(error));
       return;
     }
-    // profile.name: "David Thomas"; profile.picture: <path to image>
-    alert("hello " + JSON.stringify(authResult));
-    alert("hello " + JSON.stringify(profile));
-    //
-    // document.getElementById('nick').textContent = profile.nickname;
+    // alert("hello " + JSON.stringify(authResult));
+    // alert("hello " + JSON.stringify(profile));
+
     // If the user is known, good.
     $.ajax( {
       url: api_url + "user/is/" + profile.nickname,
@@ -53,6 +50,7 @@ lock.on("authenticated", function(authResult) {
             localStorage.setItem('profile', JSON.stringify(profile));
             // If there is an image, set it
             if ((typeof profile.picture === "string") && (profile.picture.length > 0)){
+              alert(profile.picture);
               $('#bjjt_user_image img').attr("src",profile.picture);
             }
             if ((typeof profile.name === "string") && (profile.name.length > 0)){
