@@ -48,7 +48,7 @@ $( document ).ready( function() {
             $( "#nudge_tech" ).show();
           }
         }
-      }
+      },
       error: function( jqxhr, str_textStatus,  str_errorThrown){
         alert(str_textStatus+ " ; " + str_errorThrown);
       }
