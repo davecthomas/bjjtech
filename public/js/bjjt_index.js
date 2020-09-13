@@ -15,7 +15,7 @@ $( document ).ready( function() {
 
     var topic_id = $( this ).attr( 'data-id' );
     var tag = $( this ).attr( 'data-tag' );
-
+    alert(api_url + "tech/tag/" + tag + "/" + topic_id);
     $.ajax( {
       url: api_url + "tech/tag/" + tag + "/" + topic_id,
       success: function( result ) {
@@ -48,6 +48,9 @@ $( document ).ready( function() {
             $( "#nudge_tech" ).show();
           }
         }
+      }
+      error: function( jqxhr, str_textStatus,  str_errorThrown){
+        alert(str_textStatus+ " ; " + str_errorThrown);
       }
     } );
     return false;
