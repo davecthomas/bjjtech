@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "auth0-lock": "^10.23.1",
-    "babili": "^0.1.4",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "connect-ensure-login": "^0.1.1",

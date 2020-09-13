@@ -35,19 +35,6 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 SET search_path = public, pg_catalog;
 
---
--- TOC entry 207 (class 1259 OID 16496)
--- Name: class_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE class_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -58,7 +45,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE class (
-    index integer DEFAULT nextval('class_id_seq'::regclass) NOT NULL,
+    index SERIAL,
     name character varying(255) NOT NULL,
     courseid integer,
     sequencenum integer,
@@ -78,27 +65,13 @@ CREATE TABLE classtech (
     createdate timestamp with time zone NOT NULL
 );
 
-
---
--- TOC entry 210 (class 1259 OID 16505)
--- Name: course_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE course_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
 --
 -- TOC entry 211 (class 1259 OID 16507)
 -- Name: course; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE course (
-    index integer DEFAULT nextval('course_id_seq'::regclass) NOT NULL,
+    index SERIAL,
     name character varying(255) NOT NULL,
     schoolid integer,
     sequencenum integer,
@@ -113,22 +86,8 @@ CREATE TABLE course (
 
 CREATE TABLE positionnames (
     positionname character varying(128),
-    index integer NOT NULL
+    index SERIAL
 );
-
-
---
--- TOC entry 197 (class 1259 OID 16398)
--- Name: relatedtechnique_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE relatedtechnique_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
 
 --
 -- TOC entry 198 (class 1259 OID 16400)
@@ -136,24 +95,10 @@ CREATE SEQUENCE relatedtechnique_id_seq
 --
 
 CREATE TABLE relatedtechnique (
-    index integer DEFAULT nextval('relatedtechnique_id_seq'::regclass) NOT NULL,
+    index SERIAL,
     technique integer,
     techniquerelated integer
 );
-
-
---
--- TOC entry 212 (class 1259 OID 16511)
--- Name: school_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE school_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
 
 --
 -- TOC entry 213 (class 1259 OID 16513)
@@ -161,7 +106,7 @@ CREATE SEQUENCE school_id_seq
 --
 
 CREATE TABLE school (
-    index integer DEFAULT nextval('school_id_seq'::regclass) NOT NULL,
+    index SERIAL,
     createdate timestamp with time zone,
     name character varying(255)
 );
@@ -173,7 +118,7 @@ CREATE TABLE school (
 --
 
 CREATE TABLE skilllevel (
-    index integer NOT NULL,
+    index SERIAL,
     levelname character varying(128)
 );
 
@@ -185,21 +130,8 @@ CREATE TABLE skilllevel (
 
 CREATE TABLE sport (
     sport character varying(128),
-    index integer NOT NULL
+    index SERIAL
 );
-
-
---
--- TOC entry 201 (class 1259 OID 16410)
--- Name: technique_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE technique_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 
 
 --
@@ -214,7 +146,7 @@ CREATE TABLE technique (
     setup text,
     details text,
     credit character varying(255),
-    index integer DEFAULT nextval('technique_id_seq'::regclass) NOT NULL,
+    index SERIAL,
     sport integer,
     startingpos integer,
     endingpos integer,
@@ -236,7 +168,7 @@ CREATE TABLE technique (
 
 CREATE TABLE techniquetype (
     techniquetype character varying(50),
-    index integer NOT NULL
+    index SERIAL
 );
 
 
@@ -247,7 +179,7 @@ CREATE TABLE techniquetype (
 
 CREATE TABLE topic (
     topic character varying(128),
-    index integer NOT NULL
+    index SERIAL
 );
 
 
@@ -257,7 +189,7 @@ CREATE TABLE topic (
 --
 
 CREATE TABLE users (
-    id integer NOT NULL,
+    id SERIAL,
     login character varying(32),
     password character varying(32),
     roleid integer,
@@ -265,19 +197,6 @@ CREATE TABLE users (
     lastname character varying(32),
     teamid integer
 );
-
-
---
--- TOC entry 206 (class 1259 OID 16428)
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 
 
 COPY positionnames (positionname, index) FROM stdin;
@@ -300,6 +219,7 @@ Kneeling or kneeling inside guard	8
 N/A	17
 \.
 
+select setval(pg_get_serial_sequence('positionnames','index'), 17, true);
 
 --
 -- TOC entry 2572 (class 0 OID 47989)
@@ -865,15 +785,7 @@ COPY relatedtechnique (index, technique, techniquerelated) FROM stdin;
 1051	389	45
 \.
 
-
---
--- TOC entry 2588 (class 0 OID 0)
--- Dependencies: 174
--- Name: relatedtechnique_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('relatedtechnique_id_seq', 1051, true);
-
+select setval(pg_get_serial_sequence('relatedtechnique','index'), 1051, true);
 
 --
 -- TOC entry 2573 (class 0 OID 47993)
@@ -887,6 +799,7 @@ COPY skilllevel (index, levelname) FROM stdin;
 3	Advanced
 \.
 
+select setval(pg_get_serial_sequence('skilllevel','index'), 3, true);
 
 --
 -- TOC entry 2574 (class 0 OID 47996)
@@ -901,6 +814,7 @@ Either Gi or No-gi	3
 MMA	4
 \.
 
+select setval(pg_get_serial_sequence('sport','index'), 5, true);
 
 --
 -- TOC entry 2576 (class 0 OID 48001)
@@ -1290,15 +1204,7 @@ COPY technique (type, topic, name, setup, details, credit, index, sport, startin
 3	17	Taffy Puller Hamstring Crush	This move is a fusion of a bunch of other techniques. If you are comfortable with the X Guard, Deep Half \nGuard, Biggie Slicer, and Kamikaze, you'll love this move. \nYou are on your back with opponent in your half left butterfly guard	1. Your left foot is behind his right knee in butterfly guard. Your right foot is on the ground. It can be \neither between his legs or pretty much anywhere, since you'll position it in a moment.\n2. You need to elevate him and turn him partially to his right. Reach your left hand under his left armpit \nand your right arm under his left leg as you elevate your butterfly guard. Press him up to raise him above \nyou. \n3. While he is aloft, quickly swing your right leg in front of his right instep and quickly pull your right leg \nback to you, trapping his right foot. Your left shin is still behind his right knee, deep (this is where the \ncrush is going to come from)\n4. Press your right foot against your left ankle, just like Kamikaze calf crush\n5. Reach both arms around his far (right) hip, S-grip and pull toward you as you press your legs away, into \nthe crush under his thigh (hamstring).	David Thomas	389	3	6	15	\N	\N	\N	8	3	\N	\N	\N
 \.
 
-
---
--- TOC entry 2589 (class 0 OID 0)
--- Dependencies: 178
--- Name: technique_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('technique_id_seq', 389, true);
-
+select setval(pg_get_serial_sequence('technique','index'), 389, true);
 
 --
 -- TOC entry 2577 (class 0 OID 48008)
@@ -1315,6 +1221,7 @@ Positions	5
 Unbalancing	6
 \.
 
+select setval(pg_get_serial_sequence('techniquetype','index'), 6, true);
 
 --
 -- TOC entry 2578 (class 0 OID 48011)
@@ -1343,6 +1250,8 @@ Conditioning or Flexibility	19
 Crushes	17
 \.
 
+select setval(pg_get_serial_sequence('topic','index'), 17, true);
+
 
 --
 -- TOC entry 2579 (class 0 OID 48014)
@@ -1355,7 +1264,7 @@ COPY users (id, login, password, roleid, firstname, lastname, teamid) FROM stdin
 1	admin	tTtT4	1	David	Thomas	1
 \.
 
-
+select setval(pg_get_serial_sequence('users','id'), 2, true);
 
 
 
