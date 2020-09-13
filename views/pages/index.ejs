@@ -24,15 +24,14 @@
         <div class="container-fluid">
           <% include ../partials/belowtop %>
         <div class="row">
-
-
           <div class="col-sm-3 panel panel-default content-panel" id="topiclist-content-panel">
 
-
+          <script type="text/babel" src="/public/dist/js/bjjt_react.js"></script>
           <script src="/public/dist/js/bjjt_index-min.js"></script>
 
 <%- "<h3>"+len+"&nbsp;Jits Topics&nbsp;<span id='nudge_topic' class='valign center pulsor nudge'>Click a topic.</span></h3>" %>
       <div class="list-group">
+        <div id="app"></div>
     <%
       for(i = 0; i < len; i++){ %>
         <a href="#" class="list-group-item get_techs_topic" id="<%= topics.data[i].index%>" data-listindex="<%=i%>" data-id="<%= topics.data[i].index%>" data-tag="<%=topics.data[i].tag%>"><h4 class="list-group-item-heading"><%= topics.data[i].name%></h4></a>

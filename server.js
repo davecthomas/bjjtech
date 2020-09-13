@@ -121,6 +121,7 @@ router.get('/api/user/is/:nick', user.isUser);
 var index = require('./routes/index');
 
 require('./routes/index')(router);
+router.get('/test', root.getTest);
 router.get('/', root.getIndex);
 router.get('/privacy', root.getPrivacy);
 router.get('/index', root.getIndex);

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js" integrity="sha512-kp7YHLxuJDJcOzStgd6vtpxr4ZU9kjn77e6dBsivSz+pUuAuMlE2UTdKB7jjsWT84qbS8kdCWHPETnP/ctrFsA==" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/babel">
+
+      class Technique extends React.Component {
+        constructor() {
+          super();
+          // this.props = {color: "red"};
+        }
+        render() {
+          return <h4>{this.props.context} Technique!</h4>;
+        }
+      }
+
+      ReactDOM.render(
+          <Technique context="foo"/>,
+          document.getElementById('app')
+      );
+
+    </script>
+  </body>
+</html>

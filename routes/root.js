@@ -1,12 +1,11 @@
 var request = require('request');
-
-
 var queries = require('./queries');
 var bjjt_utils = require('../public/dist/js/bjjt_utils-min.js');
 
 // add query functions
 module.exports = {
   getPrivacy: getPrivacy,
+  getTest: getTest,
   getIndex: getIndex,
   getHeader: getHeader,
   newTech: newTech,
@@ -14,11 +13,9 @@ module.exports = {
   getAllTech: getAllTech,
   getTechFromStr: getTechFromStr,
   getTech: getTech,
-
   getSchool: getSchool,
   getCourse: getCourse,
   getClass: getClass
-
 };
 
 
@@ -32,6 +29,14 @@ function getPrivacy(req, res) {
   });
 };
 
+function getTest(req, res) {
+  var api_url = bjjt_utils.getAPI(req);
+  var root_url = bjjt_utils.getRoot(req);
+  res.render('pages/test', {
+    api_url: api_url,
+    root_url: root_url
+  });
+};
 
 // define the home page route
 function getIndex(req, res) {

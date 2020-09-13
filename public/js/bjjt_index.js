@@ -1,7 +1,4 @@
 $( document ).ready( function() {
-
-
-
   var len_topic_list = len;
   $( '[data-toggle="tooltip"]' ).tooltip();
 
@@ -105,5 +102,4 @@ $( document ).ready( function() {
     } );
     return false;
   } );
-
 } );

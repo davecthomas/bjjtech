@@ -29,6 +29,8 @@
     "pg-native": "^2.2.0",
     "pg-promise": "^6.1.0",
     "qrcode": "^0.9.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "request": "^2.88.2",
     "serve-favicon": "^2.5.0",
     "speakeasy": "^2.0.0",
@@ -50,6 +52,7 @@
   "homepage": "https://github.com/davecthomas/bjjtech#readme",
   "main": "server.js",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "browserify": "^16.5.2",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",

@@ -11,6 +11,7 @@ const minify = require("gulp-minify");
 
 var paths = {
   scripts: 'public/js/*.js',
+  reacts: 'public/js/react/*.js',
   // browserified_dir: 'public/js/browserified',
   // browserified_scripts: 'public/js/browserified/*.js',
   images: 'public/img/**/*',
@@ -33,6 +34,12 @@ function minifyjs() {
 // 3rd party scripts are already minified. Just move them
 function move_js_3rdparty(){
   return gulp.src(paths.scripts_3rdparty)
+    .pipe(gulp.dest(paths.dist_js))
+};
+
+// Don't minify react scripts There's a problem in the minify that needs debugging.
+function move_js_react(){
+  return gulp.src(paths.reacts)
     .pipe(gulp.dest(paths.dist_js))
 };
 
@@ -64,5 +71,5 @@ function clean() {
 //     .pipe(gulp.dest(paths.dist_js));
 // };
 
-exports.default = series(minifyjs, move_js_3rdparty);
+exports.default = series(minifyjs, move_js_react, move_js_3rdparty);
 exports.clean = series(clean);
