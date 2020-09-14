@@ -1,3 +1,8 @@
+// import {Technique} from "./bjjt_react.js";
+// ReactDOM.render(
+//     <Technique topic="foo"/>,
+//     document.getElementById('app')
+// );
 $( document ).ready( function() {
   var len_topic_list = len;
   $( '[data-toggle="tooltip"]' ).tooltip();

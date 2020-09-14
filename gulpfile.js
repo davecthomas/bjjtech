@@ -39,7 +39,7 @@ function move_js_3rdparty(){
 
 // Don't minify react scripts There's a problem in the minify that needs debugging.
 function move_js_react(){
-  return gulp.src(paths.reacts)
+  return gulp.src([paths.reacts,paths.scripts])
     .pipe(gulp.dest(paths.dist_js))
 };
 
@@ -71,5 +71,5 @@ function clean() {
 //     .pipe(gulp.dest(paths.dist_js));
 // };
 
-exports.default = series(minifyjs, move_js_react, move_js_3rdparty);
+exports.default = series( move_js_react, move_js_3rdparty);
 exports.clean = series(clean);

@@ -6,7 +6,7 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var root = require('./root'); // root.js has our web logic
 
 const router = express.Router();
-var bjjt_utils = require('../public/dist/js/bjjt_utils-min.js');
+var bjjt_utils = require('../public/dist/js/bjjt_utils.js');
 
 module.exports = function(router) {
   // Perform the login

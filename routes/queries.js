@@ -1,7 +1,7 @@
 // http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/#.V6OlC5MrJE4
 var server = require('../server');
 // var bluebird = require('bluebird');
-var bjjt_utils = require('../public/dist/js/bjjt_utils-min.js');
+var bjjt_utils = require('../public/dist/js/bjjt_utils.js');
 var speakeasy = require("speakeasy");
 var qrcode = require("qrcode");
 // var options = {

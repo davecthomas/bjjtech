@@ -12,14 +12,14 @@ if (typeof title != 'undefined'){
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <link href="/public/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 <!-- CSS (load bootstrap from a CDN) -->
-<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js" integrity="sha512-kp7YHLxuJDJcOzStgd6vtpxr4ZU9kjn77e6dBsivSz+pUuAuMlE2UTdKB7jjsWT84qbS8kdCWHPETnP/ctrFsA==" crossorigin="anonymous"></script>
 <script type="text/javascript" src="/public/dist/js/jquery-3.1.0.min.js"></script>
 <script type="text/javascript" src="/public/dist/js/tether.min.js"></script>
 <script type="text/javascript" src="/public/dist/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/public/css/bootstrap.min.css">
-<script type="text/javascript" src="/public/dist/js/bjjt_client_utils-min.js"></script>
+<script type="text/javascript" src="/public/dist/js/bjjt_client_utils.js"></script>
 <link href="/public/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/public/css/bjjt.css">
 <link rel="shortcut icon" href="/public/img/favicon.ico?v=<%=Math.floor(Math.random() *100) %>"/>
@@ -45,7 +45,7 @@ if (typeof title != 'undefined'){
 <%
 if (process.env.NODE_ENV != 'development'){
 %>
-<script src="/public/dist/js/bjjt_ga-min.js"></script>
+<script src="/public/dist/js/bjjt_ga.js"></script>
 <%
 }
 %>
