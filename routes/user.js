@@ -15,6 +15,7 @@ function isUser(req, res, next) {
   db.one('select * from users where login = $1',
       userNick)
     .then(function(data) {
+      // res.header("Access-Control-Allow-Origin", "*");
       res.status(200)
         .json({
           status: 'success',

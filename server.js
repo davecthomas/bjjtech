@@ -5,7 +5,10 @@ var express = require('express'),
   favicon = require('serve-favicon'),
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
-  winston = require('winston');
+  winston = require('winston'),
+  cors = require('cors');       // Allows other sites to use our API without restriction
+
+app.use(cors());
 
 require('winston-papertrail').Papertrail;
 
